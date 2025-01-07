@@ -505,7 +505,7 @@ Route::controller(CustomVendorController::class)->group(function () {
 
 
 Route::get('/check-shop-name', [CustomVendorController::class, 'checkShopName'])->name('check.shop.name');
-Route::post('/vendors/add', [CustomVendorController::class, 'store'])->name('admin.vendors.s');
+Route::post('/vendors/add', [CustomVendorController::class, 'store'])->name('admin.vendors.add');
 
 
 
