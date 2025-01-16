@@ -16,7 +16,6 @@
             <div class="modal-body">
                 <form action="{{route('messages')}}" method="post" id="seller-chat-form">
                     @csrf
-
                     <input value="{{ isset($user_type) && $user_type == 'admin' ? 0 : $seller->id}}" name="vendor_id" hidden>
                     <textarea name="message" class="form-control min-height-100px max-height-200px" required placeholder="{{ translate('Write_here') }}..."></textarea>
                     <br>

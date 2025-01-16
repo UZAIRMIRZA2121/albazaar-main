@@ -111,9 +111,9 @@ class VendorService
     public function getAddData(object $request):array
     {
         return [
-            'f_name' => $request['f_name'],
-            'l_name' => $request['l_name'],
-            'phone' => $request['phone'],
+            'f_name' => $request['f_name'] ?? 'demo',
+            'l_name' => $request['l_name'] ?? 'demo',
+            'phone' => $request['phone'] ?? 'demo',
             'email' => $request['email'],
             'image' => $this->upload(dir: 'seller/', format: 'webp', image: $request->file('image')),
             'password' => bcrypt($request['password']),

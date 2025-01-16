@@ -5,7 +5,7 @@
 
 @foreach($chattingMessages as $key => $message)
     @php($genTimeGap = $message->created_at)
-    @if ($message->sent_by_customer || $message->sent_by_delivery_man)
+    @if ($message->sent_by_customer || $message->sent_by_delivery_man  || $message->sent_by_seller)
         <div class="incoming_msg d-flex align-items-end gap-2">
             <div class="">
                 <img class="avatar-img user-avatar-image border inbox-user-avatar-25" id="profile_image" width="40"
@@ -77,6 +77,7 @@
             </div>
         </div>
     @else
+
         <div class="outgoing_msg mb-0">
             <div class="sent_msg p-2" data-toggle="tooltip" data-custom-class="chatting-time min-w-0"
                  @if($message->message || count($message->attachment_full_url) > 0)

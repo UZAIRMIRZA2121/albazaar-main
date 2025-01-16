@@ -22,7 +22,7 @@ $('.get-ajax-message-view').on('click', function () {
     let userId = $(this).data('user-id');
     $('.notify-alert-' + userId).remove();
     let actionURL = $('#chatting-post-url').data('url') + userId;
-
+alert(actionURL);
     $.ajaxSetup({
         headers: {'X-XSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')}
     });
@@ -33,6 +33,7 @@ $('.get-ajax-message-view').on('click', function () {
             $('#loading').fadeIn();
         },
         success: function (response) {
+            console.log(response);
             if (response.userData) {
                 $('#chatting-messages-section').html(response.chattingMessages)
                 $('#profile_image').attr('src', response.userData.image)

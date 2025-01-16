@@ -5,38 +5,110 @@ namespace App\Http\Controllers\CustomVendor;
 use App\Http\Controllers\Controller;
 use App\Models\Seller;
 use App\Models\Shop; // Adjust model name if different
+use Http;
 use Illuminate\Http\Request;
-
+use Illuminate\Support\Str;
+use App\Services\SmsService;
+use Log;
+use App\Traits\FileManagerTrait;
 class CustomVendorController extends Controller
 {
+
+    use FileManagerTrait;
+    protected $smsService;
+
+    public function __construct(SmsService $smsService)
+    {
+        $this->smsService = $smsService;
+    }
+    public function sendOtp(Request $request)
+    {
+        // Validate phone and OTP inputs
+        $validated = $request->validate([
+            'phone' => 'required',  // Adjust regex for your phone number format
+            'otp' => 'required|digits:6',  // Ensure OTP is exactly 6 digits
+        ]);
+
+        // Send OTP
+        $response = $this->smsService->sendOTP($validated['phone'], $validated['otp']);
+
+        // Check if there is an error in the response
+        if (isset($response['error'])) {
+            return response()->json([
+                'status' => 'error',
+                'message' => $response['error']
+            ], 400);
+        }
+        // If there is no error, return the success response
+        return response()->json([
+            'status' => 'success',
+            'message' => 'OTP sent successfully',
+            'data' => $response
+        ]);
+    }
+
+
+
     public function vendor_add(Request $request)
     {
-        
-        // Validate the email to check if it already exists
+       
+        Log::info($request->all);
+        // Validated the email to check if it already exists
         $email = $request->input('email_add');
-    
         $existingSeller = Seller::where('email', $email)->first();
-        // if ($existingSeller) {
-        //     // If the email exists, return a response indicating it's already taken
-        //     return response()->json(['message' => 'Email is already taken.'], 400);
-        // }
-    
+
+        // If the email exists, return a response indicating it's already taken
+        if ($existingSeller) {
+            return response()->json(['message' => 'Email is already taken.'], 400);
+        }
+
+        // Generate a 6-digit OTP
+        $otp = rand(100000, 999999);
+
+        // Create a new seller instance
         $seller = new Seller();
         $seller->email = $email;
+
+        // Handle name parsing
         $fullName = $request->input('name_vendor');
         $nameParts = explode(' ', $fullName);
-        $l_name = array_pop($nameParts); 
+        $l_name = array_pop($nameParts);
         $seller->l_name = $l_name;
-        $seller->f_name = implode(' ', $nameParts); 
-    
+        $seller->f_name = implode(' ', $nameParts);
+
+        // Set the OTP, phone, and password
+        $seller->otp = $otp;
         $seller->phone = $request->input('phone_vendor');
-        $seller->password = bcrypt($request->input('password_vendor')); 
-        $seller->save();
-         session()->put('seller_id', $seller->id);
-        // Return a response indicating the insertion was successful
-        return response()->json(['message' => 'Seller added successfully!', 'seller' => $seller]);
+        $seller->password = bcrypt($request->input('password_vendor'));
+
+        // Send OTP
+        $response = $this->smsService->sendOTP($request->input('phone_vendor'), $otp);
+
+        // Check if there is an error in the response
+        if (isset($response['error'])) {
+            return response()->json([
+                'status' => 'error',
+                'message' => $response['error']
+            ], 400);
+        }
+      
+        // Check if there is an error in the response
+        if (isset($response['error'])) {
+            return response()->json(['message' => $response['error']], 400);
+        } else {
+            // If OTP is successfully sent, save the seller record
+            $seller->save();
+
+            // Store seller's ID in session
+            session()->put('seller_id', $seller->id);
+
+            // Return a response indicating the insertion was successful
+            return response()->json([ 'status' => 'success','message' => 'Seller added successfully!', 'seller' => $seller]);
+        }
+
     }
-    
+
+
     public function checkShopName(Request $request)
     {
         $shopName = $request->input('shop_name');
@@ -48,51 +120,131 @@ class CustomVendorController extends Controller
     }
 
     public function store(Request $request)
-    {
-        // Retrieve the seller ID from the session
-        $sellerId = session('seller_id');
-        $seller = Seller::find($sellerId);
-    
-        if (!$seller) {
-            return redirect()->back()->with('error', 'Seller not found!');
-        }
-    
-        try {
-            // Update seller attributes with request data
-            $seller->radio_check = $request->input('radio_check', $seller->radio_check);
-            $seller->business_day = $request->input('businessName', $seller->businessName);
-            $seller->establishment = $request->input('establishment', $seller->establishment);
-            $seller->city = $request->input('city', $seller->city);
-            $seller->shop_address = $request->input('shop_address', $seller->shop_address);
-            $seller->latitude = $request->input('latitude', $seller->latitude);
-            $seller->longitude = $request->input('longitude', $seller->longitude);
-            $seller->shop_name = $request->input('shop_name', $seller->shop_name);
-            $seller->category = $request->input('category', $seller->category);
-            $seller->brief_here = $request->input('brief_here', $seller->brief_here);
-          
-            // Save the updated seller data
-            $seller->save();
-               // Now, handle the shop data
-        $shopData = [
-            'seller_id' => $seller->id, // Link to the seller's ID
-            'name' => $request->input('shop_name'),
-            'slug' => ($request->input('shop_name')), // Create slug based on the shop name
-            'address' => $request->input('shop_address'),
+{
+    $request->validate([
+        'g-recaptcha-response' => 'required|captcha',
+    ]);
+
+    $recaptchaResponse = $request->input('g-recaptcha-response');
+    $secretKey = '6LcQuLYqAAAAADbxBfttI3PAYAjhR0Ba5srfP_-T';
+
+    $response = Http::asForm()->post('https://www.google.com/recaptcha/api/siteverify', [
+        'secret' => $secretKey,
+        'response' => $recaptchaResponse,
+    ]);
+
+    $responseBody = $response->json();
+
+    if (!$responseBody['success']) {
+        return back()->withErrors(['captcha' => 'reCAPTCHA verification failed.']);
+    }
+
+
+
+    // dd($request->all());
+    // Retrieve the seller ID from the session
+    $sellerId = session('seller_id');
+    $seller = Seller::find($sellerId);
+
+    if (!$seller) {
+        return redirect()->back()->with('error', 'Seller not found!');
+    }
+
+    try {
+        // Upload files and store file paths
+        $filePaths = [
+            'image' => $request->hasFile('image') ? $this->upload('shop/', 'webp', $request->file('image')) : null,
+            'shop_logo' => $request->hasFile('shop_logo') ? $this->upload('shop/logos/', 'webp', $request->file('shop_logo')) : null,
+            'shop_banner' => $request->hasFile('shop_banner') ? $this->upload('shop/banner/', 'webp', $request->file('shop_banner')) : null,
         ];
 
-        // Store shop data in the 'shops' table
-        $shop = new Shop($shopData);
-        $shop->save();
+        // Update seller attributes
+        $seller->fill([
+            'radio_check' => $request->input('radio_check', $seller->radio_check),
+            'business_day' => $request->input('businessName', $seller->businessName),
+            'establishment' => $request->input('establishment', $seller->establishment),
+            'city' => $request->input('city', $seller->city),
+            'shop_address' => $request->input('shop_address', $seller->shop_address),
+            'latitude' => $request->input('latitude', $seller->latitude),
+            'longitude' => $request->input('longitude', $seller->longitude),
+            'shop_name' => $request->input('shop_name', $seller->shop_name),
+            'category' => $request->input('category', $seller->category),
+            'brief_here' => $request->input('brief_here', $seller->brief_here),
+            'upload_certifice' => $filePaths['upload_certifice'] ?? $seller->upload_certifice,
+        ]);
+        $seller->save();
+
+        // Handle shop data
+        $shop = Shop::updateOrCreate(
+            ['seller_id' => $seller->id], // Match on seller ID
+            [
+                'name' => $request->input('shop_name'),
+                'slug' => Str::slug($request->input('shop_name')), // Generate slug from shop name
+                'address' => $request->input('shop_address'),
+                'banner_storage_type' => 'public',
+                'banner' => $filePaths['shop_banner'] ?? null,
+                'image' => $filePaths['image'] ?? null,
+            ]
+        );
+
+        // dd( 'Seller and shop updated successfully.', [
+        //     'seller' => $seller,
+        //     'shop' => $shop,
+        // ]);
+
         return redirect()->back()->with('success', 'Your form has been submitted successfully!');
-            // Redirect with success message
-            
-        } catch (\Exception $e) {
-            // Log the error for debugging
-            \Log::error('Error updating seller: ' . $e->getMessage());
-            dd('Error updating seller: ' . $e->getMessage());
-            // Redirect with error message
-            return redirect()->back()->with('error', 'Something went wrong! Please try again.');
-        }
+    } catch (\Exception $e) {
+        dd( 'Error updating seller or shop: ' . $e->getMessage(), ['trace' => $e->getTrace()]);
+        // Log the error for debugging
+       
+        return redirect()->back()->with('error', 'Something went wrong! Please try again.');
     }
+}
+
+
     
+    // Verify OTP
+    public function verifyOtp(Request $request)
+    {
+        $otp = $request->input('otp');
+        $sellerId = session()->get('seller_id');
+
+        // Retrieve the seller record from the database
+        $seller = Seller::find($sellerId);
+
+        if ($seller && $seller->otp == $otp) {
+            // OTP is correct, proceed with the next step
+            return response()->json(['status' => 'success']);
+        }
+
+        // OTP is incorrect
+        return response()->json(['status' => 'error'], 400);
+    }
+
+    // Resend OTP
+    public function resendOtp(Request $request)
+    {
+
+        $sellerId = session()->get('seller_id');
+        $seller = Seller::find($sellerId);
+
+        if (!$seller) {
+            return response()->json(['message' => 'error'], 400);
+        }
+
+        // Generate a new OTP
+        $newOtp = rand(100000, 999999);
+
+        // Save the new OTP
+        $seller->otp = $newOtp;
+        $seller->save();
+
+        // Optionally, send the OTP to the seller (via email or SMS)
+        // For email: Use Laravel's Mail facade to send the OTP
+        // Mail::to($seller->email)->send(new \App\Mail\OtpMail($newOtp));
+
+        // Return success response
+        return response()->json(['message' => 'success']);
+    }
+
 }

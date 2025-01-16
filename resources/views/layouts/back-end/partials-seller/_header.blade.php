@@ -220,6 +220,17 @@
                                             class="btn-status btn-sm-status-custom btn-status-danger">{{ $messageDeliveryMan }}</span>
                                     @endif
                                 </a>
+                                <div class="dropdown-divider"></div>
+                                <a class="dropdown-item position-relative"
+                                   href="{{route('vendor.messages.index', ['type' => 'admin'])}}">
+                                    <span class="text-truncate pr-2"
+                                          title="Settings">{{translate('delivery_man')}}</span>
+                                    @php($messageDeliveryMan =\App\Models\Chatting::where(['seen_by_seller'=>0, 'seller_id'=>auth('seller')->id()])->whereNotNull(['admin_id'])->count())
+                                    @if($messageDeliveryMan > 0)
+                                        <span
+                                            class="btn-status btn-sm-status-custom btn-status-danger">{{ $messageDeliveryMan }}</span>
+                                    @endif
+                                </a>
                             </div>
                         </div>
                     </li>

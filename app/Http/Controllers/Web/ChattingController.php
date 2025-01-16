@@ -19,6 +19,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator;
+use Log;
 
 class ChattingController extends BaseController
 {
@@ -33,14 +34,13 @@ class ChattingController extends BaseController
      * @param VendorRepositoryInterface $vendorRepo
      */
     public function __construct(
-        private readonly ChattingRepositoryInterface    $chattingRepo,
-        private readonly ShopRepositoryInterface        $shopRepo,
-        private readonly ChattingService                $chattingService,
+        private readonly ChattingRepositoryInterface $chattingRepo,
+        private readonly ShopRepositoryInterface $shopRepo,
+        private readonly ChattingService $chattingService,
         private readonly DeliveryManRepositoryInterface $deliveryManRepo,
-        private readonly CustomerRepositoryInterface    $customerRepo,
-        private readonly VendorRepositoryInterface      $vendorRepo,
-    )
-    {
+        private readonly CustomerRepositoryInterface $customerRepo,
+        private readonly VendorRepositoryInterface $vendorRepo,
+    ) {
     }
 
     /**
@@ -59,9 +59,11 @@ class ChattingController extends BaseController
      */
     public function getListView(string|array $type): View
     {
+       
         return match ($type) {
             'delivery-man' => $this->getChatList(relation: ['deliveryMan'], columnName: 'delivery_man_id', type: $type),
             'vendor' => $this->getChatList(relation: ['seller'], columnName: 'seller_id', type: $type),
+            'admin' => $this->getChatList(relation: ['admin'], columnName: 'admin_id', type: $type),
         };
     }
 
@@ -71,6 +73,7 @@ class ChattingController extends BaseController
      */
     public function getMessageByUser(Request $request): JsonResponse
     {
+        Log::info($request->all());
         if ($request->has(key: 'delivery_man_id')) {
             $getUser = $this->deliveryManRepo->getFirstWhere(params: ['id' => $request['delivery_man_id']]);
             $requestColumn = 'delivery_man_id';
@@ -78,25 +81,39 @@ class ChattingController extends BaseController
             $whereNotNull = ['user_id', 'delivery_man_id'];
             $relation = ['deliveryMan'];
             $type = 'delivery-man';
-        } elseif ($request->has(key: 'vendor_id') && $request['vendor_id'] == 0) {
+        } elseif ($request->has(key: 'vendor_id')) {
             $getUser = 'admin';
-            $requestColumn = 'admin_id';
+            $requestColumn = 'seller_id';
             $requestId = 0;
+            $whereNotNull = ['user_id', 'seller_id'];
+            $relation = ['seller'];
+            $type = 'seller';
+        } else {
+         
+                $this->chattingRepo->add(
+                    data: $this->chattingService->addChattingDataForWeb(
+                        request: $request,
+                        userId: auth('customer')->id(),
+                        type: 'admin',
+                        adminId: 1,
+
+                    )
+                );
+
+            $getUser = 'admin'; // Placeholder, retrieve admin details if needed
+            $requestColumn = 'admin_id';
+            $requestId = 1;
             $whereNotNull = ['user_id', 'admin_id'];
             $relation = ['admin'];
             $type = 'admin';
-        } else {
-            $vendorData = $this->vendorRepo->getFirstWhere(params: ['id' => $request['vendor_id']], relations: ['shop']);
-            $getUser = $vendorData->shop;
-            $requestColumn = 'seller_id';
-            $requestId = $request['vendor_id'];
-            $whereNotNull = ['user_id', 'seller_id', 'shop_id'];
-            $relation = ['seller'];
-            $type = 'vendor';
         }
+
+
+      
         $this->updateAllUnseenMessageStatus(requestColumn: $requestColumn, requestId: $requestId);
         $chattingMessages = $this->getMessage(requestColumn: $requestColumn, requestId: $requestId, whereNotNull: $whereNotNull, relation: $relation);
         $data = self::getRenderMessagesView(user: $getUser, message: $chattingMessages, type: $type);
+     
         return response()->json($data);
     }
 
@@ -106,6 +123,7 @@ class ChattingController extends BaseController
      */
     public function addMessage(ChattingRequest $request): JsonResponse
     {
+      
         $customerId = auth('customer')->id();
         $customer = $this->customerRepo->getFirstWhere(params: ['id' => $customerId]);
         if ($request->has(key: 'delivery_man_id')) {
@@ -123,8 +141,10 @@ class ChattingController extends BaseController
             $whereNotNull = ['user_id', 'delivery_man_id'];
             $relation = ['deliveryMan'];
             $type = 'delivery-man';
+            Log::info(1);
             event(new ChattingEvent(key: 'message_from_customer', type: 'delivery_man', userData: $getUser, messageForm: $customer));
-        } elseif ($request->has(key: 'vendor_id') && $request['vendor_id'] == 0) {
+        } elseif ($request->vendor_id > 0) {
+            Log::info(2);
             $this->chattingRepo->add(
                 data: $this->chattingService->addChattingDataForWeb(
                     request: $request,
@@ -139,6 +159,29 @@ class ChattingController extends BaseController
             $whereNotNull = ['user_id', 'admin_id'];
             $relation = ['admin'];
             $type = 'admin';
+        } elseif ($request->has(key: 'admin_id')) {
+            Log::info(3);
+
+
+            $vendorData =
+                $this->chattingRepo->add(
+                    data: $this->chattingService->addChattingDataForWeb(
+                        request: $request,
+                        userId: 2,
+                        type: 'admin',
+                        adminId: 1,
+
+                    )
+                );
+
+            $getUser = 'admin'; // Placeholder, retrieve admin details if needed
+            $requestColumn = 'admin_id';
+            $requestId = 1;
+            $whereNotNull = ['user_id', 'admin_id'];
+            $relation = ['admin'];
+            $type = 'admin';
+
+            // event(new ChattingEvent(key: 'message_from_customer', type: 'admin', userData: $getUser, messageForm: $customer));
         } else {
             $vendorData = $this->vendorRepo->getFirstWhere(params: ['id' => $request['vendor_id']], relations: ['shop']);
 
@@ -148,7 +191,8 @@ class ChattingController extends BaseController
                     userId: $customerId,
                     type: 'seller',
                     shopId: $vendorData?->shop?->id,
-                    vendorId: $vendorData['id'])
+                    vendorId: $vendorData['id']
+                )
             );
 
             event(new ChattingEvent(key: 'message_from_customer', type: 'seller', userData: $vendorData, messageForm: $customer));
@@ -160,6 +204,7 @@ class ChattingController extends BaseController
             $type = 'vendor';
         }
         $chattingMessages = $this->getMessage(requestColumn: $requestColumn, requestId: $requestId, whereNotNull: $whereNotNull, relation: $relation);
+     
         $data = self::getRenderMessagesView(user: $getUser, message: $chattingMessages, type: $type);
         return response()->json($data);
     }
@@ -191,6 +236,7 @@ class ChattingController extends BaseController
             )->unique('admin_id');
             $allChattingUsers = $inHouseInfo->count() > 0 ? ($allChattingUsers->merge($inHouseInfo))->sortByDesc('created_at') : $allChattingUsers;
         }
+
         $allChattingUsers?->map(function ($chatting) use ($allChattingUsers, $customerId) {
             $filterColumn = !is_null($chatting?->admin_id) ? 'admin_id' : (!is_null($chatting?->seller_id) ? 'seller_id' : 'delivery_man_id');
             $filterId = $chatting?->admin_id ?? ($chatting?->seller_id ? $chatting->shop->id : $chatting->deliveryMan->id);
@@ -201,7 +247,8 @@ class ChattingController extends BaseController
                 'seen_by_customer' => 0,
             ];
             $unseenMessageCount = $this->chattingRepo->getListWhere(
-                filters: $filter, dataLimit: 'all'
+                filters: $filter,
+                dataLimit: 'all'
             )->count();
             $chatting['unseen_message_count'] = $unseenMessageCount;
         });
@@ -253,22 +300,27 @@ class ChattingController extends BaseController
         if ($type == 'vendor') {
             $userData = ['name' => $user['name'], 'phone' => $user['contact']];
             $userData['image'] = getStorageImages(path: $user->image_full_url, type: 'shop');
-            $userData['temporary-close-status'] = (int)$user->temporary_close;
+            $userData['temporary-close-status'] = (int) $user->temporary_close;
         } elseif ($type == 'delivery-man') {
             $userData = ['name' => $user['f_name'] . ' ' . $user['l_name'], 'phone' => $user['country_code'] . $user['phone']];
             $userData['image'] = getStorageImages(path: $user->image_full_url, type: 'avatar');
             $userData['temporary-close-status'] = '';
 
         } else {
-            $userData = ['name' => getWebConfig('company_name'), 'phone' => ''];
+            $userData = ['name' => 'super' . ' ' . 'admin ', 'phone' => 111111111111111];
             $userData['image'] = getStorageImages(path: getWebConfig('company_fav_icon'), type: 'shop');
-            $userData['temporary-close-status'] = (int)getWebConfig(name: 'temporary_close')['status'];
+            $userData['temporary-close-status'] = (int) getWebConfig(name: 'temporary_close')['status'];
         }
         return $userData;
     }
 
     private function getMessage($requestColumn, $requestId, $whereNotNull, $relation): Collection
     {
+        // Log::info('Request Column: ' . (is_array($requestColumn) ? print_r($requestColumn, true) : $requestColumn));
+        // Log::info('Request ID: ' . (is_array($requestId) ? print_r($requestId, true) : $requestId));
+        // Log::info('Where Not Null Condition: ' . (is_array($whereNotNull) ? print_r($whereNotNull, true) : $whereNotNull));
+        // Log::info('Relation: ' . (is_array($relation) ? print_r($relation, true) : $relation));
+
         $customerId = auth('customer')->id();
         $orderBy = theme_root_path() == 'default' ? ['created_at' => 'DESC'] : ['created_at' => 'ASC'];
         return $this->chattingRepo->getListWhereNotNull(
@@ -282,10 +334,11 @@ class ChattingController extends BaseController
 
     private function updateAllUnseenMessageStatus($requestColumn, $requestId): void
     {
+
         $customerId = auth('customer')->id();
         $this->chattingRepo->updateAllWhere(
             params: ['user_id' => $customerId, $requestColumn => $requestId],
-            data: ['sent_by_customer' => 1]
+            data: ['seen_by_customer' => 1]
         );
     }
 }

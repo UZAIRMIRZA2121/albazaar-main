@@ -661,6 +661,15 @@ $eCommerceLogo = getWebConfig(name: 'company_web_logo');
                             </span>
                         </a>
                     </li>
+                      <li class="navbar-vertical-aside-has-menu {{Request::is('admin/messages*')?'active':''}}">
+                        <a class="nav-link" title="{{translate('inbox')}}"
+                            href="{{route('admin.messages.index', ['type' => 'vendor'])}}">
+                            <i class="tio-chat nav-icon"></i>
+                            <span class="navbar-vertical-aside-mini-mode-hidden-elements text-truncate">
+                                Vendor
+                            </span>
+                        </a>
+                    </li>
                     <li class="navbar-vertical-aside-has-menu {{Request::is('admin/contact*')?'active':''}}">
                         <a class="js-navbar-vertical-aside-menu-link nav-link"
                             href="{{route('admin.contact.list')}}" title="{{translate('messages')}}">

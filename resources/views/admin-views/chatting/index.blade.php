@@ -29,15 +29,21 @@
                                     {{translate("customer")}}
                                 </a>
                             </li>
+                            <li class="nav-item" role="presentation">
+                                <a class="nav-link bg-transparent p-2 {{ request('type') == 'seller' ? 'active' : '' }}"
+                                   href="{{ route('admin.messages.index', ['type' => 'seller']) }}">
+                                    {{translate("Vendor")}}
+                                </a>
+                            </li>
                             <!-- <li class="nav-item" role="presentation">
-                                <a class="nav-link bg-transparent p-2 {{ request('type') == 'delivery-man' ? 'active' : '' }}"
-                                   href="{{ route('admin.messages.index', ['type' => 'delivery-man']) }}">
+                                <a class="nav-link bg-transparent p-2 {{ request('type') == 'vendor' ? 'active' : '' }}"
+                                   href="{{ route('admin.messages.index', ['type' => 'Vendor']) }}">
                                     {{translate('delivery_Man')}}
                                 </a>
-                            </li> -->
-                            <p>
+                            </li> --> <br>
+                            {{-- <p>
                                 <i>No delivery men in system</i>
-                            </p>
+                            </p> --}}
                         </ul>
 
                         <div class="tab-content">
@@ -47,6 +53,7 @@
                                     @if(isset($allChattingUsers) && count($allChattingUsers) > 0)
                                         @foreach($allChattingUsers as $key => $chatting)
                                             @if($chatting->user_id && $chatting->customer)
+
                                                 <div class="list_filter">
                                                     <div
                                                         class="chat_list p-3 d-flex gap-2 @if ($key == 0) bg-soft-secondary @endif get-ajax-message-view"
@@ -117,6 +124,43 @@
                                                         @endif
                                                     </div>
                                                 </div>
+                                                @elseif($chatting->seller_id && $chatting->seller)
+                                                <div class="list_filter">
+                                                    <div
+                                                        class="chat_list p-3 d-flex gap-2 @if ($key == 0) bg-soft-secondary @endif get-ajax-message-view"
+                                                        data-user-id="{{ $chatting->seller_id }}">
+                                                        <div class="chat_people media gap-10 w-100" id="chat_people">
+                                                            <div class="chat_img avatar avatar-sm avatar-circle">
+                                                                <img
+                                                                    src="{{ getStorageImages(path:$chatting->seller->image_full_url,type: 'backend-profile') }}"
+                                                                    id="{{$chatting->seller_id}}"
+                                                                    class="avatar-img avatar-circle" alt="">
+                                                                <span
+                                                                    class="avatar-status avatar-sm-status avatar-status-success"></span>
+                                                            </div>
+                                                            <div class="chat_ib media-body">
+                                                                <h5 class="mb-1 seller {{$chatting->seen_by_seller ?'active-text' :''}}"
+                                                                    id="{{ $chatting->seller_id }}"
+                                                                    data-name="{{ $chatting->seller->f_name.' '.$chatting->seller->l_name }}"
+                                                                    data-phone="{{ $chatting->seller->country_code.$chatting->seller->phone }}">
+                                                                    {{ $chatting->seller->f_name.' '.$chatting->seller->l_name }}
+
+                                                                    <span class="lead small float-end">{{ $chatting->created_at->diffForHumans() }}</span>
+                                                                </h5>
+                                                                <span
+                                                                    class="mt-2 font-weight-normal text-muted d-block"
+                                                                    id="{{ $chatting->seller_id }}"
+                                                                    data-name="{{ $chatting->seller->f_name .' '. $chatting->seller->l_name}}"
+                                                                    data-phone="{{ $chatting->seller->country_code.$chatting->seller->phone ?? ' '}}">{{ $chatting->seller->country_code.$chatting->seller->phone }}</span>
+                                                            </div>
+                                                        </div>
+                                                        @if(!$chatting->seen_by_admin && !($key == 0))
+                                                            <div
+                                                                class="message-status bg-danger notify-alert-{{ $chatting->seller_id }}"></div>
+                                                        @endif
+                                                    </div>
+                                                </div>
+
                                             @endif
                                         @endforeach
                                     @endif
@@ -127,10 +171,10 @@
                     </div>
                 </div>
             </div>
-
             <section class="col-xl-9 col-lg-8 mt-4 mt-lg-0">
                 <div class="card card-body card-chat justify-content-center Chat" id="">
                     @if(isset($lastChatUser))
+                   
                         <div class="inbox_msg_header d-flex flex-wrap gap-3 justify-content-between align-items-center border px-3 py-2 rounded mb-4">
                             <div class="media align-items-center gap-3">
                                 <div class="avatar avatar-sm avatar-circle border">
@@ -236,8 +280,13 @@
             </section>
         </div>
         <span id="chatting-post-url"
-              data-url="{{ Request::is('admin/messages/index/customer') ? route('admin.messages.message').'?user_id=' : route('admin.messages.message').'?delivery_man_id=' }}"></span>
-        <span id="image-url" data-url="{{ asset('storage/app/public/chatting') }}"></span>
+      data-url="{{ Request::is('admin/messages/index/customer') 
+                  ? route('admin.messages.message') . '?user_id=' 
+                  : (Request::is('admin/messages/index/delivery_man') 
+                      ? route('admin.messages.message') . '?delivery_man_id=' 
+                      : route('admin.messages.message') . '?seller_id=') }}">
+</span>
+  <span id="image-url" data-url="{{ asset('storage/app/public/chatting') }}"></span>
     </div>
     <span id="get-file-icon" data-default-icon="{{dynamicAsset("public/assets/back-end/img/default-icon.png")}}"
           data-word-icon="{{dynamicAsset("public/assets/back-end/img/default-icon.png")}}"></span>

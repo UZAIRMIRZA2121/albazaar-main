@@ -17,6 +17,7 @@ return new class extends Migration
             $table->string('commission_first_percentage')->nullable();
             $table->string('commission_second_price')->nullable();
             $table->string('commission_second_percentage')->nullable();
+            $table->string('tax_percentage')->nullable();
             $table->timestamps();
         });
     }

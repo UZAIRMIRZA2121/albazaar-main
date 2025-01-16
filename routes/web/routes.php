@@ -48,6 +48,8 @@ use App\Http\Controllers\Payment_Methods\FlutterwaveV3Controller;
 use App\Http\Controllers\Payment_Methods\PaypalPaymentController;
 use App\Http\Controllers\Payment_Methods\StripePaymentController;
 use App\Http\Controllers\Payment_Methods\SslCommerzPaymentController;
+use Laravel\Socialite\Facades\Socialite;
+
 
 
 /*
@@ -60,6 +62,22 @@ use App\Http\Controllers\Payment_Methods\SslCommerzPaymentController;
 | be assigned to the "web" middleware group. Make something great!
 |
 */
+
+// use Illuminate\Http\Request;
+// use Anhskohbo\NoCaptcha\Facades\NoCaptcha;
+
+// Route::get('/test-captcha', function () {
+//     return view('test-captcha');
+// });
+
+// Route::post('/test-captcha', function (Request $request) {
+//     $request->validate([
+//         'g-recaptcha-response' => 'required|captcha',
+//     ]);
+
+//     return 'CAPTCHA verification passed!';
+// });
+
 
 Route::controller(WebController::class)->group(function () {
     Route::get('maintenance-mode', 'maintenance_mode')->name('maintenance-mode');
@@ -78,10 +96,14 @@ Route::group(['namespace' => 'Web', 'middleware' => ['maintenance_mode', 'guestC
 });
 
 Route::group(['namespace' => 'Web', 'middleware' => ['maintenance_mode', 'guestCheck']], function () {
-
     Route::controller(HomeController::class)->group(function () {
         Route::get('/', 'index')->name('home');
     });
+
+    Route::post('custome/vendors/add', [CustomVendorController::class, 'store'])->name('custome.vendors.store');
+
+
+
 
     Route::controller(WebController::class)->group(function () {
         Route::get('quick-view', 'getQuickView')->name('quick-view');
@@ -501,12 +523,19 @@ if (!$isGatewayPublished) {
 
 Route::controller(CustomVendorController::class)->group(function () {
     Route::POST('/VendorAdd-Custom', 'vendor_add')->name('vendor_addCustom');
+    // Verify OTP Route
+    Route::post('/verify-otp', 'verifyOtp')->name('verify.otp');
+    // Resend OTP Route
+    Route::post('/custom-resend-otp', 'resendOtp')->name('resend.otp');
 });
-
+Route::get('/send-otp', [CustomVendorController::class, 'sendOtp']);
 
 Route::get('/check-shop-name', [CustomVendorController::class, 'checkShopName'])->name('check.shop.name');
-Route::post('/vendors/add', [CustomVendorController::class, 'store'])->name('admin.vendors.add');
 
+// Route::get('login/google', [App\Http\Controllers\Auth\SocialLoginController::class, 'redirectToGoogle']);
+// Route::get('login/google/callback', [App\Http\Controllers\Auth\SocialLoginController::class, 'handleGoogleCallback']);
 
+// Route::get('login/facebook', [App\Http\Controllers\Auth\SocialLoginController::class, 'redirectToFacebook']);
+// Route::get('login/facebook/callback', [App\Http\Controllers\Auth\SocialLoginController::class, 'handleFacebookCallback']);
 
-
+Route::get('/cc', [HomeController::class, 'optimizeClear']);

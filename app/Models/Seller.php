@@ -74,6 +74,7 @@ class Seller extends Authenticatable
         'city',
         'category',
         'google_id',
+        'otp',
     ];
 
     protected $casts = [

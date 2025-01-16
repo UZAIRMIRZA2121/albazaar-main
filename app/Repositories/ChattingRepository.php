@@ -102,7 +102,7 @@ class ChattingRepository implements ChattingRepositoryInterface
             ->when(!empty($orderBy), function ($query) use ($orderBy) {
                 return $query->orderBy(array_key_first($orderBy), array_values($orderBy)[0]);
             });
-
+           
         $filters += ['searchValue' =>$searchValue];
         return $dataLimit == 'all' ? $query->get() : $query->paginate($dataLimit)->appends($filters);
     }

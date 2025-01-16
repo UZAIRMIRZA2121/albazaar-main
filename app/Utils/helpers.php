@@ -3,6 +3,7 @@
 namespace App\Utils;
 
 use App\Models\AddFundBonusCategories;
+use App\Models\Commission;
 use App\Models\OrderStatusHistory;
 use App\Models\ShippingMethod;
 use App\Models\Shop;
@@ -722,23 +723,37 @@ class Helpers
     {
         $carts = CartManager::get_cart(groupId: $cart_group_id);
         $cart_summery = OrderManager::order_summary_before_place_order($carts, $coupon_discount);
+    
         return self::seller_sales_commission($carts[0]['seller_is'], $carts[0]['seller_id'], $cart_summery['order_total']);
     }
 
     public static function seller_sales_commission($seller_is, $seller_id, $order_total)
     {
         $commission_amount = 0;
+      
         if ($seller_is == 'seller') {
-            $seller = Seller::find($seller_id);
-            if (isset($seller) && $seller['sales_commission_percentage'] !== null) {
-                $commission = $seller['sales_commission_percentage'];
-            } else {
-                $commission = getWebConfig(name: 'sales_commission');
-            }
+           $commission = Commission::first();
+           $first_commission =  $commission->commission;
+           $first_commission_percentage =  $commission->commission_first_percentage;
+           $second_commission =  $commission->commission_second_price;
+           $second_commission_percentage =  $commission->commission_second_percentage;
+           if($order_total <= $first_commission){
+            $commission = $first_commission_percentage ;
+           }else{
+            $commission = $second_commission_percentage ;
+           }
+            // $seller = Seller::find($seller_id);
+            // if (isset($seller) && $seller['sales_commission_percentage'] !== null) {
+            //     $commission = $seller['sales_commission_percentage'];
+            // } else {
+            //     $commission = getWebConfig(name: 'sales_commission');
+            // }
             $commission_amount = number_format(($order_total / 100) * $commission, 2);
-        }
+         
+            
         return $commission_amount;
     }
+}
 
     public static function categoryName($id)
     {

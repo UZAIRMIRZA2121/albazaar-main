@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\Admin\Settings;
 
 use App\Models\Commission;
+use App\Models\Product;
+use Auth;
 use Illuminate\Http\Request;
 use Illuminate\Contracts\View\View;
 use Brian2694\Toastr\Facades\Toastr;
@@ -17,8 +19,7 @@ class VendorSettingsController extends BaseController
 
     public function __construct(
         private readonly BusinessSettingRepositoryInterface $businessSettingRepo,
-    )
-    {
+    ) {
     }
 
     /**
@@ -35,30 +36,30 @@ class VendorSettingsController extends BaseController
     public function getView(): View
     {
 
-        $Commission = Commission::first();
-        $sales_commission = $this->businessSettingRepo->getFirstWhere(params: ['type'=>'sales_commission']);
+        $Commission = Commission::where('admin_id', Auth::guard('admin')->id())->first();
+        $sales_commission = $this->businessSettingRepo->getFirstWhere(params: ['type' => 'sales_commission']);
         if (!isset($sales_commission)) {
             $this->businessSettingRepo->add(data: ['type' => 'sales_commission', 'value' => 0]);
         }
 
-        $seller_registration = $this->businessSettingRepo->getFirstWhere(params: ['type'=>'seller_registration']);
+        $seller_registration = $this->businessSettingRepo->getFirstWhere(params: ['type' => 'seller_registration']);
         if (!isset($seller_registration)) {
             $this->businessSettingRepo->add(data: ['type' => 'seller_registration', 'value' => 1]);
         }
-        return view(BusinessSettings::VENDOR_VIEW[VIEW] , compact('Commission') );
+        return view(BusinessSettings::VENDOR_VIEW[VIEW], compact('Commission'));
     }
 
     public function update(VendorSettingsRequest $request): RedirectResponse
     {
-        // dd($request->all());
 
         $validatedData = $request->validate([
             'commission' => 'required|numeric',
             'commission_first_percentage' => 'required|numeric',
             'commission_second_price' => 'required|numeric',
             'commission_second_percentage' => 'required|numeric',
+            'tax_percentage' => 'required|numeric',
         ]);
-        $record = Commission::first();
+        $record = Commission::where('admin_id', Auth::guard('admin')->id())->first();
 
         if ($record) {
             // Update the record
@@ -67,8 +68,9 @@ class VendorSettingsController extends BaseController
                 'commission_first_percentage' => $validatedData['commission_first_percentage'],
                 'commission_second_price' => $validatedData['commission_second_price'],
                 'commission_second_percentage' => $validatedData['commission_second_percentage'],
+                'tax_percentage' => $validatedData['tax_percentage'],
             ]);
-    
+
             $message = 'Record updated successfully!';
         } else {
             // Create a new record
@@ -77,10 +79,15 @@ class VendorSettingsController extends BaseController
                 'commission_first_percentage' => $validatedData['commission_first_percentage'],
                 'commission_second_price' => $validatedData['commission_second_price'],
                 'commission_second_percentage' => $validatedData['commission_second_percentage'],
+                'tax_percentage' => $validatedData['tax_percentage'],
             ]);
-    
+
             $message = 'Record created successfully!';
         }
+        Product::query()->update([
+        'tax' => $validatedData['tax_percentage'], 
+        'tax_type' => 'percent', 
+        'tax_model' => 'include']);
 
 
         $this->businessSettingRepo->updateOrInsert(type: 'sales_commission', value: $request->get('commission', 10));

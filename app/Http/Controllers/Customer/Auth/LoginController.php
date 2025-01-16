@@ -16,6 +16,7 @@ use Gregwar\Captcha\PhraseBuilder;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Session;
+use Laravel\Socialite\Facades\Socialite;
 
 class LoginController extends Controller
 {
@@ -287,6 +288,59 @@ class LoginController extends Controller
             'register_modal' => view(VIEW_FILE_NAMES['get_register_modal_data'])->render(),
         ]);
     }
+
+
+
+    public function redirectToGoogle()
+    {
+        dd(123);
+        return Socialite::driver('google')->redirect();
+    }
+
+    /**
+     * Handle the Google callback after authentication.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function handleGoogleCallback()
+    {
+        try {
+            // Get the user's information from Google
+            $googleUser = Socialite::driver('google')->user();
+
+            // Check if the user exists in the database or create a new user
+            $user = User::where('email', $googleUser->getEmail())->first();
+
+            if (!$user) {
+                // If the user doesn't exist, create a new one
+                $user = User::create([
+                    'name' => $googleUser->getName(),
+                    'email' => $googleUser->getEmail(),
+                    'google_id' => $googleUser->getId(),
+                    'avatar' => $googleUser->getAvatar(),
+                ]);
+            }
+
+            // Log the user in
+            Auth::login($user, true);
+
+            // Redirect to the home page or wherever you want after login
+            return redirect()->route('home');
+        } catch (\Exception $e) {
+            // Handle the error, if any
+            return redirect('/login')->with('error', 'Google login failed. Please try again.');
+        }
+    }
+
+
+
+
+
+
+
+
+
+
 
 
 }

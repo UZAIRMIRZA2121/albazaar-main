@@ -1,3 +1,4 @@
+{!! NoCaptcha::renderJs() !!}
 <div class="second-el d--none">
     <style>
         .step-indicator {
@@ -214,6 +215,18 @@
             color: black !important;
         }
     </style>
+    @if ($errors->has('captcha'))
+        <div class="alert alert-danger">
+            {{ $errors->first('captcha') }}
+        </div>
+    @endif
+
+    @if (session('success'))
+        <div class="alert alert-success">
+            {{ session('success') }}
+        </div>
+    @endif
+
     <div class="container my-5 coloFAFBFC p-lg-5 p-md-5">
         <div class="row flex justify-content-center">
             <div class="col-11 col-md-11 col-lg-11 pt-3">
@@ -253,12 +266,12 @@
                         </div>
                     </div>
                 </div>
-                <form id="multiStepForm" class="user placeholder_target" action="{{ route('admin.vendors.store') }}"
-                method="post" enctype="multipart/form-data" >
-                @csrf
-            
+                <form id="multiStepForm" class="user placeholder_target" action="{{ route('custome.vendors.store') }}"
+                    method="post" enctype="multipart/form-data">
+                    @csrf
+
                 </form>
-                <form id="multiStepForm" class="user placeholder_target" action="{{ route('admin.vendors.store') }}"
+                <form id="multiStepForm" class="user placeholder_target" action="{{ route('custome.vendors.store') }}"
                     method="post" enctype="multipart/form-data">
                     @csrf
                     <div class="form-step active" data-step="1">
@@ -272,8 +285,9 @@
                                                 class="col d-flex justify-content-between border p-2  align-items-center colorFCFCFC">
                                                 <div><label for="commercial">Commercial</label></div>
                                                 <div>
-                                                     <input class="show" type="radio" name="radio_check"
-                                                        value="commercial" id="commercial"></div>
+                                                    <input class="show" type="radio" name="radio_check"
+                                                        value="commercial" id="commercial">
+                                                </div>
                                             </div>
                                             <div
                                                 class="col d-flex justify-content-between border p-2  align-items-center colorFCFCFC">
@@ -282,13 +296,13 @@
                                                         value="freelancing" id="freelancing"></div>
                                             </div>
                                         </div>
-
+                                        <p id="radioCheckError" class="text-danger error-message"></p>
                                         <div class="mb-2">
                                             <label for="businessName" class="form-label step_label">Business name as
-                                                seen on
-                                                Certification</label>
+                                                seen on Certification</label>
                                             <input type="text" id="businessName" name="businessName"
                                                 class="form-control" placeholder="Business Name">
+                                            <p id="businessNameError" class="text-danger error-message"></p>
                                         </div>
                                         <div class="mb-2">
                                             <label for="establishment" class="form-label step_label">Year of
@@ -298,10 +312,11 @@
                                                 <option value="2019">2019</option>
                                                 <option value="2018">2018</option>
                                             </select>
+                                            <p id="establishmentError" class="text-danger error-message"></p>
                                         </div>
                                         <div class="mb-2 form-group">
                                             <div class="title-color mb-2 d-flex gap-1 align-items-center">
-                                               Certificate 
+                                                Certificate
                                             </div>
                                             <div class="custom-file text-left">
                                                 <input type="file" name="image" id="custom-file-upload"
@@ -310,6 +325,7 @@
                                                 <label class="custom-file-label"
                                                     for="custom-file-upload">{{ translate('upload_image') }}</label>
                                             </div>
+                                            <p id="certificateImageError" class="text-danger error-message"></p>
                                         </div>
                                     </div>
                                     <div class="col-lg-6">
@@ -321,64 +337,59 @@
                                                     style="max-width: 190px; height: auto;" />
                                             </div>
                                         </div>
-                                      
+
                                     </div>
-    
+
                                 </div>
-                            
-                                <script>
-                                    // JavaScript to show the uploaded image
-                                    document.getElementById('custom-file-upload').addEventListener('change', function(event) {
-                                        const file = event.target.files[0]; // Get the selected file
-                                        const viewer = document.getElementById('viewer'); // Get the image element
-                                        if (file) {
-                                            const reader = new FileReader(); // Create a FileReader to read the file
-                                            reader.onload = function(e) {
-                                                viewer.src = e.target.result; // Set the image source to the file's data URL
-                                            };
-                                            reader.readAsDataURL(file); // Read the file as a data URL
-                                        }
-                                    });
-                                </script>
-
-
                             </div>
                         </div>
                     </div>
                     <div class="form-step" data-step="2">
                         <div class="container">
                             <div class="row steps_borders p-2 p-lg-5">
-                                <div class="col-12 col-md-6 mb-3">
+                                <div class="col-md-6 mb-3">
                                     <div class="mb-3">
                                         <label for="city" class="form-label step_label">City</label>
                                         <select id="city" class="custom-select" name="city">
                                             <option value="Faislabad">Faislabad</option>
                                             <option value="Lahore">Lahore</option>
                                         </select>
-                                    </div>
+                                    </div> <br>
+                                    <p id="cityError" class="text-danger error-message"></p>
                                     <div class="mb-3">
                                         <label for="shop_address" class="form-label">Shop Address</label>
                                         <textarea id="shop_address" name="shop_address" class="form-control" rows="11" placeholder="Address"></textarea>
                                     </div>
+                                    <br>
+                                    <p id="shopAddressError" class="text-danger error-message"></p>
                                 </div>
 
-                                <div class="col-12 col-md-6">
+                                <div class="col-md-6">
+                                    <!-- Add a container to prevent issues with dropdown visibility -->
                                     <div class="map-container mb-3">
-                                        <iframe
-                                            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3629.650719447814!2d46.675295114785446!3d24.713552084119667!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3e2f02b3e037d0d3%3A0x37e34a9e59ad82c8!2sRiyadh!5e0!3m2!1sen!2ssa!4v1234567890123"
-                                            allowfullscreen="" loading="lazy"></iframe>
+                                        <input id="autocomplete" class="form-control"
+                                            placeholder="Search for a place" type="text">
                                     </div>
+
+                                    <!-- Google Map Container -->
+                                    <div id="map" style="height: 400px;"></div>
+
                                     <div class="mb-3">
                                         <label for="latitude" class="form-label step_label">Latitude <i
                                                 class="bi bi-info-circle " title="Enter Latitude"></i></label>
                                         <input type="text" id="latitude" name="latitude"
-                                            class="form-control E9ECEFcolor" placeholder="Ex: -94.22213">
+                                            class="form-control E9ECEFcolor" placeholder="Ex: -94.22213" readonly>
+                                        <br>
+                                        <p id="latitudeError" class="text-danger error-message"></p>
                                     </div>
+
                                     <div class="mb-3">
                                         <label for="longitude" class="form-label step_label">Longitude <i
                                                 class="bi bi-info-circle " title="Enter Longitude"></i></label>
                                         <input type="text" id="longitude" name="longitude"
-                                            class="form-control E9ECEFcolor" placeholder="Ex: 103.344322">
+                                            class="form-control E9ECEFcolor" placeholder="Ex: 103.344322" readonly>
+                                        <br>
+                                        <p id="longitudeError" class="text-danger error-message"></p>
                                     </div>
                                 </div>
                             </div>
@@ -391,19 +402,14 @@
                                 <input type="text" id="shop_name" name="shop_name" class="form-control"
                                     placeholder="Shop name">
                                 <div class="mt-2 mx-4 mt-4">
-                                    <p class="validation-message text-success mb-1">
-                                        <i class="bi bi-check-circle"></i> Between 4-20 characters
-                                    </p>
-                                    <p class="validation-message text-success mb-1">
-                                        <i class="bi bi-check-circle"></i> No special characters, spaces, or accented
-                                        letters
-                                    </p>
-                                    <p id="error-message" class="validation-message text-danger  mt-4">
-                                        <i class="bi bi-exclamation-triangle"></i> This name is already taken.
-                                    </p>
-                                    <p id="success-message" class="validation-message text-black ">
-                                        <i class="bi bi-lightbulb"></i> Great thinking! This name's available!
-                                    </p>
+                                    <p id="error-length-message" class="text-danger validation-message"
+                                        style="display: none;"></p>
+                                    <p id="error-special-message" class="text-danger validation-message"
+                                        style="display: none;"></p>
+                                    <p id="error-message" class="text-danger validation-message"
+                                        style="display: none;"></p>
+                                    <p id="success-message" class="text-success validation-message"
+                                        style="display: none;"></p>
                                 </div>
                             </div>
                         </div>
@@ -417,15 +423,74 @@
                                         <select id="category" name="category" class="custom-select">
                                             <option value="Toys">Toys</option>
                                             <option value="Bed">Bed</option>
-                                        </select>
+                                        </select> <br>
+                                        <p id="category-error-message" class="text-danger validation-message"
+                                            style="display: none;"></p>
                                     </div>
                                     <div class="mb-3">
                                         <label for="brief_here" class="form-label">write a brief about your
                                             shop</label>
-                                        <textarea id="brief_here" name="brief_here" class="form-control" rows="11" placeholder="Brief here"></textarea>
+                                        <textarea id="brief_here" name="brief_here" class="form-control" rows="11" placeholder="Brief here"></textarea> <br>
+                                        <p id="brief-error-message" class="text-danger validation-message"
+                                            style="display: none;"></p>
                                     </div>
                                 </div>
-                                <div class="col-12 col-md-6 mb-3"></div>
+                                <div class="col-12 col-md-6 mb-3">
+                                    <!-- Shop Logo -->
+                                    <div class="mb-2 form-group">
+                                        <div class="title-color mb-2 d-flex gap-1 align-items-center">
+                                            Shop Logo
+                                        </div>
+                                        <div class="custom-file text-left">
+                                            <input type="file" name="shop_logo" id="shop-logo-upload"
+                                                class="custom-file-input image-input" data-image-id="shopLogoViewer"
+                                                accept=".jpg, .png, .jpeg, .gif, .bmp, .tif, .tiff|image/*">
+                                            <label class="custom-file-label" for="shop-logo-upload">
+                                                {{ translate('upload_logo') }}
+                                            </label>
+                                        </div>
+                                        <p id="shopLogoError" class="text-danger error-message"></p>
+                                    </div>
+
+                                    <div class="col-lg-6">
+                                        <div class="form-group">
+                                            <div class="d-flex justify-content-center">
+                                                <img class="upload-img-view" id="shopLogoViewer"
+                                                    src="{{ dynamicAsset(path: 'public/assets/back-end/img/400x400/img2.jpg') }}"
+                                                    alt="{{ translate('shop_logo') }}"
+                                                    style="max-width: 190px; height: auto;" />
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Shop Banner -->
+                                    <div class="mb-2 form-group">
+                                        <div class="title-color mb-2 d-flex gap-1 align-items-center">
+                                            Shop Banner
+                                        </div>
+                                        <div class="custom-file text-left">
+                                            <input type="file" name="shop_banner" id="shop-banner-upload"
+                                                class="custom-file-input image-input" data-image-id="shopBannerViewer"
+                                                accept=".jpg, .png, .jpeg, .gif, .bmp, .tif, .tiff|image/*">
+                                            <label class="custom-file-label" for="shop-banner-upload">
+                                                {{ translate('upload_banner') }}
+                                            </label>
+                                        </div>
+                                        <p id="shopBannerError" class="text-danger error-message"></p>
+                                    </div>
+
+                                    <div class="col-lg-6">
+                                        <div class="form-group">
+                                            <div class="d-flex justify-content-center">
+                                                <img class="upload-img-view" id="shopBannerViewer"
+                                                    src="{{ dynamicAsset(path: 'public/assets/back-end/img/400x400/img2.jpg') }}"
+                                                    alt="{{ translate('shop_banner') }}"
+                                                    style="max-width: 190px; height: auto;" />
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                </div>
                             </div>
                         </div>
 
@@ -469,12 +534,11 @@
                                             </p>
                                             <div class="mb-3">
                                                 <div class="d-inline-block border p-3 rounded">
-                                                    <div class="text-danger small mb-2">Verification challenge expired.
-                                                        Check the checkbox again.</div>
                                                     <div>
-                                                        <input type="checkbox" id="recaptcha" >
-                                                        <label for="recaptcha">I'm not a robot</label>
+                                                        {!! NoCaptcha::display() !!}
                                                     </div>
+                                                    <p id="captcha-error" style="color: red; display: none;">Please
+                                                        complete the captcha.</p>
                                                 </div>
                                             </div>
                                             <div class="form-check">
@@ -484,6 +548,9 @@
                                                         conditions</a>
                                                 </label>
                                             </div>
+                                            <p id="terms-error" style="color: red; display: none;">You must agree to
+                                                the terms & conditions.</p>
+
                                         </div>
                                     </div>
                                 </div>
@@ -493,7 +560,7 @@
                     <div class="d-flex justify-content-lg-end  justify-content-center mt-4">
                         <button type="button" class="btn btn-C0C0C0  mx-2 px-4 px-lg-4" id="prevBtn"
                             disabled>Back</button>
-                        <button  class="btn btn-FC4D05 text-white px-3" id="nextBtn">Proceed To Next</button>
+                        <button class="btn btn-FC4D05 text-white px-3" id="nextBtn">Proceed To Next</button>
                     </div>
                     {{-- <input type="submit" value="submit"> --}}
                 </form>
@@ -505,13 +572,12 @@
     <script src="{{ dynamicAsset(path: 'public/assets/back-end/plugins/intl-tel-input/js/intlTelInput.js') }}"></script>
     <script src="{{ dynamicAsset(path: 'public/assets/back-end/js/country-picker-init.js') }}"></script>
     <script src="{{ dynamicAsset(path: 'public/assets/back-end/js/admin/vendor.js') }}"></script>
- 
-
 @endpush
-  <!-- SweetAlert2 CDN -->
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11.4.17/dist/sweetalert2.min.css">
-  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.4.17/dist/sweetalert2.all.min.js"></script>
+<!-- SweetAlert2 CDN -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11.4.17/dist/sweetalert2.min.css">
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.4.17/dist/sweetalert2.all.min.js"></script>
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://www.google.com/recaptcha/api.js" async defer></script>
 <script>
     // Select all step indicators and form steps
     const steps = document.querySelectorAll('.step'); // Step indicators (e.g., dots or numbers)
@@ -550,18 +616,49 @@
         e.preventDefault(); // Prevent default button behavior (like form submission)
 
         if (currentStep < steps.length) {
-            currentStep++; // Move to the next step
-            updateFormSteps();
+            console.log(currentStep + '----------' + steps.length);
+
+            // Validate the current step dynamically based on currentStep
+            const validateCurrentStep = window[`validateStep${currentStep}`];
+            if (validateCurrentStep && validateCurrentStep()) {
+                currentStep++; // Move to the next step
+                updateFormSteps(); // Update the form to the next step
+            }
         } else {
-            alert('Form is being submitted!'); // Optional alert for form submission
-            form.submit(); // Submit the form on the last step
+            // Reset error messages
+            $("#captcha-error").hide();
+            $("#terms-error").hide();
+
+            let isValid = true;
+
+            // Check if the reCAPTCHA is not checked
+            if (!grecaptcha.getResponse()) {
+                $("#captcha-error").show();
+                isValid = false;
+            }
+
+            // Check if the terms checkbox is not checked
+            if (!$('#terms').is(':checked')) {
+                $("#terms-error").show();
+                isValid = false;
+            }
+
+            // If validation fails, prevent form submission
+            if (!isValid) {
+                alert('Please correct the errors before submitting the form.');
+                event.preventDefault();
+            }
+            if (isValid ) {
+                form.submit(); // Submit the form on the last step
+            }
         }
     });
+
 
     // Handle Previous button click
     prevBtn.addEventListener('click', (e) => {
         e.preventDefault(); // Prevent default button behavior
-
+ 
         if (currentStep > 1) {
             currentStep--; // Move to the previous step
             updateFormSteps();
@@ -570,69 +667,347 @@
 
     // Initialize form steps on page load
     updateFormSteps();
+
+    // Generic validation function
+    function validateStep1() {
+        let isValid = true;
+
+        // Clear previous error messages
+        document.querySelectorAll('.error-message').forEach(el => el.textContent = '');
+
+        // Check if a radio button is selected for Registration Type
+        const radioCheck = document.querySelector('input[name="radio_check"]:checked');
+        if (!radioCheck) {
+            document.getElementById('radioCheckError').textContent = "Please select a registration type.";
+            isValid = false;
+        }
+
+        // Business Name validation
+        const businessName = document.getElementById('businessName').value;
+        if (!businessName) {
+            document.getElementById('businessNameError').textContent = "Business name is required.";
+            isValid = false;
+        }
+
+        // Year of establishment validation
+        const establishment = document.getElementById('establishment').value;
+        if (!establishment) {
+            document.getElementById('establishmentError').textContent = "Year of establishment is required.";
+            isValid = false;
+        }
+
+        // Certificate Image validation
+        const certificateImage = document.getElementById('custom-file-upload').files[0];
+        if (!certificateImage) {
+            document.getElementById('certificateImageError').textContent =
+                "Please upload your business certificate image.";
+            isValid = false;
+        } else {
+            const validTypes = ['image/jpeg', 'image/png', 'image/jpg', 'image/gif', 'image/bmp', 'image/tiff'];
+            if (!validTypes.includes(certificateImage.type)) {
+                document.getElementById('certificateImageError').textContent =
+                    "Invalid image type. Please upload a jpg, png, or jpeg file.";
+                isValid = false;
+            }
+        }
+
+        return isValid;
+    }
+
+
+    function validateStep2() {
+        let isValid = true;
+
+        // Clear previous error messages
+        document.querySelectorAll('.error-message').forEach(el => el.textContent = '');
+
+        // City selection validation
+        const city = document.getElementById('city').value;
+        if (!city) {
+            document.getElementById('cityError').textContent = "Please select a city.";
+            isValid = false;
+        }
+
+        // Shop address validation
+        const shopAddress = document.getElementById('shop_address').value;
+        if (!shopAddress) {
+            document.getElementById('shopAddressError').textContent = "Shop address is required.";
+            isValid = false;
+        }
+
+        // Latitude and Longitude validation
+        const latitude = document.getElementById('latitude').value;
+        const longitude = document.getElementById('longitude').value;
+
+        const latRegex = /^-?\d+(\.\d+)?$/; // Regular expression for numeric format
+        const lonRegex = /^-?\d+(\.\d+)?$/;
+
+        if (!latRegex.test(latitude)) {
+            document.getElementById('latitudeError').textContent = "Invalid latitude format.";
+            isValid = false;
+        }
+
+        if (!lonRegex.test(longitude)) {
+            document.getElementById('longitudeError').textContent = "Invalid longitude format.";
+            isValid = false;
+        }
+
+        return isValid;
+    }
+
+
+    function validateStep3() {
+        let isValid = true;
+
+        // Clear previous error messages
+        document.querySelectorAll('.error-message').forEach(el => el.textContent = '');
+
+        // Shop Name validation
+        const shopName = document.getElementById('shop_name').value;
+
+        if (shopName.length < 4 || shopName.length > 20) {
+            document.getElementById('shopNameError').textContent = "Shop name must be between 4 and 20 characters.";
+            isValid = false;
+        }
+
+        const specialCharRegex = /[^a-zA-Z0-9 ]/; // No special characters
+        if (specialCharRegex.test(shopName)) {
+            document.getElementById('shopNameError').textContent = "Shop name cannot contain special characters.";
+            isValid = false;
+        }
+
+        // Backend validation for shop name uniqueness can be added here (e.g., AJAX check)
+
+        return isValid;
+    }
+
+    function validateStep4() {
+        let isValid = true;
+
+        // Hide all validation messages
+        $('.validation-message').hide();
+
+        // Category validation
+        const category = document.getElementById('category').value;
+        if (!category) {
+            $('#category-error-message').text("Please choose a category.").show();
+            isValid = false;
+        }
+
+        // Brief about the shop validation
+        const briefHere = document.getElementById('brief_here').value.trim();
+        if (!briefHere) {
+            $('#brief-error-message').text("Please write a brief about your shop.").show();
+            isValid = false;
+        }
+
+        return isValid;
+    }
+
+    function validateStep5() {
+        let isValid = true;
+
+
+        return isValid;
+    }
+
+
+    function validateStep6() {
+        let isValid = true;
+
+        // Hide all validation messages
+        $('.validation-message').hide();
+
+        // "I'm not a robot" reCAPTCHA checkbox validation
+        const recaptchaChecked = document.getElementById('recaptcha').checked;
+        if (!recaptchaChecked) {
+            $('#recaptcha-error-message').text("Please confirm that you're not a robot.").show();
+            isValid = false;
+        }
+
+        // Terms and Conditions checkbox validation
+        const termsChecked = document.getElementById('terms').checked;
+        if (!termsChecked) {
+            $('#terms-error-message').text("You must agree to the terms and conditions.").show();
+            isValid = false;
+        }
+
+        return isValid;
+    }
 </script>
 
 <script>
-    $(document).ready(function () {
-        $('#shop_name').on('keyup', function () {
+    $(document).ready(function() {
+        $('#shop_name').on('keyup', function() {
             const shopName = $(this).val();
 
             // Hide all validation messages
             $('.validation-message').hide();
 
-            if (shopName.length >= 4 && shopName.length <= 20) {
-                // Send AJAX request
-                $.ajax({
-                    url: "{{ route('check.shop.name') }}", // Use route name here
-                    type: 'GET', // Use POST if needed
-                    data: { shop_name: shopName },
-                    success: function (response) {
-                        console.log(response);
-                        if (response.exists) {
-                            console.log(response.exists);
-                            // Shop name is already taken
-                            $('#success-message').hide();
-                            $('#error-message').show();
-                        } else {
-                            // Shop name is available
-                            $('#error-message').hide();
-                            $('#success-message').show();
-                        }
-                    },
-                    error: function () {
-                        console.error('Error checking shop name.');
-                    },
-                });
-            } else {
-                // Show validation for length requirement
-                $('.text-success').show();
+            // Length and character validation
+            const specialCharRegex = /[^a-zA-Z0-9 ]/; // No special characters
+            if (shopName.length < 4 || shopName.length > 20) {
+                $('#error-length-message').text("Shop name must be between 4 and 20 characters.")
+                    .show();
+                return;
             }
+
+            if (specialCharRegex.test(shopName)) {
+                $('#error-special-message').text("Shop name cannot contain special characters.").show();
+                return;
+            }
+
+            // Send AJAX request if basic validation passes
+            $.ajax({
+                url: "{{ route('check.shop.name') }}", // Use route name here
+                type: 'GET', // Use POST if required by your backend
+                data: {
+                    shop_name: shopName
+                },
+                success: function(response) {
+                    if (response.exists) {
+                        // Shop name is already taken
+                        $('#success-message').hide();
+                        $('#error-message').text("Shop name is already taken.").show();
+                    } else {
+                        // Shop name is available
+                        $('#error-message').hide();
+                        $('#success-message').text("Shop name is available.").show();
+                    }
+                },
+                error: function() {
+                    $('#error-message').text(
+                        "An error occurred while checking the shop name.").show();
+                }
+            });
         });
     });
 </script>
 
-@if(session('success'))
-<script>
-    Swal.fire({
-        icon: 'success',
-        title: 'Success!',
-        text: '{{ session('success') }}',
-        toast: false,  // Set to false to make it a normal modal rather than a toast
-        position: 'center',  // Position it in the center of the screen
-        showConfirmButton: false,
-        timer: 5000,  // Keep it visible for 5 seconds
-        customClass: {
-            popup: 'big-toast'  // Custom class for styling
-        }
-    });
-</script>
-@endif
-
-
-
-@if(session('success'))
+@if (session('success'))
     <script>
-       Swal.fire({{ session('success') }});
+        Swal.fire({
+            icon: 'success',
+            title: 'Success!',
+            text: '{{ session('success') }}',
+            toast: false, // Set to false to make it a normal modal rather than a toast
+            position: 'center', // Position it in the center of the screen
+            showConfirmButton: false,
+            timer: 5000, // Keep it visible for 5 seconds
+            customClass: {
+                popup: 'big-toast' // Custom class for styling
+            }
+        });
     </script>
 @endif
 
+
+<script>
+    // JavaScript to show the uploaded image
+    document.getElementById('custom-file-upload').addEventListener('change', function(event) {
+        const file = event.target.files[0]; // Get the selected file
+        const viewer = document.getElementById('viewer'); // Get the image element
+        if (file) {
+            const reader = new FileReader(); // Create a FileReader to read the file
+            reader.onload = function(e) {
+                viewer.src = e.target.result; // Set the image source to the file's data URL
+            };
+            reader.readAsDataURL(file); // Read the file as a data URL
+        }
+    });
+    $(document).ready(function() {
+        // Image preview handler
+        function previewImage(input, viewerId) {
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    $(`#${viewerId}`).attr('src', e.target.result);
+                };
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+
+        // Shop Logo Preview
+        $('#shop-logo-upload').change(function() {
+            previewImage(this, 'shopLogoViewer');
+        });
+
+        // Shop Banner Preview
+        $('#shop-banner-upload').change(function() {
+            previewImage(this, 'shopBannerViewer');
+        });
+
+        // Additional validation logic can be added here for logo and banner
+    });
+</script>
+
+@if (session('success'))
+    <script>
+        Swal.fire({{ session('success') }});
+    </script>
+@endif
+<!-- Google Maps API Script -->
+<script
+    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyB3VTAihhs6gEYNld1LMwNkEiszH3TRcMQ&libraries=places&callback=initMap"
+    async></script>
+
+<script>
+    let autocomplete;
+    let map;
+    let marker;
+
+    function initMap() {
+        // Initialize the map centered at a default location (Riyadh, for example)
+        map = new google.maps.Map(document.getElementById("map"), {
+            center: {
+                lat: 24.7136,
+                lng: 46.6753
+            }, // Default coordinates
+            zoom: 13,
+        });
+
+        // Create a draggable marker
+        marker = new google.maps.Marker({
+            map: map,
+            draggable: true,
+            position: map.getCenter(), // Initially place it at the center of the map
+        });
+
+        // Add an event listener to update latitude and longitude when the marker is dragged
+        google.maps.event.addListener(marker, 'dragend', function() {
+            const latLng = marker.getPosition();
+            document.getElementById("latitude").value = latLng.lat();
+            document.getElementById("longitude").value = latLng.lng();
+        });
+
+        // Initialize the Places Autocomplete feature
+        autocomplete = new google.maps.places.Autocomplete(
+            document.getElementById("autocomplete"), {
+                types: ["geocode"], // Only return geocoded results
+            }
+        );
+
+        // Listen for place change and update the map and marker position
+        autocomplete.addListener("place_changed", onPlaceChanged);
+    }
+
+    function onPlaceChanged() {
+        const place = autocomplete.getPlace();
+        if (!place.geometry) {
+            return;
+        }
+
+        // Update the map's center and zoom
+        map.setCenter(place.geometry.location);
+        map.setZoom(15);
+
+        // Update the marker's position to the selected place
+        marker.setPosition(place.geometry.location);
+
+        // Set the latitude and longitude values
+        const lat = place.geometry.location.lat();
+        const lng = place.geometry.location.lng();
+        document.getElementById("latitude").value = lat;
+        document.getElementById("longitude").value = lng;
+    }
+</script>

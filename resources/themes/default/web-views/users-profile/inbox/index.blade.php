@@ -37,6 +37,11 @@
                                                 {{translate('deliveryman')}}
                                             </a>
                                         </li>
+                                        <li class="nav-item">
+                                            <a class="nav-link {{Request::is('chat/admin')?'active': '' }}" href="{{route('chat', ['type' => 'admin'])}}">
+                                                {{translate('admin')}}
+                                            </a>
+                                        </li>
                                     </ul>
 
                                     <div class="heading_search px-0">
@@ -65,13 +70,23 @@
                                                                  src="{{ getStorageImages(path: $chatting?->seller?->shop->image_full_url, type: 'shop') }}">
                                                         @else
                                                             <img alt="" class="__inline-14 __rounded-10 img-profile"
-                                                                 src="{{ getStorageImages(path: $web_config['fav_icon'], type: 'shop') }}">
+                                                                 src="{{ getStorageImages(path: $web_config['fav_icon'], type: 'shop') }}" >
+                                                                
                                                         @endif
                                                     </div>
                                                     <div class="chat_ib">
                                                         <div>
                                                             <div class="d-flex flex-wrap align-items-center justify-content-between mb-1">
-                                                                <h5 class="{{$seenMessage == 0 ? 'active-text' : ''}}">{{$userName}}</h5>
+                                                                <h5 class="{{$seenMessage == 0 ? 'active-text' : ''}}">
+                                                                    @if($chatting->delivery_man_id)
+                                                                    {{ $userName }}
+                                                                @elseif($chatting?->seller_id)
+                                                                {{ $userName }}
+                                                                @else
+                                                                 Admin
+                                                                @endif
+                                                                
+                                                               </h5>
                                                                 <span class="date">
                                                                 {{$chatting->created_at->diffForHumans()}}
                                                             </span>
@@ -103,7 +118,7 @@
                         </div>
 
                         <section class="col-lg-8">
-                            @if(isset($chattingMessages) && count($chattingMessages) > 0)
+                            @if(isset($chattingMessages) )
                                 <div class="bg-white Chat __shadow h-100 rounded-left-0">
                                     <div class="messaging ">
                                         <div class="inbox_msg position-relative">
@@ -223,7 +238,10 @@
             </div>
         </div>
     </div>
-    <span id="chatting-post-url" data-url="{{ Request::is('chat/vendor') ? route('messages').'?vendor_id=' : route('messages').'?delivery_man_id=' }}"></span>
+    <span id="chatting-post-url" data-url="{{ 
+        Request::is('chat/vendor') 
+            ? route('messages').'?vendor_id='  : (Request::is('chat/admin')  ? route('messages').'?admin_id='. 1: route('messages').'?delivery_man_id=') 
+    }}"></span>
     <span id="get-file-icon" data-default-icon="{{dynamicAsset("public/assets/back-end/img/default-icon.png")}}"
           data-word-icon="{{dynamicAsset("public/assets/back-end/img/default-icon.png")}}"></span>
 @endsection

@@ -23,6 +23,7 @@ $('.get-ajax-message-view').on('click', function () {
     let userId = $(this).data('user-id');
     let actionURL = $('#chatting-post-url').data('url') + userId;
     console.log(userId)
+    
     $.ajaxSetup({
         headers: {'X-XSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')}
     });

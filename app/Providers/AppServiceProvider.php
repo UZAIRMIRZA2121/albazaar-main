@@ -29,6 +29,7 @@ use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
+use App\Services\SmsService;
 
 ini_set('memory_limit', -1);
 ini_set('upload_max_filesize', '180M');
@@ -48,11 +49,17 @@ class AppServiceProvider extends ServiceProvider
      *
      * @return void
      */
-    public function register(): void
+    // public function register(): void
+    // {
+    //     if ($this->app->isLocal()) {
+    //         $this->app->register(\Amirami\Localizator\ServiceProvider::class);
+    //     }
+    // }
+    public function register()
     {
-        if ($this->app->isLocal()) {
-            $this->app->register(\Amirami\Localizator\ServiceProvider::class);
-        }
+        $this->app->singleton(SmsService::class, function ($app) {
+            return new SmsService();
+        });
     }
 
     /**
@@ -82,7 +89,7 @@ class AppServiceProvider extends ServiceProvider
                     $web = $this->cacheBusinessSettingsTable();
 
                     $firebaseOTPVerification = getWebConfig(name: 'firebase_otp_verification');
-                    $firebaseOTPVerificationStatus = (int)($firebaseOTPVerification && $firebaseOTPVerification['status'] && $firebaseOTPVerification['web_api_key']);
+                    $firebaseOTPVerificationStatus = (int) ($firebaseOTPVerification && $firebaseOTPVerification['status'] && $firebaseOTPVerification['web_api_key']);
 
                     $systemColors = getWebConfig('colors');
                     $web_config = [
@@ -93,7 +100,7 @@ class AppServiceProvider extends ServiceProvider
                         'company_name' => getWebConfig(name: 'company_name'),
                         'phone' => getWebConfig(name: 'company_phone'),
                         'web_logo' => getWebConfig(name: 'company_web_logo'),
-                        'mob_logo' => getWebConfig(name:'company_mobile_logo'),
+                        'mob_logo' => getWebConfig(name: 'company_mobile_logo'),
                         'fav_icon' => getWebConfig(name: 'company_fav_icon'),
                         'email' => getWebConfig(name: 'company_email'),
                         'about' => Helpers::get_settings($web, 'about_us'),
@@ -104,7 +111,7 @@ class AppServiceProvider extends ServiceProvider
                         'wallet_status' => getWebConfig(name: 'wallet_status'),
                         'loyalty_point_status' => getWebConfig(name: 'loyalty_point_status'),
                         'guest_checkout_status' => getWebConfig(name: 'guest_checkout'),
-                        'digital_product_setting' => getWebConfig(name:'digital_product'),
+                        'digital_product_setting' => getWebConfig(name: 'digital_product'),
                         'language' => getWebConfig(name: 'language'),
                         'publishing_houses' => Schema::hasTable('publishing_houses') ? ProductManager::getPublishingHouseList() : null,
                         'digital_product_authors' => Schema::hasTable('authors') ? ProductManager::getProductAuthorList() : null,
@@ -244,4 +251,6 @@ class AppServiceProvider extends ServiceProvider
         });
 
     }
+  
+
 }

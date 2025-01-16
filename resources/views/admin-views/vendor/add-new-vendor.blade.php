@@ -245,38 +245,52 @@
                             <textarea id="shop_address" name="shop_address" class="form-control" rows="4" placeholder="Address"></textarea>
                         </div>
                     </div>
+                    
                     <div class="col-lg-6 form-group">
                         <label for="brief_here" class="title-color d-flex gap-1 align-items-center">
-                            write a brief about your shop
+                            Write a brief about your shop
                         </label>
                         <div class="input-group input-group-merge">
                             <textarea id="brief_here" name="brief_here" class="form-control" rows="4" placeholder="Brief here"></textarea>
                         </div>
                     </div>
-                  
+                    
                     <div class="col-lg-6 form-group">
                         <label for="latitude" class="title-color d-flex gap-1 align-items-center">
                             Latitude
                         </label>
                         <div class="input-group input-group-merge">
-                            <input type="text" id="latitude" name="latitude" class="form-control E9ECEFcolor" placeholder="Ex: -94.22213">
+                            <input type="text" id="latitude" name="latitude" class="form-control E9ECEFcolor" placeholder="Ex: -94.22213" readonly>
                         </div>
                     </div>
+                    
                     <div class="col-lg-6 form-group">
                         <label for="longitude" class="title-color d-flex gap-1 align-items-center">
                             Longitude
                         </label>
                         <div class="input-group input-group-merge">
-                            <input type="text" id="longitude" name="longitude" class="form-control E9ECEFcolor" placeholder="Ex: 103.344322">
+                            <input type="text" id="longitude" name="longitude" class="form-control E9ECEFcolor" placeholder="Ex: 103.344322" readonly>
                         </div>
                     </div>
-                    <div class="col-lg-12 form-group map-container" id="map">
-                        <iframe 
+                    
+                    <!-- Search Location Field -->
+                    <div class="col-lg-12 form-group">
+                        <label for="autocomplete" class="title-color d-flex gap-1 align-items-center">
+                            Search Location
+                        </label>
+                        <div class="input-group input-group-merge">
+                            <input id="autocomplete" class="form-control" placeholder="Search for a place" type="text">
+                        </div>
+                    </div>
+                    
+                    <!-- Google Map Embed -->
+                    <div class="col-lg-12 form-group map-container" id="map" style="height: 200px;">
+                        <iframe  
                           src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3629.650719447814!2d46.675295114785446!3d24.713552084119667!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3e2f02b3e037d0d3%3A0x37e34a9e59ad82c8!2sRiyadh!5e0!3m2!1sen!2ssa!4v1234567890123"
                           allowfullscreen=""
-                          loading="lazy"
-                        ></iframe>
+                          loading="lazy"></iframe>
                     </div>
+                    
                     <div class="col-lg-6 form-group">
                         <label for="city" class="title-color d-flex gap-1 align-items-center">
                             City
@@ -399,7 +413,7 @@
     <script src="{{ dynamicAsset(path: 'public/assets/back-end/plugins/intl-tel-input/js/intlTelInput.js') }}"></script>
     <script src="{{ dynamicAsset(path: 'public/assets/back-end/js/country-picker-init.js') }}"></script>
     <script src="{{dynamicAsset(path: 'public/assets/back-end/js/admin/vendor.js')}}"></script>
-    <script>
+    {{-- <script>
         function initMap() {
           // Interactive map initialize karna
           const map = new google.maps.Map(document.getElementById("map"), {
@@ -423,5 +437,72 @@
     
         // Map initialize karna jab page load ho
         window.onload = initMap;
-      </script>
+      </script> --}}
+      <!-- Google Maps API Script -->
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyB3VTAihhs6gEYNld1LMwNkEiszH3TRcMQ&libraries=places&callback=initMap" async></script>
+
+<script>
+    let autocomplete;
+    let map;
+    let marker;
+
+    function initMap() {
+        // Initialize the map centered at a default location (Riyadh, for example)
+        map = new google.maps.Map(document.getElementById("map"), {
+            center: { lat: 24.7136, lng: 46.6753 },  // Default coordinates
+            zoom: 13,
+        });
+
+        // Create a draggable marker
+        marker = new google.maps.Marker({
+            map: map,
+            draggable: true,
+            position: map.getCenter(),  // Initially place it at the center of the map
+        });
+
+        // Add an event listener to update latitude and longitude when the marker is dragged
+        google.maps.event.addListener(marker, 'dragend', function() {
+            const latLng = marker.getPosition();
+            document.getElementById("latitude").value = latLng.lat();
+            document.getElementById("longitude").value = latLng.lng();
+        });
+
+        // Initialize the Places Autocomplete feature
+        autocomplete = new google.maps.places.Autocomplete(
+            document.getElementById("autocomplete"),
+            {
+                types: ["geocode"], // Only return geocoded results
+            }
+        );
+
+        // Listen for place change and update the map and marker position
+        autocomplete.addListener("place_changed", onPlaceChanged);
+    }
+
+    function onPlaceChanged() {
+    const place = autocomplete.getPlace();
+    if (!place.geometry) {
+        return;
+    }
+
+    // Update the map's center and zoom to the selected place
+    map.setCenter(place.geometry.location);
+    map.setZoom(15);
+
+    // Update the marker's position to the selected place
+    marker.setPosition(place.geometry.location);
+
+    // Set the latitude and longitude values
+    const lat = place.geometry.location.lat();
+    const lng = place.geometry.location.lng();
+    document.getElementById("latitude").value = lat;
+    document.getElementById("longitude").value = lng;
+
+    // Optionally display the place name or address
+    const placeName = place.formatted_address || "Location not found";
+    document.getElementById("shop_address").value = placeName;
+}
+
+</script>
+
 @endpush

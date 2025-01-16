@@ -91,8 +91,7 @@
                                 </label>
                                 @php($commission_second_price=getWebConfig('sales_commission_second_price'))
                                 <input type="number" class="form-control" name="commission_second_price"
-                                       value="{{$Commission->commission_second_price ?? 0}}"
-                                       placeholder="{{ translate('ex').':'.'70'}}" >
+                                       value="{{$Commission->commission_second_price ?? 0}}"  placeholder="{{ translate('ex').':'.'70'}}" >
                             </div>
                         </div>
                         <div class="col-xl-2 col-md-2">
@@ -111,8 +110,24 @@
                                        placeholder="{{ translate('ex').':'.'70'}}" min="0" max="100">
                             </div>
                         </div>
+                        <div class="col-xl-2 col-md-2">
+                            <div class="form-group">
+                                <label class="title-color d-flex align-items-center " style="font-size: 13px;">
+                                    Tax %
+                                    <span class="input-label-secondary cursor-pointer" data-toggle="tooltip"
+                                          data-placement="right"
+                                          title="{{ translate('This tax % will be applied to all products.')}}">
+                                        <img width="16" src="{{dynamicAsset(path: 'public/assets/back-end/img/info-circle.svg')}}" alt="">
+                                    </span>
+                                </label>
+                                @php($commission_second_percentage=getWebConfig('sales_commission_second_percentage'))
+                                <input type="number" class="form-control" name="tax_percentage"
+                                       value="{{$Commission->tax_percentage ?? 0}}"
+                                       placeholder="Taz %" min="0" max="100">
+                            </div>
+                        </div>
 
-                        <div class="col-xl-4 col-md-6">
+                        <div class="col-xl-2 col-md-2">
                             <div class="d-flex justify-content-between align-items-center gap-10 form-control form-group">
                                 <span class="title-color">
                                     {{ translate('enable_POS_in_Vendor_Panel')}}

@@ -36,11 +36,21 @@ class SocialAuthController extends Controller
 
     public function redirectToProvider($service)
     {
-        return Socialite::driver($service)->redirect();
+            // Set the client ID, secret, and redirect URI directly
+            config([
+                'services.google.client_id' => env('GOOGLE_CLIENT_ID'),
+                'services.google.client_secret' => env('GOOGLE_CLIENT_SECRET'),
+                'services.google.redirect' => env('GOOGLE_REDIRECT_URI'),
+            ]);
+            return Socialite::driver($service)->redirect();
+   
+      
     }
+    
 
     public function handleProviderCallback(Request $request, $service)
     {
+    
         $userSocialData = Socialite::driver($service)->stateless()->user();
         $user = $this->customerRepo->getFirstWhere(params: ['email' => $userSocialData->getEmail()]);
 
