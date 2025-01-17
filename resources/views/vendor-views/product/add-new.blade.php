@@ -368,10 +368,13 @@
                                         <img src="{{ dynamicAsset(path: 'public/assets/back-end/img/info-circle.svg') }}" alt="">
                                     </span>
                                 </div>
+                                @php 
+                                    $commission =  App\Models\Commission::first();
+                                @endphp
 
                                 <input type="number" min="0" step="0.01"
-                                       placeholder="{{ translate('ex: 5') }}" name="tax" id="tax"
-                                       value="{{ old('tax') ?? 0 }}" class="form-control">
+                                       name="tax" id="tax" disabled
+                                       value="{{$commission->tax_percentage}}" class="form-control">
                                 <input name="tax_type" value="percent" class="d-none">
                             </div>
                         </div>
@@ -388,9 +391,9 @@
                                         <img src="{{ dynamicAsset(path: 'public/assets/back-end/img/info-circle.svg') }}" alt="">
                                     </span>
                                 </div>
-                                <select name="tax_model" id="tax_model" class="form-control" required>
+                                <select name="tax_model" id="tax_model" class="form-control"  disabled>
                                     <option value="include">{{ translate("include_with_product") }}</option>
-                                    <option value="exclude">{{ translate("exclude_with_product") }}</option>
+                                    {{-- <option value="exclude">{{ translate("exclude_with_product") }}</option> --}}
                                 </select>
                             </div>
                         </div>

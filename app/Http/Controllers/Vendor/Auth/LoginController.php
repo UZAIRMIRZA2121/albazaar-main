@@ -70,12 +70,13 @@ class LoginController extends Controller
                     },
                 ],
             ]);
-        } else {
-            if ($recaptcha['status'] != 1 && strtolower($request->vendorRecaptchaKey) != strtolower(Session(SessionKey::VENDOR_RECAPTCHA_KEY))) {
-                Toastr::error(translate('ReCAPTCHA_Failed'));
-                return back();
-            }
-        }
+        } 
+        // else {
+        //     if ($recaptcha['status'] != 1 && strtolower($request->vendorRecaptchaKey) != strtolower(Session(SessionKey::VENDOR_RECAPTCHA_KEY))) {
+        //         Toastr::error(translate('ReCAPTCHA_Failed'));
+        //         return back();
+        //     }
+        // }
         $vendor = $this->vendorRepo->getFirstWhere(['identity' => $request['email']]);
         if (!$vendor) {
             Toastr::error(translate('credentials_doesnt_match') . '!');

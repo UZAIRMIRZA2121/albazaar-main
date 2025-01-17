@@ -12,8 +12,19 @@
 
 
 @section('content')
+{{-- @if(session()->has('new_email'))
+<p>The user's email is: {{ session('new_email') }}</p>
+<p>The user's email is: {{ session('seller_id') }}</p>
+@endif
+ --}}
+
+
+
+
+
     <form id="seller-registration" action="#" method="POST" enctype="multipart/form-data">
         @csrf
+
         <div class="py-5">
             <div class="first-el">
                 <section>
@@ -132,7 +143,9 @@
         </div>
     </form>
     <form id="vendorForm">
-        <!-- Modal 1: Email & Social  -->
+      
+
+        <!-- Modal 1: Email & Social -->
         <div class="modal fade" id="signInModal" tabindex="-1" aria-labelledby="signInModalLabel" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered">
                 <div class="modal-content">
@@ -154,7 +167,6 @@
                                 id="toModal2">Continue</button>
                             <p class="text-center mt-3">Trouble Signing In?</p>
                             <div class="text-center">
-
                                 <a href="{{ route('vendor.auth.login.google') }}"
                                     class="btn btn-social w-100 border rounded-pill my-1">
                                     <img width="25" src="https://img.icons8.com/color/48/google-logo.png"
@@ -181,6 +193,21 @@
             </div>
         </div>
 
+
+
+        <script>
+            document.getElementById('googleLogin').addEventListener('click', function(e) {
+                e.preventDefault(); // Prevent the default anchor behavior
+
+                // Close the first modal
+                $('#signInModal').modal('hide');
+
+                // Open the Saudi phone number modal
+                $('#saudiPhoneModal').modal('show');
+            });
+        </script>
+
+    
         <!-- Modal 2: Create Account -->
         <div class="modal fade" id="createAccountModal" tabindex="-1" aria-labelledby="createAccountModalLabel"
             aria-hidden="true">
@@ -273,7 +300,7 @@
                     <!-- OTP Verification Modal -->
                     <div class="modal-body">
                         <p>Confirm your phone number</p>
-                        <p>We sent a 6-digit code to +966536523625</p>
+                        <p>We sent a 6-digit code to +966548005243</p>
                         <form id="otp-form">
                             <div class="form-group">
                                 <input type="text" class="form-control rounded" id="otp"
@@ -294,7 +321,6 @@
 
                     <!-- Include jQuery -->
                     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-
                     <script>
                         $(document).ready(function() {
                             // Verify OTP
@@ -305,7 +331,6 @@
                                     alert("Please enter the OTP.");
                                     return;
                                 }
-
                                 $.ajax({
                                     url: '/verify-otp', // Route to verify OTP
                                     method: 'POST',
@@ -317,10 +342,11 @@
                                         if (response.status === 'success') {
                                             // Remove the 'verify-otp' class and add the 'proceed-to-next' class
                                             $('#verify-otp').addClass('d-none');
-                                           
+
                                             // Trigger the "Next" button
-                                            $('#proceed-to-next').trigger('click'); // Trigger the button programmatically
-                                        
+                                            $('#proceed-to-next').trigger(
+                                                'click'); // Trigger the button programmatically
+
 
                                         } else {
                                             // Show the error message below the OTP input
@@ -395,6 +421,115 @@
         data-enter-confirm-password="{{ translate('please_enter_your_confirm_password') . '.' }}"
         data-password-not-match="{{ translate('passwords_do_not_match') . '.' }}">
     </span>
+
+
+
+
+
+
+
+
+    @if(session()->has('new_email'))
+    <p>The user's email is: {{ session('new_email') }}</p>
+    <p>The user's email is: {{ session('seller_id') }}</p>
+
+    <!-- Script to open the modal if email is available in the session -->
+    <script type="text/javascript">
+        $(document).ready(function() {
+            // Open the modal if the session has 'new_email'
+            $('#saudiPhoneModal').modal('show');
+        });
+    </script>
+
+    <!-- Form Submission Handling with AJAX -->
+    <script>
+        $(document).ready(function() {
+            $("#saudiPhoneForm").on("submit", function(e) {
+                e.preventDefault(); // Prevent the default form submission
+    
+                // Get the phone number value
+                const phoneNumber = "+966" + $("#saudiPhone").val();
+    
+                // Validate phone number manually (if required, though `pattern` handles this)
+                if (!/^5\d{8}$/.test($("#saudiPhone").val())) {
+                    alert("Invalid phone number format. It must start with 5 and be 9 digits long.");
+                    return;
+                }
+    
+                // Send AJAX request
+                $.ajax({
+                    url: "/send-otp", // Your backend endpoint for handling OTP
+                    method: "POST",
+                    data: {
+                        phone: phoneNumber,
+                        _token: "{{ csrf_token() }}" // For Laravel CSRF protection
+                    },
+                    success: function(response) {
+                        if (response.status === "success" || response.status === "exists") {
+                            // Display appropriate success message
+                            alert(response.status === "success" ? 
+                                "OTP sent successfully!" : 
+                                "Phone number exists. OTP regenerated!");
+    
+                            // Close the Saudi Phone Modal
+                            $('#saudiPhoneModal').modal('hide');
+    
+                            // Populate the Account Verification Modal with phone number details
+                            $('#accountVerificationModal').find('p').eq(1).text(
+                                `We sent a 6-digit code to +966${$('#saudiPhone').val()}`
+                            );
+    
+                            // Open the Account Verification Modal
+                            $('#accountVerificationModal').modal('show');
+                        } else {
+                            alert("An error occurred. Please try again.");
+                        }
+                    },
+                    error: function() {
+                        alert("Failed to send OTP. Please check your network and try again.");
+                    }
+                });
+            });
+        });
+    </script>
+
+    <!-- Modal 2: Saudi Phone Number -->
+    <div class="modal fade" id="saudiPhoneModal" tabindex="-1" aria-labelledby="saudiPhoneModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title" id="saudiPhoneModalLabel">Enter Your Saudi Phone Number</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form id="saudiPhoneForm">
+                        <div class="form-group">
+                            <label for="saudiPhone">Saudi Phone Number</label>
+                            <div class="input-group">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text">+966</span>
+                                </div>
+                                <input type="tel" class="form-control rounded" id="saudiPhone"
+                                       placeholder="5XXXXXXXX" required pattern="5\d{8}"
+                                       title="Saudi phone number must start with 5 and be 9 digits long">
+                            </div>
+                            <small class="form-text text-muted">
+                                Enter your 9-digit Saudi phone number starting with 5.
+                            </small>
+                        </div>
+                        <button type="submit" class="btn btn-dark w-100 rounded-pill">Submit</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+@else
+    <p>Email not available.</p>
+@endif
+
 @endsection
 
 @push('script')
@@ -403,18 +538,18 @@
 
 
 
-@if ($web_config['recaptcha']['status'] == '1')
-    <script type="text/javascript">
-        "use strict";
-        var onloadCallback = function() {
-            let reg_id = grecaptcha.render('recaptcha-element-vendor-register', {
-                'sitekey': '{{ $web_config['recaptcha']['site_key'] }}'
-            });
-            $('#recaptcha-element-vendor-register').attr('data-reg-id', reg_id);
-        };
-    </script>
-    <script src="https://www.google.com/recaptcha/api.js?onload=onloadCallback&render=explicit" async defer></script>
-@endif
+    @if ($web_config['recaptcha']['status'] == '1')
+        <script type="text/javascript">
+            "use strict";
+            var onloadCallback = function() {
+                let reg_id = grecaptcha.render('recaptcha-element-vendor-register', {
+                    'sitekey': '{{ $web_config['recaptcha']['site_key'] }}'
+                });
+                $('#recaptcha-element-vendor-register').attr('data-reg-id', reg_id);
+            };
+        </script>
+        <script src="https://www.google.com/recaptcha/api.js?onload=onloadCallback&render=explicit" async defer></script>
+    @endif
 
     <script>
         $('.proceed-to-next').on('click', function(e) {
@@ -537,18 +672,19 @@
 
                             // Hide the first modal and show the second modal after a delay
                             setTimeout(function() {
-                                $("#createAccountModal").modal("hide"); // Hide the first modal
-                                $('#accountVerificationModal').modal({
-                                    backdrop: 'static',
-                                    keyboard: false
-                                });
-                            },
-                            3000); // Wait for 3 seconds before hiding the first modal and showing the second modal
+                                    $("#createAccountModal").modal("hide"); // Hide the first modal
+                                    $('#accountVerificationModal').modal({
+                                        backdrop: 'static',
+                                        keyboard: false
+                                    });
+                                },
+                                3000
+                            ); // Wait for 3 seconds before hiding the first modal and showing the second modal
 
                         } else {
                             // If the message is not 'Seller added successfully!', show the error message
                             $('#message').html('<div class="alert alert-danger">' + response.message +
-                            '</div>');
+                                '</div>');
                         }
                     },
                     error: function(xhr, status, error) {

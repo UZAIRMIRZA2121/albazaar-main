@@ -402,9 +402,9 @@
                                     </span>
                                 </div>
 
-                                <input type="number" min="0" value={{ $product->tax ?? 0 }} step="0.01"
+                                <input type="number" min="0" value={{ $product->tax }} step="0.01"
                                        placeholder="{{ translate('tax') }}" name="tax" id="tax"
-                                       class="form-control" required>
+                                       class="form-control"  disabled>
                                 <input name="tax_type" value="percent" class="d-none">
                             </div>
                         </div>
@@ -421,11 +421,10 @@
                                         <img src="{{ dynamicAsset(path: 'public/assets/back-end/img/info-circle.svg') }}" alt="">
                                     </span>
                                 </div>
-                                <select name="tax_model" id="tax_model" class="form-control" required>
+                                <select name="tax_model" id="tax_model" class="form-control" disabled>
                                     <option
-                                        value="include" {{ $product->tax_model == 'include' ? 'selected':'' }}>{{ translate("include_with_product") }}</option>
-                                    <option
-                                        value="exclude" {{ $product->tax_model == 'exclude' ? 'selected':'' }}>{{ translate("exclude_with_product") }}</option>
+                                        value="include" {{ $product->tax_model == 'include' ? 'selected':'selected' }}>{{ translate("include_with_product") }}</option>
+                               
                                 </select>
                             </div>
                         </div>

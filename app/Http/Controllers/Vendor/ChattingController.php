@@ -11,6 +11,7 @@ use App\Enums\ViewPaths\Vendor\Chatting;
 use App\Events\ChattingEvent;
 use App\Http\Controllers\BaseController;
 use App\Http\Requests\Vendor\ChattingRequest;
+use App\Models\Admin;
 use App\Services\ChattingService;
 use App\Traits\PushNotificationTrait;
 use Illuminate\Contracts\View\View;
@@ -19,6 +20,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator;
+use Log;
 
 class ChattingController extends BaseController
 {
@@ -60,6 +62,7 @@ class ChattingController extends BaseController
      */
     public function getListView(string|array $type): View
     {
+       
         $shop = $this->shopRepo->getFirstWhere(params: ['seller_id' => auth('seller')->id()]);
         $vendorId = auth('seller')->id();
         if ($type == 'delivery-man') {
@@ -163,6 +166,8 @@ class ChattingController extends BaseController
      */
     public function getMessageByUser(Request $request): JsonResponse
     {
+    
+     
         $vendorId = auth('seller')->id();
         $data = [];
         if ($request->has(key: 'delivery_man_id')) {
@@ -177,6 +182,8 @@ class ChattingController extends BaseController
                 whereNotNull: ['delivery_man_id', 'seller_id'],
                 dataLimit: 'all'
             );
+            log::info('Chatting Message1111s: '.json_encode($getUser));
+
             $data = self::getRenderMessagesView(user: $getUser, message: $chattingMessages, type: 'delivery_man');
         } elseif ($request->has(key: 'user_id')) {
             $getUser = $this->customerRepo->getFirstWhere(params: ['id' => 3]);
@@ -190,27 +197,24 @@ class ChattingController extends BaseController
                 whereNotNull: ['user_id', 'seller_id'],
                 dataLimit: 'all'
             );
+            log::info('Chatting Message222s: '.json_encode($getUser));
             $data = self::getRenderMessagesView(user: $getUser, message: $chattingMessages, type: 'customer');
         }
         elseif ($request->has(key: 'admin_id')) {
-            $getUser =   [
-                'id' => 1,
-                'name' => 'Admin John Doe',
-                'phone' => '+1234567890',
-                'image' => 'https://example.com/admin-image.jpg',
-                'role' => 'Admin' // Adding role information for clarity
-            ];
+           
+            $getUser =  Admin::find(1);
         
             $this->chattingRepo->updateAllWhere(
-                params: ['seller_id' => $vendorId, 'user_id' => $request['user_id']],
+                params: ['seller_id' => $vendorId, 'admin_id' =>1],
                 data: ['seen_by_seller' => 1]
             );
             $chattingMessages = $this->chattingRepo->getListWhereNotNull(
                 orderBy: ['created_at' => 'DESC'],
-                filters: ['seller_id' => $vendorId, 'user_id' => $request['user_id']],
-                whereNotNull: ['user_id', 'seller_id'],
+                filters: ['seller_id' => $vendorId, 'admin_id' => 1],
+                whereNotNull: ['admin_id', 'seller_id'],
                 dataLimit: 'all'
             );
+            log::info('Chatting Message333s: '.json_encode($getUser));
             $data = self::getRenderMessagesView(user: $getUser, message: $chattingMessages, type: 'customer');
         }
         return response()->json($data);
@@ -292,14 +296,14 @@ class ChattingController extends BaseController
      */
     protected function getRenderMessagesView(object $user, object $message, string $type): array
     {
-        $userData = ['name' => $user['f_name'] . ' ' . $user['l_name'], 'phone' => $user['country_code'] . $user['phone']];
+        $userData = ['name' => $user['name']];
 
         if ($type == 'customer') {
             $userData['image'] = getStorageImages(path: $user->image_full_url, type: 'backend-profile');
         } else {
             $userData['image'] = getStorageImages(path: $user->image_full_url, type: 'backend-profile');
         }
-
+log::info('Chatting Message444s: '.json_encode($userData));
         return [
             'userData' => $userData,
             'chattingMessages' => view('vendor-views.chatting.messages', [

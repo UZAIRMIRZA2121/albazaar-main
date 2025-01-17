@@ -20,10 +20,20 @@ class SocialControllerFacebook extends Controller
 {
     public function facebookRedirect()
     {
+        config([
+            'services.facebook.client_id' => '1007819224509885',
+            'services.facebook.client_secret' => '533dd425ade16943aa3fd954be9ff031',
+            'services.facebook.redirect' => 'https://msonsmedicareservices.store/auth/facebook/callback',
+        ]);
         return Socialite::driver('facebook')->redirect();
     }
     public function loginWithFacebook()
     {
+        config([
+            'services.facebook.client_id' => '1007819224509885',
+            'services.facebook.client_secret' => '533dd425ade16943aa3fd954be9ff031',
+            'services.facebook.redirect' => 'https://msonsmedicareservices.store/auth/facebook/callback',
+        ]);
         try {
             $user = Socialite::driver('facebook')->stateless()->user();
             $existingUser = Seller::where('google_id', $user->id)->first();

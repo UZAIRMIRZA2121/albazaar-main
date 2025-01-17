@@ -123,13 +123,14 @@
                                                     </div>
                                                 </div>
                                             @elseif($chatting->admin_id && $chatting->admin)
+                                           
                                                 <div class="list_filter">
                                                     <div class="chat_list p-3 d-flex gap-2 @if ($key == 0) bg-soft-secondary @endif get-ajax-message-view"
                                                         data-user-id="{{ $chatting->admin_id }}">
                                                         <div class="chat_people media gap-10 w-100" id="chat_people">
                                                             <div class="chat_img avatar avatar-sm avatar-circle">
                                                                 <img src="{{ getStorageImages(path: $chatting->admin->image_full_url, type: 'backend-profile') }}"
-                                                                    id="{{ $chatting->user_id }}"
+                                                                    id="{{ $chatting->admin_id }}"
                                                                     class="avatar-img avatar-circle" alt="">
                                                                 <span
                                                                     class="avatar-status avatar-sm-status avatar-status-success"></span>
@@ -202,8 +203,13 @@
                             <div class="input_msg_write">
                                 <form class="mt-4 chatting-messages-ajax-form" enctype="multipart/form-data">
                                     @csrf
-                                    <input type="hidden" id="current-user-hidden-id" value="{{ $lastChatUser->id }}"
-                                        name="{{ $userType == 'customer' ? 'user_id' : 'delivery_man_id' }}">
+                                    <input type="hidden" id="current-user-hidden-id" value="{{ $lastChatUser->id }}" name="{{ match($userType) {
+                                        'customer' => 'user_id',
+                                        'admin' => 'admin_id',
+                                        'delivery_man' => 'delivery_man_id',
+                                        default => '',
+                                    } }}"
+                                    >
                                     <div class="position-relative d-flex">
                                         <div class="d-flex align-items-center m-0 position-absolute top-3 px-3 gap-2">
                                             <label class="py-0 cursor-pointer">
@@ -308,11 +314,11 @@
 
             if (Request::is('vendor/messages/index/customer')) {
                 $queryParams = 'user_id=';
-            } elseif (Request::is('admin/messages/index/delivery_man')) {
-                $baseUrl = route('admin.messages.message'); // Adjust base URL for admin route
+            } elseif (Request::is('vendor/messages/index/delivery_man')) {
+                $baseUrl = route('vendor.messages.message'); // Adjust base URL for admin route
                 $queryParams = 'delivery_man_id=';
             } else {
-                $baseUrl = route('admin.messages.message'); // Adjust base URL for admin route
+                $baseUrl = route('vendor.messages.message'); // Adjust base URL for admin route
                 $queryParams = 'admin_id=';
             }
         @endphp

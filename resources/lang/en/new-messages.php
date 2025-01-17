@@ -8820,4 +8820,8 @@ return [
 	"proceed_to_Checkou222t" => "Proceed to Checkou222t",
 	"proceed_to_chec111kout" => "Proceed to chec111kout",
 	"This tax % will be applied to all products." => "This tax % will be applied to all products.",
+	"Venffdor" => "Venffdor",
+	"you_have_not_any_cossnversation_yet" => "You have not any cossnversation yet",
+	"tax_amousssnt" => "Tax amousssnt",
+	"Not_approve_yet" => "Not approve yet",
 ];

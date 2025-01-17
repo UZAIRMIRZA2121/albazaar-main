@@ -198,7 +198,13 @@
                             <div class="input_msg_write">
                                 <form class="mt-4 chatting-messages-ajax-form" enctype="multipart/form-data">
                                     @csrf
-                                    <input type="hidden" id="current-user-hidden-id" value="{{ $lastChatUser->id }}" name="{{ $userType == 'customer' ? 'user_id' : 'delivery_man_id' }}">
+                                    <input type="hidden" id="current-user-hidden-id" value="{{ $lastChatUser->id }}" name="{{ match($userType) {
+                                        'customer' => 'user_id',
+                                        'seller' => 'seller_id',
+                                        'delivery_man' => 'delivery_man_id',
+                                        default => '',
+                                    } }}"
+                                    >
                                     <div class="position-relative d-flex">
                                         <div class="d-flex align-items-center m-0 position-absolute top-3 px-3 gap-2">
                                             <label class="py-0 cursor-pointer">

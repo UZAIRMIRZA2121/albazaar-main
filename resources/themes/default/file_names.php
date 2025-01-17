@@ -1,6 +1,7 @@
 <?php
 
 return [
+ 
     'home' => 'web-views.home',
     'product_search_result' => 'web-views.partials._search-result',
     'privacy_policy_page' => 'web-views.pages.privacy-policy',

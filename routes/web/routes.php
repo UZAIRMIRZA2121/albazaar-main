@@ -101,6 +101,9 @@ Route::group(['namespace' => 'Web', 'middleware' => ['maintenance_mode', 'guestC
     });
 
     Route::post('custome/vendors/add', [CustomVendorController::class, 'store'])->name('custome.vendors.store');
+    Route::post('/send-otp', [CustomVendorController::class, 'sendOtp']);
+
+    Route::get('login/{service}/callback', [SocialAuthController::class, 'handleProviderCallback'])->name('service-callback');
 
 
 
@@ -118,8 +121,8 @@ Route::group(['namespace' => 'Web', 'middleware' => ['maintenance_mode', 'guestC
         });
     });
 
-    Route::get('auth/google', [GoogleController::class, 'redirectToGoogle'])->name('vendor.auth.login.google');
-    Route::get('auth/google/callback', [GoogleController::class, 'handleGoogleCallback']);
+    Route::get('vendor/auth/google', [GoogleController::class, 'redirectToGoogle'])->name('vendor.auth.login.google');
+    Route::get('vendor/auth/google/callback', [GoogleController::class, 'handleGoogleCallback']);
 
     Route::get('auth/facebook', [SocialControllerFacebook::class, 'facebookRedirect'])->name('vendor.auth.login.facebook');
     Route::get('auth/facebook/callback', [SocialControllerFacebook::class, 'loginWithFacebook']);

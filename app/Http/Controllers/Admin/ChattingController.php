@@ -7,6 +7,7 @@ use App\Contracts\Repositories\ChattingRepositoryInterface;
 use App\Contracts\Repositories\CustomerRepositoryInterface;
 use App\Contracts\Repositories\DeliveryManRepositoryInterface;
 use App\Contracts\Repositories\ShopRepositoryInterface;
+use App\Contracts\Repositories\VendorRepositoryInterface;
 use App\Enums\ViewPaths\Admin\Chatting;
 use App\Events\ChattingEvent;
 use App\Http\Controllers\BaseController;
@@ -14,6 +15,7 @@ use App\Http\Requests\Admin\ChattingRequest;
 use App\Models\Seller;
 use App\Services\ChattingService;
 use App\Traits\PushNotificationTrait;
+use Exception;
 use Illuminate\Contracts\View\View;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\JsonResponse;
@@ -32,6 +34,7 @@ class ChattingController extends BaseController
      * @param ChattingService $chattingService
      * @param DeliveryManRepositoryInterface $deliveryManRepo
      * @param CustomerRepositoryInterface $customerRepo
+     *  @param VendorRepositoryInterface $vendorRepo
      */
     public function __construct(
         private readonly ChattingRepositoryInterface $chattingRepo,
@@ -39,6 +42,7 @@ class ChattingController extends BaseController
         private readonly ChattingService $chattingService,
         private readonly DeliveryManRepositoryInterface $deliveryManRepo,
         private readonly CustomerRepositoryInterface $customerRepo,
+        private readonly VendorRepositoryInterface $vendorRepo,
     ) {
     }
 
@@ -50,7 +54,7 @@ class ChattingController extends BaseController
      */
     public function index(?Request $request, string|array $type = null): View|Collection|LengthAwarePaginator|null|callable|RedirectResponse
     {
-
+       
         return $this->getListView(type: $type);
     }
 
@@ -60,7 +64,7 @@ class ChattingController extends BaseController
      */
     public function getListView(string|array $type): View
     {
-        Log::info('allChattingUsers' . $type);
+    
         $shop = $this->shopRepo->getFirstWhere(params: ['seller_id' => auth('seller')->id()]);
         $adminId = 1;
         if ($type == 'delivery-man') {
@@ -128,7 +132,7 @@ class ChattingController extends BaseController
                 ]);
             }
         } elseif ($type == 'seller') {
-
+           
             $allChattingUsers = $this->chattingRepo->getListWhereNotNull(
                 orderBy: ['created_at' => 'DESC'],
                 filters: ['admin_id' => 1],
@@ -150,7 +154,7 @@ class ChattingController extends BaseController
                     orderBy: ['created_at' => 'DESC'],
                     filters: ['admin_id' => $adminId, 'seller_id' => $lastChatUser?->id],
                     whereNotNull: ['seller_id', 'admin_id'],
-                    relations: ['customer'],
+                    relations: ['seller'],
                     dataLimit: 'all'
                 );
 
@@ -162,7 +166,8 @@ class ChattingController extends BaseController
                 ]);
             }
         }
-    
+      
+       
         return view(Chatting::INDEX[VIEW], compact('shop'));
 
     }
@@ -172,88 +177,103 @@ class ChattingController extends BaseController
      * @return JsonResponse
      */
     public function getMessageByUser(Request $request): JsonResponse
-    {
-     
-        try {
-            $adminId = 0;
-            $data = [];
+{
+    Log::info('Request payload: ' . json_encode($request->all()));
 
-            if ($request->has(key: 'delivery_man_id')) {
-                $getUser = $this->deliveryManRepo->getFirstWhere(params: ['id' => $request['delivery_man_id']]);
-                if (!$getUser) {
-                    throw new Exception('Delivery man not found.');
-                }
+    try {
+        $adminId = "1";
+        $data = [];
+        $chatType = null;
+        $getUser = null;
+        $chattingMessages = null;
 
-                $this->chattingRepo->updateAllWhere(
-                    params: ['admin_id' => $adminId, 'delivery_man_id' => $request['delivery_man_id']],
-                    data: ['seen_by_admin' => 1]
-                );
+        if ($request->has('delivery_man_id')) {
+            $chatType = 'delivery_man';
+            $getUser = $this->deliveryManRepo->getFirstWhere(['id' => $request['delivery_man_id']]);
 
-                $chattingMessages = $this->chattingRepo->getListWhereNotNull(
-                    orderBy: ['created_at' => 'DESC'],
-                    filters: ['admin_id' => $adminId, 'delivery_man_id' => $request['delivery_man_id']],
-                    whereNotNull: ['delivery_man_id', 'admin_id'],
-                    dataLimit: 'all'
-                );
-                $data = self::getRenderMessagesView(user: $getUser, message: $chattingMessages, type: 'delivery_man');
-
-            } elseif ($request->has(key: 'user_id')) {
-                $getUser = $this->customerRepo->getFirstWhere(params: ['id' => $request['user_id']]);
-               
-                if (!$getUser) {
-                    throw new Exception('Customer not found.');
-                }
-                $this->chattingRepo->updateAllWhere(
-                    params: ['admin_id' => 1, 'user_id' => $request['user_id']],
-                    data: ['seen_by_admin' => 1]
-                );
-
-                $chattingMessages = $this->chattingRepo->getListWhereNotNull(
-                    orderBy: ['created_at' => 'DESC'],
-                    filters: ['admin_id' => 1, 'user_id' => $request['user_id']],
-                    whereNotNull: ['user_id', 'admin_id'],
-                    dataLimit: 'all'
-                );
-                $data = self::getRenderMessagesView(user: $getUser, message: $chattingMessages, type: 'customer');
-
-            } elseif ($request->has(key: 'seller_id')) {
-                $getUser = Seller::where('id', $request['seller_id'])->first();
-
-                if (!$getUser) {
-                    throw new Exception('Seller not found.');
-                }
-
-                $this->chattingRepo->updateAllWhere(
-                    params: ['admin_id' => $adminId, 'seller_id' => $request['seller_id']],
-                    data: ['seen_by_admin' => 1]
-                );
-
-                $chattingMessages = $this->chattingRepo->getListWhereNotNull(
-                    orderBy: ['created_at' => 'DESC'],
-                    filters: ['admin_id' => $adminId, 'seller_id' => $request['seller_id']],
-                    whereNotNull: ['seller_id', 'admin_id'],
-                    dataLimit: 'all'
-                );
-                $data = self::getRenderMessagesView(user: $getUser, message: $chattingMessages, type: 'seller');
+            if (!$getUser) {
+                throw new Exception('Delivery man not found.');
             }
 
-          
-            return response()->json($data);
+            $this->chattingRepo->updateAllWhere(
+                params: ['admin_id' => $adminId, 'delivery_man_id' => $request['delivery_man_id']],
+                data: ['seen_by_admin' => 1]
+            );
 
-        } catch (Exception $e) {
-            // Log the error
-            Log::error('Error retrieving chat data.', [
-                'error' => $e->getMessage(),
-                'request' => $request->all(),
-            ]);
+            $chattingMessages = $this->chattingRepo->getListWhereNotNull(
+                orderBy: ['created_at' => 'DESC'],
+                filters: ['admin_id' => $adminId, 'delivery_man_id' => $request['delivery_man_id']],
+                whereNotNull: ['delivery_man_id', 'admin_id'],
+                dataLimit: 'all'
+            );
 
-            // Return a JSON error response
-            return response()->json([
-                'success' => false,
-                'message' => $e->getMessage(),
-            ], 500);
+        } elseif ($request->has('user_id')) {
+            $chatType = 'customer';
+            $getUser = $this->customerRepo->getFirstWhere(['id' => $request['user_id']]);
+
+            if (!$getUser) {
+                throw new Exception('Customer not found.');
+            }
+
+            $this->chattingRepo->updateAllWhere(
+                params: ['admin_id' => $adminId, 'user_id' => $request['user_id']],
+                data: ['seen_by_admin' => 1]
+            );
+
+            $chattingMessages = $this->chattingRepo->getListWhereNotNull(
+                orderBy: ['created_at' => 'DESC'],
+                filters: ['admin_id' => $adminId, 'user_id' => $request['user_id']],
+                whereNotNull: ['user_id', 'admin_id'],
+                dataLimit: 'all'
+            );
+
+        } elseif ($request->has('seller_id')) {
+            $chatType = 'seller';
+            $getUser = $this->vendorRepo->getFirstWhere(['id' => $request['seller_id']]);
+            Log::info("Fetched user details for {$chatType}: " . json_encode($getUser));
+
+            if (!$getUser) {
+                throw new Exception('Seller not found.');
+            }
+
+            $this->chattingRepo->updateAllWhere(
+                params: ['admin_id' => $adminId, 'seller_id' => $request['seller_id']],
+                data: ['seen_by_admin' => 1]
+            );
+
+            $chattingMessages = $this->chattingRepo->getListWhereNotNull(
+                orderBy: ['created_at' => 'DESC'],
+                filters: ['admin_id' => $adminId, 'seller_id' => $request['seller_id']],
+                whereNotNull: ['seller_id', 'admin_id'],
+                dataLimit: 'all'
+            );
+        } else {
+            throw new Exception('Invalid request. No valid user identifier provided.');
         }
+
+        // Log data after processing
+        Log::info("Fetched user details for {$chatType}: " . json_encode($getUser));
+        Log::info("Chat messages for {$chatType}: " . json_encode($chattingMessages));
+
+        // Render messages view
+        $data = self::getRenderMessagesView(user: $getUser, message: $chattingMessages, type: $chatType);
+
+        return response()->json($data);
+
+    } catch (Exception $e) {
+        // Log the error
+        Log::error('Error retrieving chat data.', [
+            'error' => $e->getMessage(),
+            'request' => $request->all(),
+        ]);
+
+        // Return a JSON error response
+        return response()->json([
+            'success' => false,
+            'message' => $e->getMessage(),
+        ], 500);
     }
+}
 
 
     /**
@@ -261,23 +281,32 @@ class ChattingController extends BaseController
      * @return JsonResponse
      */
     public function addAdminMessage(ChattingRequest $request): JsonResponse
-    {
-        $data = [];
-        $shop = [
-            'name' => getWebConfig(name: 'company_name')
-        ];
-        $messageForm = (object) [
-            'f_name' => 'admin',
-            'shop' => (object) $shop,
-        ];
+{
+    Log::info('Request payload: ' . json_encode($request->all()));
+
+    $data = [];
+    $shop = [
+        'name' => getWebConfig(name: 'company_name')
+    ];
+    $messageForm = (object) [
+        'f_name' => 'admin',
+        'shop' => (object) $shop,
+    ];
+
+    try {
         if ($request->has(key: 'delivery_man_id')) {
+            $deliveryMan = $this->deliveryManRepo->getFirstWhere(params: ['id' => $request['delivery_man_id']]);
+            if (!$deliveryMan) {
+                throw new Exception('Delivery man not found.');
+            }
+
             $this->chattingRepo->add(
                 data: $this->chattingService->addChattingData(
                     request: $request,
                     type: 'delivery-man',
                 )
             );
-            $deliveryMan = $this->deliveryManRepo->getFirstWhere(params: ['id' => $request['delivery_man_id']]);
+
             event(new ChattingEvent(key: 'message_from_admin', type: 'delivery_man', userData: $deliveryMan, messageForm: $messageForm));
 
             $chattingMessages = $this->chattingRepo->getListWhereNotNull(
@@ -288,14 +317,18 @@ class ChattingController extends BaseController
             );
             $data = self::getRenderMessagesView(user: $deliveryMan, message: $chattingMessages, type: 'delivery_man');
         } elseif ($request->has(key: 'user_id')) {
-           
+            $customer = $this->customerRepo->getFirstWhere(params: ['id' => $request['user_id']]);
+            if (!$customer) {
+                throw new Exception('Customer not found.');
+            }
+
             $this->chattingRepo->add(
                 data: $this->chattingService->addChattingData(
                     request: $request,
                     type: 'customer',
                 )
             );
-            $customer = $this->customerRepo->getFirstWhere(params: ['id' => $request['user_id']]);
+
             event(new ChattingEvent(key: 'message_from_admin', type: 'customer', userData: $customer, messageForm: $messageForm));
 
             $chattingMessages = $this->chattingRepo->getListWhereNotNull(
@@ -304,11 +337,43 @@ class ChattingController extends BaseController
                 whereNotNull: ['user_id', 'admin_id'],
                 dataLimit: 'all'
             );
-            Log::info('allChattingUsers' . $chattingMessages);
             $data = self::getRenderMessagesView(user: $customer, message: $chattingMessages, type: 'customer');
+        } elseif ($request->has(key: 'seller_id')) {
+            $seller = Seller::where('id', $request['seller_id'])->first();
+            if (!$seller) {
+                throw new Exception('Seller not found.');
+            }
+
+            $this->chattingRepo->add(
+                data: $this->chattingService->addChattingData(
+                    request: $request,
+                    type: 'seller',
+                )
+            );
+
+            event(new ChattingEvent(key: 'message_from_admin', type: 'seller', userData: $seller, messageForm: $messageForm));
+
+            $chattingMessages = $this->chattingRepo->getListWhereNotNull(
+                orderBy: ['created_at' => 'DESC'],
+                filters: ['admin_id' => 1, 'seller_id' => $request['seller_id']],
+                whereNotNull: ['seller_id', 'admin_id'],
+                dataLimit: 'all'
+            );
+            $data = self::getRenderMessagesView(user: $seller, message: $chattingMessages, type: 'seller');
         }
-        return response()->json($data);
+    } catch (Exception $e) {
+        Log::error('Error adding admin message.', [
+            'error' => $e->getMessage(),
+            'request' => $request->all(),
+        ]);
+        return response()->json([
+            'success' => false,
+            'message' => $e->getMessage(),
+        ], 500);
     }
+
+    return response()->json($data);
+}
 
     /**
      * @param string $tableName
@@ -346,6 +411,8 @@ class ChattingController extends BaseController
             path: $user->image_full_url, 
             type: 'backend-profile'
         );
+    
+      
         return [
             'userData' => $userData,
             'chattingMessages' => view('admin-views.chatting.messages', [
@@ -355,6 +422,7 @@ class ChattingController extends BaseController
             ])->render(),
         ];
     }
+    
 
     public function getNewNotification(): JsonResponse
     {

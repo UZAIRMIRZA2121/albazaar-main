@@ -191,7 +191,7 @@
                                 Business name as seen on Certification
                             </label>
                             <div class="input-group input-group-merge">
-                                <input type="text" class=" form-control"name="business_day" required id="business_day"  placeholder="Business name" >
+                                <input type="text" class=" form-control" name="business_day" required id="business_day"  placeholder="Business name" >
                             </div>
                         </div>
                         <div class="col-lg-12 form-group">
@@ -315,18 +315,35 @@
                         </div>
                     </div>
                 
-                    <div class="col-lg-6 form-group">
+                    {{-- <div class="col-lg-6 form-group">
                         <label for="business_day" class="title-color d-flex gap-1 align-items-center">
                             Business name as seen on Certification
                         </label>
                         <div class="input-group input-group-merge">
                             <input type="text" class=" form-control"name="business_day" required id="business_day"  placeholder="Business name" >
                         </div>
-                    </div>
+                    </div> --}}
                     <div class="col-lg-6 form-group">
-                        <label for="shop_name" class="title-color d-flex gap-1 align-items-center">{{translate('shop_name')}}</label>
-                        <input type="text" class="form-control form-control-user" id="shop_name" name="shop_name" placeholder="{{translate('ex').':'.translate('Jhon')}}" value="{{old('shop_name')}}" required>
+                        <label for="shop_name" class="title-color d-flex gap-1 align-items-center">
+                            {{translate('shop_name')}}
+                        </label>
+                        <input 
+                            type="text" 
+                            class="form-control form-control-user" 
+                            id="shop_name" 
+                            name="shop_name" 
+                            placeholder="{{translate('ex').':'.translate('Jhon')}}" 
+                            value="{{old('shop_name')}}" 
+                            required>
+                            <br>
+                        <!-- Validation Messages -->
+                        <small id="error-length-message" class="text-danger validation-message" style="display: none;"></small>
+                        <small id="error-special-message" class="text-danger validation-message" style="display: none;"></small>
+                        <small id="error-message" class="text-danger validation-message" ></small>
+                        <small id="success-message" class="text-success validation-message" style="display: none;"></small>
                     </div>
+                 
+                    
                     <div class="col-lg-12 form-group">
                         <label for="shop_address" class="title-color d-flex gap-1 align-items-center">{{translate('shop_address')}}</label>
                         <textarea name="shop_address" class="form-control text-area-max" id="shop_address" rows="1" placeholder="{{translate('ex').':'.translate('doe')}}">{{old('shop_address')}}</textarea>
@@ -440,7 +457,51 @@
       </script> --}}
       <!-- Google Maps API Script -->
 <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyB3VTAihhs6gEYNld1LMwNkEiszH3TRcMQ&libraries=places&callback=initMap" async></script>
+<script>
+    $(document).ready(function() {
+        $('#shop_name').on('keyup', function() {
+            const shopName = $(this).val();
 
+            // Hide all validation messages
+            $('.validation-message').hide();
+
+            // Length and character validation
+            const specialCharRegex = /[^a-zA-Z0-9 ]/; // No special characters
+            if (shopName.length < 4 || shopName.length > 20) {
+                $('#error-length-message').text("Shop name must be between 4 and 20 characters.").show();
+                return;
+            }
+
+            if (specialCharRegex.test(shopName)) {
+                $('#error-special-message').text("Shop name cannot contain special characters.").show();
+                return;
+            }
+
+            // Send AJAX request if basic validation passes
+            $.ajax({
+                url: "{{ route('check.shop.name') }}", // Adjust the route name as per your Laravel route
+                type: 'GET', // Use POST if required by your backend
+                data: {
+                    shop_name: shopName
+                },
+                success: function(response) {
+                    if (response.exists) {
+                        // Shop name is already taken
+                        $('#success-message').hide();
+                        $('#error-message').text("Shop name is already taken.").show();
+                    } else {
+                        // Shop name is available
+                        $('#error-message').hide();
+                        $('#success-message').text("Shop name is available.").show();
+                    }
+                },
+                error: function() {
+                    $('#error-message').text("An error occurred while checking the shop name.").show();
+                }
+            });
+        });
+    });
+</script>
 <script>
     let autocomplete;
     let map;
