@@ -8824,4 +8824,5 @@ return [
 	"you_have_not_any_cossnversation_yet" => "You have not any cossnversation yet",
 	"tax_amousssnt" => "Tax amousssnt",
 	"Not_approve_yet" => "Not approve yet",
+	"Vendor_Registration" => "Vendor Registration",
 ];

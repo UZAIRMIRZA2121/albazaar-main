@@ -5,11 +5,14 @@ namespace App\Http\Controllers\CustomVendor;
 use App\Http\Controllers\Controller;
 use App\Models\Seller;
 use App\Models\Shop; // Adjust model name if different
-use Http;
+use Illuminate\Support\Facades\Http;
+
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use App\Services\SmsService;
 use Log;
+use Illuminate\Support\Facades\Mail;
+
 use App\Traits\FileManagerTrait;
 class CustomVendorController extends Controller
 {
@@ -170,19 +173,24 @@ class CustomVendorController extends Controller
         ]);
 
         $recaptchaResponse = $request->input('g-recaptcha-response');
-        $secretKey = '6LcQuLYqAAAAADbxBfttI3PAYAjhR0Ba5srfP_-T';
-
+        $secretKey = env('NOCAPTCHA_SECRET');
+     
         $response = Http::asForm()->post('https://www.google.com/recaptcha/api/siteverify', [
             'secret' => $secretKey,
             'response' => $recaptchaResponse,
         ]);
 
+
         $responseBody = $response->json();
 
         if (!$responseBody['success']) {
+
             return back()->withErrors(['captcha' => 'reCAPTCHA verification failed.']);
         }
-        // dd($request->all());
+
+
+
+
         // Retrieve the seller ID from the session
         $sellerId = session('seller_id');
         $seller = Seller::find($sellerId);
@@ -232,11 +240,38 @@ class CustomVendorController extends Controller
             //     'seller' => $seller,
             //     'shop' => $shop,
             // ]);
+            // Custom email message
+  // Get the email address
+  $email = $seller->email;
+  $status = $seller->status;
 
+            $data = [
+                'companyName' => htmlspecialchars(is_array($companyName = getWebConfig('company_name')) ? implode(', ', $companyName) : $companyName ?? ''),
+                'companyLogo' => htmlspecialchars(is_array($companyLogo = getWebConfig('company_web_logo')) ? implode(', ', $companyLogo) : $companyLogo ?? ''),
+                'title' => htmlspecialchars(is_array($title = $template['title'] ?? 'Default Title') ? implode(', ', $title) : $title),
+                'body' => htmlspecialchars(is_array($body = $template['body'] ?? 'Default Body Content') ? implode(', ', $body) : $body),
+                'copyrightText' => htmlspecialchars(is_array($copyrightText = $template['copyright_text'] ?? 'Default Copyright') ? implode(', ', $copyrightText) : $copyrightText),
+                'footerText' => htmlspecialchars(is_array($footerText = $template['footer_text'] ?? 'Default Footer Text') ? implode(', ', $footerText) : $footerText),
+                'buttonName' => htmlspecialchars(is_array($buttonName = $template['button_name'] ?? 'Default Button Name') ? implode(', ', $buttonName) : $buttonName),
+                'status' => htmlspecialchars(is_array($status = $template['status'] ?? 'pending') ? implode(', ', $status) : $status),
+
+
+            ];
+            
+            
+          
+            $mail = Mail::send('vendor-registration-pending', $data, function ($message) use ($email) {
+                $message->to($email)
+                    ->subject('Email Verification')
+                    ->from(env('MAIL_FROM_ADDRESS'), env('MAIL_FROM_NAME'));
+            });
+          
+
+
+            dd('Email sent successfully!');
 
             // Clear all session data
             session()->flush();
-
             return redirect()->back()->with('success', 'Your form has been submitted successfully!');
         } catch (\Exception $e) {
             dd('Error updating seller or shop: ' . $e->getMessage(), ['trace' => $e->getTrace()]);

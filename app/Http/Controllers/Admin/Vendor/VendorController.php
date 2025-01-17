@@ -36,6 +36,7 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Maatwebsite\Excel\Facades\Excel;
+use Mail;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 
 class VendorController extends BaseController
@@ -112,6 +113,8 @@ class VendorController extends BaseController
 
     public function updateStatus(Request $request): RedirectResponse
     {
+
+       
         $vendor = $this->vendorRepo->getFirstWhere(params: ['id' => $request['id']]);
         $this->vendorRepo->update(id: $request['id'], data: ['status' => $request['status']]);
         if ($request['status'] == "approved") {
@@ -163,6 +166,10 @@ class VendorController extends BaseController
                 ];
             }
         }
+
+
+
+       
         event(new VendorRegistrationEvent(email: $vendor['email'], data: $data));
         return back();
     }

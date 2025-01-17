@@ -55,6 +55,7 @@ class VendorRegistrationReasonController extends BaseController
 
     public function updateStatus(Request $request): JsonResponse
     {
+       
         $this->vendorRegistrationReasonRepo->update(id:$request['id'], data: ['status' => $request->get('status', 0)]);
         return response()->json([ 'message' => translate('vendor_registration_reason_status_changed_successfully')]);
     }

@@ -66,17 +66,46 @@ use Laravel\Socialite\Facades\Socialite;
 // use Illuminate\Http\Request;
 // use Anhskohbo\NoCaptcha\Facades\NoCaptcha;
 
-// Route::get('/test-captcha', function () {
-//     return view('test-captcha');
-// });
+use Illuminate\Http\Request;
 
-// Route::post('/test-captcha', function (Request $request) {
-//     $request->validate([
-//         'g-recaptcha-response' => 'required|captcha',
-//     ]);
+Route::get('/test-captcha', function () {
+    return view('test-captcha');
+});
 
-//     return 'CAPTCHA verification passed!';
-// });
+Route::post('/test-captcha', function (Request $request) {
+    // Validate the CAPTCHA response
+    $request->validate([
+        'g-recaptcha-response' => 'required|captcha',  // Assuming you have the captcha validation set up
+    ]);
+
+    return 'CAPTCHA verification passed!';
+});
+
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Log;
+
+Route::get('/test-email', function () {
+    try {
+        $data = ['message' => 'This is a test email sent using Mailtrap in Laravel.'];
+        $email = 'uzairmirza2121@gmail.com'; // Fixed email address
+
+        // Send email via Mailtrap
+        Mail::raw($data['message'], function ($message) use ($email) {
+            $message->to($email)
+                ->subject('Test Email')
+                ->from(env('MAIL_FROM_ADDRESS'), env('MAIL_FROM_NAME'));
+        });
+
+        // If email sent successfully, return success message
+        return 'Email has been sent successfully!';
+    } catch (\Exception $e) {
+        // Log error and return failure message
+        Log::error('Error sending email: ' . $e->getMessage());
+        return 'Failed to send email.';
+    }
+});
+
+
 
 
 Route::controller(WebController::class)->group(function () {
