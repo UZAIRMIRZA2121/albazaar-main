@@ -14,20 +14,25 @@ use Illuminate\Support\Facades\Auth;
 
 use Illuminate\Support\Facades\Hash;
 use Laravel\Socialite\Facades\Socialite;
+use Illuminate\Support\Facades\Config;
 
 
 class SocialControllerFacebook extends Controller
 {
+
     public function facebookRedirect()
     {
-        config([
-            'services.facebook.client_id' => '1007819224509885',
-            'services.facebook.client_secret' => '533dd425ade16943aa3fd954be9ff031',
-            'services.facebook.redirect' => 'https://msonsmedicareservices.store/auth/facebook/callback',
-        ]);
-        dd('here');
+        // Dynamically set Facebook credentials
+        Config::set('services.facebook.client_id', env('FACEBOOK_CLIENT_ID'));
+        Config::set('services.facebook.client_secret', env('FACEBOOK_CLIENT_SECRET'));
+        Config::set('services.facebook.redirect', env('FACEBOOK_REDIRECT_URL'));
+        // Debug the configuration to ensure values are correctly set
+     
+    
+        // Redirect to Facebook for authentication
         return Socialite::driver('facebook')->redirect();
     }
+    
     public function loginWithFacebook()
     {
         config([
