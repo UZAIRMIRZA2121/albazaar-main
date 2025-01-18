@@ -25,6 +25,7 @@ class SocialControllerFacebook extends Controller
             'services.facebook.client_secret' => '533dd425ade16943aa3fd954be9ff031',
             'services.facebook.redirect' => 'https://msonsmedicareservices.store/auth/facebook/callback',
         ]);
+        dd('here');
         return Socialite::driver('facebook')->redirect();
     }
     public function loginWithFacebook()
