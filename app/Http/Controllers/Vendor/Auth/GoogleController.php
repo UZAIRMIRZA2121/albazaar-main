@@ -22,7 +22,7 @@ class GoogleController extends Controller
             'services.google.client_secret' => env('Vendor_GOOGLE_CLIENT_SECRET'),
             'services.google.redirect' => env('Vendor_GOOGLE_REDIRECT_URI'),
         ]);
-    dd(config('services.google'));
+  
         return Socialite::driver('google')->redirect();
     }
 
