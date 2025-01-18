@@ -14,6 +14,7 @@ use App\Utils\CartManager;
 use Brian2694\Toastr\Facades\Toastr;
 use Carbon\Carbon;
 use Carbon\CarbonInterval;
+use Config;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
@@ -36,12 +37,24 @@ class SocialAuthController extends Controller
 
     public function redirectToProvider($service)
     {
+        if ($service == 'google') {
             // Set the client ID, secret, and redirect URI directly
             config([
                 'services.google.client_id' => env('GOOGLE_CLIENT_ID'),
                 'services.google.client_secret' => env('GOOGLE_CLIENT_SECRET'),
                 'services.google.redirect' => env('GOOGLE_REDIRECT_URI'),
             ]);
+        }else if ($service == 'facebook') {
+            // Set the client ID, secret, and redirect URI directly
+            config([
+                'services.facebook.client_id' => env('FACEBOOK_CLIENT_ID'),
+                'services.facebook.client_secret' => env('FACEBOOK_CLIENT_SECRET'),
+                'services.facebook.redirect' => env('FACEBOOK_REDIRECT_URL'),
+            ]);
+        //  dd(Config::get('services.facebook'));
+
+
+        }
             return Socialite::driver($service)->redirect();
    
       
@@ -50,12 +63,23 @@ class SocialAuthController extends Controller
 
     public function handleProviderCallback(Request $request, $service)
     {
-        config([
-            'services.google.client_id' => env('GOOGLE_CLIENT_ID'),
-            'services.google.client_secret' => env('GOOGLE_CLIENT_SECRET'),
-            'services.google.redirect' => env('GOOGLE_REDIRECT_URI'),
-        ]);
-      
+
+        if ($service == 'google') {
+            // Set the client ID, secret, and redirect URI directly
+            config([
+                'services.google.client_id' => env('GOOGLE_CLIENT_ID'),
+                'services.google.client_secret' => env('GOOGLE_CLIENT_SECRET'),
+                'services.google.redirect' => env('GOOGLE_REDIRECT_URI'),
+            ]);
+        }else if ($service == 'facebook') {
+            // Set the client ID, secret, and redirect URI directly
+            config([
+                'services.facebook.client_id' => env('FACEBOOK_CLIENT_ID'),
+                'services.facebook.client_secret' => env('FACEBOOK_CLIENT_SECRET'),
+                'services.facebook.redirect' => env('FACEBOOK_REDIRECT_URL'),
+            ]);
+        //  dd(Config::get('services.facebook'));
+
         $userSocialData = Socialite::driver($service)->stateless()->user();
         $user = $this->customerRepo->getFirstWhere(params: ['email' => $userSocialData->getEmail()]);
 
