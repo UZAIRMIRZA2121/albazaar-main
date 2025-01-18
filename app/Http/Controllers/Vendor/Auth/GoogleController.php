@@ -34,6 +34,7 @@ class GoogleController extends Controller
             'services.google.client_secret' => env('Vendor_GOOGLE_CLIENT_SECRET'),
             'services.google.redirect' => env('Vendor_GOOGLE_REDIRECT_URI'),
         ]);
+        
         try {
             $user = Socialite::driver('google')->user();
     

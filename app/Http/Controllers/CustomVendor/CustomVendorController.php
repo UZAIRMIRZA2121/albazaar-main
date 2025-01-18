@@ -168,9 +168,9 @@ class CustomVendorController extends Controller
 
     public function store(Request $request)
     {
-        $request->validate([
-            'g-recaptcha-response' => 'required|captcha',
-        ]);
+        // $request->validate([
+        //     'g-recaptcha-response' => 'required|captcha',
+        // ]);
 
         $recaptchaResponse = $request->input('g-recaptcha-response');
         $secretKey = env('NOCAPTCHA_SECRET');
@@ -183,10 +183,10 @@ class CustomVendorController extends Controller
 
         $responseBody = $response->json();
 
-        if (!$responseBody['success']) {
+        // if (!$responseBody['success']) {
 
-            return back()->withErrors(['captcha' => 'reCAPTCHA verification failed.']);
-        }
+        //     return back()->withErrors(['captcha' => 'reCAPTCHA verification failed.']);
+        // }
 
 
 
