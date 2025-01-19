@@ -15,70 +15,63 @@
 
 
   </style>
-
-
-<div id="imageCarousel" class="  carousel slide "  data-bs-ride="carousel" data-bs-interval="3000"> <!-- 2000ms interval for one by one scroll -->
+<!-- Carousel Wrapper -->
+<div id="imageCarousel" class="carousel slide" data-bs-interval="false">
   <div class="carousel-inner">
     <!-- Slide 1 -->
     <div class="carousel-item active">
-      <div class="">
-        <div class="row">
-          <div class="col-md-3">
-            <img src="http://127.0.0.1:8081/storage/shop/banner/2025-01-13-6785921b4137a.webp" alt="Image 1" class="img-fluid">
-          </div>
-          <div class="col-md-3">
-            <img src="http://127.0.0.1:8081/storage/shop/banner/2025-01-13-6785921b4137a.webp" alt="Image 2" class="img-fluid">
-          </div>
-          <div class="col-md-3">
-            <img src="http://127.0.0.1:8081/storage/shop/banner/2025-01-13-6785921b4137a.webp" alt="Image 3" class="img-fluid">
-          </div>
-          <div class="col-md-3">
-            <img src="http://127.0.0.1:8081/storage/shop/banner/2025-01-13-6785921b4137a.webp" alt="Image 4" class="img-fluid">
-          </div>
+      <div class="row">
+        <div class="col-md-3">
+          <img src="http://127.0.0.1:8081/storage/shop/banner/2025-01-13-6785921b4137a.webp" alt="Image 1" class="img-fluid">
+        </div>
+        <div class="col-md-3">
+          <img src="http://127.0.0.1:8081/storage/shop/banner/2025-01-13-6785921b4137a.webp" alt="Image 2" class="img-fluid">
+        </div>
+        <div class="col-md-3">
+          <img src="http://127.0.0.1:8081/storage/shop/banner/2025-01-13-6785921b4137a.webp" alt="Image 3" class="img-fluid">
+        </div>
+        <div class="col-md-3">
+          <img src="http://127.0.0.1:8081/storage/shop/banner/2025-01-13-6785921b4137a.webp" alt="Image 4" class="img-fluid">
         </div>
       </div>
     </div>
     <!-- Slide 2 -->
     <div class="carousel-item">
-      <div class="">
-        <div class="row">
-          <div class="col-md-3">
-            <img src="http://127.0.0.1:8081/storage/shop/banner/2025-01-13-6785921b4137a.webp" alt="Image 5" class="img-fluid">
-          </div>
-          <div class="col-md-3">
-            <img src="http://127.0.0.1:8081/storage/shop/banner/2025-01-13-6785921b4137a.webp" alt="Image 6" class="img-fluid">
-          </div>
-          <div class="col-md-3">
-            <img src="http://127.0.0.1:8081/storage/shop/banner/2025-01-13-6785921b4137a.webp" alt="Image 7" class="img-fluid">
-          </div>
-          <div class="col-md-3">
-            <img src="http://127.0.0.1:8081/storage/shop/banner/2025-01-13-6785921b4137a.webp" alt="Image 8" class="img-fluid">
-          </div>
+      <div class="row">
+        <div class="col-md-3">
+          <img src="http://127.0.0.1:8081/storage/shop/banner/2025-01-13-6785921b4137a.webp" alt="Image 5" class="img-fluid">
+        </div>
+        <div class="col-md-3">
+          <img src="http://127.0.0.1:8081/storage/shop/banner/2025-01-13-6785921b4137a.webp" alt="Image 6" class="img-fluid">
+        </div>
+        <div class="col-md-3">
+          <img src="http://127.0.0.1:8081/storage/shop/banner/2025-01-13-6785921b4137a.webp" alt="Image 7" class="img-fluid">
+        </div>
+        <div class="col-md-3">
+          <img src="http://127.0.0.1:8081/storage/shop/banner/2025-01-13-6785921b4137a.webp" alt="Image 8" class="img-fluid">
         </div>
       </div>
     </div>
     <!-- Slide 3 -->
     <div class="carousel-item">
-      <div class="">
-        <div class="row">
-          <div class="col-md-3">
-            <img src="http://127.0.0.1:8081/storage/shop/banner/2025-01-13-6785921b4137a.webp" alt="Image 9" class="img-fluid">
-          </div>
-          <div class="col-md-3">
-            <img src="http://127.0.0.1:8081/storage/shop/banner/2025-01-13-6785921b4137a.webp" alt="Image 10" class="img-fluid">
-          </div>
-          <div class="col-md-3">
-            <img src="http://127.0.0.1:8081/storage/shop/banner/2025-01-13-6785921b4137a.webp" alt="Image 11" class="img-fluid">
-          </div>
-          <div class="col-md-3">
-            <img src="https://pk.image1993.com/cdn/shop/files/Solids_380ba464-8ebe-44a4-83dd-4c71a87cf0d5.jpg?v=1736586989" alt="Image 12" class="img-fluid">
-          </div>
+      <div class="row">
+        <div class="col-md-3">
+          <img src="http://127.0.0.1:8081/storage/shop/banner/2025-01-13-6785921b4137a.webp" alt="Image 9" class="img-fluid">
+        </div>
+        <div class="col-md-3">
+          <img src="http://127.0.0.1:8081/storage/shop/banner/2025-01-13-6785921b4137a.webp" alt="Image 10" class="img-fluid">
+        </div>
+        <div class="col-md-3">
+          <img src="http://127.0.0.1:8081/storage/shop/banner/2025-01-13-6785921b4137a.webp" alt="Image 11" class="img-fluid">
+        </div>
+        <div class="col-md-3">
+          <img src="https://pk.image1993.com/cdn/shop/files/Solids_380ba464-8ebe-44a4-83dd-4c71a87cf0d5.jpg?v=1736586989" alt="Image 12" class="img-fluid">
         </div>
       </div>
     </div>
   </div>
 
-  {{-- <!-- Controls (Optional) -->
+  {{-- <!-- Controls -->
   <button class="carousel-control-prev" type="button" data-bs-target="#imageCarousel" data-bs-slide="prev">
     <span class="carousel-control-prev-icon" aria-hidden="true"></span>
     <span class="visually-hidden">Previous</span>
@@ -88,6 +81,30 @@
     <span class="visually-hidden">Next</span>
   </button> --}}
 </div>
+
+<!-- jQuery for Custom Behavior -->
+<script>
+  $(document).ready(function () {
+    // Carousel auto-scroll settings
+    const interval = 2000; // Time between slides in ms
+
+    // Custom smooth scrolling
+    const $carousel = $('#imageCarousel');
+
+    setInterval(() => {
+      // Trigger the next slide
+      $carousel.carousel('next');
+    }, interval);
+
+    // Optional: Ensure smooth scrolling on manual control
+    $carousel.on('slide.bs.carousel', function () {
+      $(this).find('.carousel-inner').css('transition', 'transform 0.5s ease-in-out');
+    });
+  });
+</script>
+
+
+
 @if ($categories->count() > 0 )
     <section class="pb-4 rtl">
         <div class="container">
