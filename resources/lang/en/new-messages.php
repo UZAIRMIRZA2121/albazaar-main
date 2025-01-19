@@ -8830,4 +8830,12 @@ return [
 	"The tax model field is required." => "The tax model field is required.",
 	"Digital Product variations are required!" => "Digital Product variations are required!",
 	"The code format is invalid." => "The code format is invalid.",
+	"best-selling" => "Best-selling",
+	"4FOITO" => "4FOITO",
+	"The tax field is required." => "The tax field is required.",
+	"5" => "5",
+	"3" => "3",
+	"2" => "2",
+	"123456789" => "123456789",
+	"proceed_to_Casdheckout" => "Proceed to Casdheckout",
 ];

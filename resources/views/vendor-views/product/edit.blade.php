@@ -388,7 +388,7 @@
                                        class="form-control" required>
                             </div>
                         </div>
-                        <div class="col-md-6 col-lg-4 col-xl-3">
+                        <div class="col-md-6 col-lg-4 col-xl-3 d-none">
                             <div class="form-group">
                                 <div class="d-flex gap-2">
                                     <label class="title-color" for="tax">
@@ -401,14 +401,17 @@
                                         <img src="{{ dynamicAsset(path: 'public/assets/back-end/img/info-circle.svg') }}" alt="">
                                     </span>
                                 </div>
+                                @php 
+                                    $commission =  App\Models\Commission::first();
+                                @endphp
 
-                                <input type="number" min="0" value={{ $product->tax }} step="0.01"
-                                       placeholder="{{ translate('tax') }}" name="tax" id="tax"
-                                       class="form-control"  disabled>
+                                <input type="hidden" min="0" step="0.01"
+                                       name="tax" id="tax" readonly
+                                       value="{{$commission->tax_percentage}}" class="form-control">
                                 <input name="tax_type" value="percent" class="d-none">
                             </div>
                         </div>
-                        <div class="col-md-6 col-lg-4 col-xl-3">
+                        <div class="col-md-6 col-lg-4 col-xl-3 d-none">
                             <div class="form-group">
                                 <div class="d-flex gap-2">
                                     <label class="title-color" for="tax_model">
@@ -421,11 +424,17 @@
                                         <img src="{{ dynamicAsset(path: 'public/assets/back-end/img/info-circle.svg') }}" alt="">
                                     </span>
                                 </div>
-                                <select name="tax_model" id="tax_model" class="form-control" disabled>
-                                    <option
-                                        value="include" {{ $product->tax_model == 'include' ? 'selected':'selected' }}>{{ translate("include_with_product") }}</option>
-                               
-                                </select>
+                                <input type="hidden" min="0" step="0.01"
+                                name="tax_model" id="tax_model" readonly
+                                value="include" class="form-control">
+
+
+                                {{-- 
+                                <select name="tax_model" id="tax_model" class="form-control"  disabled>
+                                    <option value="include">{{ translate("include_with_product") }}</option>
+                                     <option value="exclude">{{ translate("exclude_with_product") }}</option> 
+                               </select>
+                                 --}}
                             </div>
                         </div>
                         <div class="col-md-6 col-lg-4 col-xl-3 physical_product_show" id="shipping_cost">

@@ -49,7 +49,7 @@ class OrderManager
         return rand(1000, 9999) . '-' . Str::random(5) . '-' . time();
     }
 
-    public static function order_summary($order)
+    public static function  order_summary($order)
     {
         $sub_total = 0;
         $total_tax = 0;

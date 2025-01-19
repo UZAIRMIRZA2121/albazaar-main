@@ -396,10 +396,12 @@
                                 value="include" class="form-control">
 
 
-                                {{-- <select name="tax_model" id="tax_model" class="form-control"  disabled>
+                                {{-- 
+                                <select name="tax_model" id="tax_model" class="form-control"  disabled>
                                     <option value="include">{{ translate("include_with_product") }}</option>
                                      <option value="exclude">{{ translate("exclude_with_product") }}</option> 
-                               </select>  --}}
+                               </select>
+                                 --}}
                             </div>
                         </div>
                         <div class="col-md-6 col-lg-4 col-xl-3 physical_product_show" id="shipping_cost">
