@@ -8825,4 +8825,5 @@ return [
 	"tax_amousssnt" => "Tax amousssnt",
 	"Not_approve_yet" => "Not approve yet",
 	"Vendor_Registration" => "Vendor Registration",
+	"dddddd" => "Dddddd",
 ];

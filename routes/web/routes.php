@@ -99,6 +99,7 @@ Route::get('/test-email', function () {
         // If email sent successfully, return success message
         return 'Email has been sent successfully!';
     } catch (\Exception $e) {
+        dd('Error sending email: ' . $e->getMessage());
         // Log error and return failure message
         Log::error('Error sending email: ' . $e->getMessage());
         return 'Failed to send email.';

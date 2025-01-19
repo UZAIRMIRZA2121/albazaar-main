@@ -1,10 +1,5 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Carousel with 4 Images</title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+
   <style>
     .carousel-item img {
       width: 100%;
@@ -20,10 +15,9 @@
 
 
   </style>
-</head>
-<body>
 
-<div id="imageCarousel" class="carousel slide "  data-bs-ride="carousel" data-bs-interval="5000"> <!-- 2000ms interval for one by one scroll -->
+
+<div id="imageCarousel" class="  carousel slide "  data-bs-ride="carousel" data-bs-interval="3000"> <!-- 2000ms interval for one by one scroll -->
   <div class="carousel-inner">
     <!-- Slide 1 -->
     <div class="carousel-item active">
@@ -84,7 +78,7 @@
     </div>
   </div>
 
-  <!-- Controls (Optional) -->
+  {{-- <!-- Controls (Optional) -->
   <button class="carousel-control-prev" type="button" data-bs-target="#imageCarousel" data-bs-slide="prev">
     <span class="carousel-control-prev-icon" aria-hidden="true"></span>
     <span class="visually-hidden">Previous</span>
@@ -92,7 +86,7 @@
   <button class="carousel-control-next" type="button" data-bs-target="#imageCarousel" data-bs-slide="next">
     <span class="carousel-control-next-icon" aria-hidden="true"></span>
     <span class="visually-hidden">Next</span>
-  </button>
+  </button> --}}
 </div>
 @if ($categories->count() > 0 )
     <section class="pb-4 rtl">

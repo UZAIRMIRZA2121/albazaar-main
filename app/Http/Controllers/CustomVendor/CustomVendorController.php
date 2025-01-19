@@ -91,11 +91,7 @@ class CustomVendorController extends Controller
             'data' => $response,
         ]);
     }
-
-
-
-
-
+    
     public function vendor_add(Request $request)
     {
 
