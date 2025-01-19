@@ -100,7 +100,7 @@
 
                     <form action="{{route('products')}}" type="submit" class="search_form">
                         <div class="d-flex align-items-center gap-2">
-                            <a href="{{route('categories')}}" class="btn btn-light border"> All Categories</a>
+                            <button class="btn btn-light border">All Categories</button>
                             <input class="form-control appended-form-control search-bar-input" type="search"
                                    autocomplete="off" data-given-value=""
                                    placeholder="{{ translate("search_for_items")}}..."
@@ -442,6 +442,29 @@
                             </li>
                         @endif
 
+                        @if ($businessMode == 'multi')
+                            @if(getWebConfig(name: 'seller_registration'))
+                                <li class="nav-item">
+                                    <div class="dropdown">
+                                        <button class="btn dropdown-toggle text-white text-max-md-dark text-capitalize ps-2"
+                                                type="button" id="dropdownMenuButton"
+                                                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                            {{ translate('vendor_zone')}}
+                                        </button>
+                                        <div class="dropdown-menu __dropdown-menu-3 __min-w-165px text-align-direction"
+                                             aria-labelledby="dropdownMenuButton">
+                                            <a class="dropdown-item text-nowrap text-capitalize" href="{{route('vendor.auth.registration.index')}}">
+                                                {{ translate('become_a_vendor')}}
+                                            </a>
+                                            <div class="dropdown-divider"></div>
+                                            <a class="dropdown-item text-nowrap" href="{{route('vendor.auth.login')}}">
+                                                {{ translate('vendor_login')}}
+                                            </a>
+                                        </div>
+                                    </div>
+                                </li>
+                            @endif
+                        @endif
                     </ul>
                     @if(auth('customer')->check())
                         <div class="logout-btn mt-auto d-md-none">

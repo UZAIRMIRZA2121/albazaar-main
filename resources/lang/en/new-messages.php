@@ -8825,4 +8825,9 @@ return [
 	"tax_amousssnt" => "Tax amousssnt",
 	"Not_approve_yet" => "Not approve yet",
 	"Vendor_Registration" => "Vendor Registration",
+	"tax_amdadaount" => "Tax amdadaount",
+	"Digital_Product_variations_are_required" => "Digital Product variations are required",
+	"The tax model field is required." => "The tax model field is required.",
+	"Digital Product variations are required!" => "Digital Product variations are required!",
+	"The code format is invalid." => "The code format is invalid.",
 ];
