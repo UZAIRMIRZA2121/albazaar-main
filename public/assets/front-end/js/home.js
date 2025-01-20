@@ -372,46 +372,24 @@ $(document).ready(function () {
         },
     });
 
-    $(".categories--slider").owlCarousel({
-        loop: false,
-        autoplay: true,
-        margin: 20,
-        nav: false,
-        dots: false,
-        autoplayHoverPause: true,
-        rtl: directionFromSession === "rtl",
-        ltr: directionFromSession === "ltr",
-        responsive: {
-            0: {
-                items: 3,
+        $(".categories--slider").owlCarousel({
+            loop: true,
+            autoplay: true,
+            margin: 20,
+            nav: true,
+            dots: false,
+            autoplayHoverPause: true,
+            rtl: directionFromSession === "rtl",
+            responsive: {
+                0: { items: 3 },
+                540: { items: 4 },
+                576: { items: 5 },
+                768: { items: 6 },
+                992: { items: 8 },
+                1200: { items: 10 },
+                1400: { items: 11 },
             },
-            // 360: {
-            //     items: 3.2,
-            // },
-            // 375: {
-            //     items: 3.5,
-            // },
-            540: {
-                items: 4,
-            },
-            576: {
-                items: 5,
-            },
-            768: {
-                items: 6,
-            },
-            992: {
-                items: 8,
-            },
-            1200: {
-                items: 10,
-            },
-            1400: {
-                items: 11,
-            },
-        },
-    });
-
+        });
     const othersStore = $(".others-store-slider").owlCarousel({
         responsiveClass: true,
         nav: false,

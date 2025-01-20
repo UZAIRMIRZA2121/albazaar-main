@@ -231,26 +231,27 @@
                             </div>
                         </div>
 
+                        <div class=" d-none d-lg-block">
+                            @if ($businessMode == 'multi')
+                                @if (getWebConfig(name: 'seller_registration'))
+                                    <div class="dropdown show mx-2 ">
+                                        <a class="btn  bg-light dropdown-toggle" href="#" role="button"
+                                            id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true"
+                                            aria-expanded="false">
+                                            Vendor
+                                        </a>
 
-                        @if ($businessMode == 'multi')
-                            @if (getWebConfig(name: 'seller_registration'))
-                                <div class="dropdown show mx-2 ">
-                                    <a class="btn  bg-light dropdown-toggle" href="#" role="button"
-                                        id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true"
-                                        aria-expanded="false">
-                                        Vendor
-                                    </a>
-
-                                    <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
-                                        <a class="dropdown-item"
-                                            href="{{ route('vendor.auth.registration.index') }}">
-                                            {{ translate('become_a_vendor') }}</a>
-                                        <a class="dropdown-item" href="{{ route('vendor.auth.login') }}">
-                                            {{ translate('vendor_login') }}</a>
+                                        <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+                                            <a class="dropdown-item"
+                                                href="{{ route('vendor.auth.registration.index') }}">
+                                                {{ translate('become_a_vendor') }}</a>
+                                            <a class="dropdown-item" href="{{ route('vendor.auth.login') }}">
+                                                {{ translate('vendor_login') }}</a>
+                                        </div>
                                     </div>
-                                </div>
+                                @endif
                             @endif
-                        @endif
+                        </div>
                     @endif
                 </div>
             </div>
@@ -490,7 +491,40 @@
                                 </a>
                             </li>
                         @endif
+
+
+
+
+
+                        @if ($businessMode == 'multi')
+                            @if (getWebConfig(name: 'seller_registration'))
+                                <li class="nav-item dropdown">
+                                    <a class="nav-link dropdown-toggle" href="#"
+                                        data-toggle="dropdown">{{ translate('Vendor') }}</a>
+                                    <ul
+                                        class="text-align-direction dropdown-menu __dropdown-menu-sizing dropdown-menu-{{ Session::get('direction') === 'rtl' ? 'right' : 'left' }} scroll-bar">
+
+
+                                        <li class="__inline-17">
+                                            <div>
+                                                <a class="dropdown-item"
+                                                    href="{{ route('vendor.auth.registration.index') }}">
+                                                    {{ translate('become_a_vendor') }}
+                                                </a>
+                                                <a class="dropdown-item" href="{{ route('vendor.auth.login') }}">
+                                                    {{ translate('vendor_login') }}
+                                                </a>
+                                            </div>
+
+                                        </li>
+                                    </ul>
+                                </li>
+                            @endif
+                        @endif
+
+
                     </ul>
+
                     @if (auth('customer')->check())
                         <div class="logout-btn mt-auto d-md-none">
                             <hr>

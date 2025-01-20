@@ -69,6 +69,9 @@ class HomeController extends Controller
         $bannerTypeFooterBanner = $this->cacheBannerTable(bannerType: 'Footer Banner', dataLimit: 10);
 
         $categories = CategoryManager::getCategoriesWithCountingAndPriorityWiseSorting();
+    
+        $categories = Category::all();
+       
         $userId = Auth::guard('customer')->user() ? Auth::guard('customer')->id() : 0;
         $flashDeal = ProductManager::getPriorityWiseFlashDealsProductsQuery(userId: $userId);
         $current_date = date('Y-m-d H:i:s');
