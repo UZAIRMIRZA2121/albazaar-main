@@ -234,7 +234,7 @@
 
                         @if ($businessMode == 'multi')
                             @if (getWebConfig(name: 'seller_registration'))
-                                <div class="dropdown show">
+                                <div class="dropdown show mx-2 ">
                                     <a class="btn  bg-light dropdown-toggle" href="#" role="button"
                                         id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true"
                                         aria-expanded="false">
@@ -251,10 +251,6 @@
                                 </div>
                             @endif
                         @endif
-
-
-
-
                     @endif
                 </div>
             </div>

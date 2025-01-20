@@ -362,6 +362,7 @@ trait CacheManagerTrait
         $themeName = theme_root_path() ?? 'default';
         $cacheKey = 'cache_banner_type_main_banner_' . ($themeName);
         $this->cacheBannerAllTypeKeys(cacheKey: $cacheKey);
+        return Banner::where(['banner_type' => 'Main Banner', 'published' => 1, 'theme' => $themeName])->latest()->get();
 
         return Cache::remember($cacheKey, CACHE_FOR_3_HOURS, function () use ($themeName) {
             return Banner::where(['banner_type' => 'Main Banner', 'published' => 1, 'theme' => $themeName])->latest()->get();

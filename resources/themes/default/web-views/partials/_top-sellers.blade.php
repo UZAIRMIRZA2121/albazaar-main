@@ -5,7 +5,7 @@
                 <div class="row d-flex justify-content-between">
                     <div class="seller-list-title">
                         <h5 class="font-bold m-0 text-capitalize">
-                            {{ translate('top_sellers')}}
+                            {{ translate('top_sffellers')}}
                         </h5>
                     </div>
                     <div class="seller-list-view-all">
