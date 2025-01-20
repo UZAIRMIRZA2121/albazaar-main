@@ -4,6 +4,7 @@
 /public/themes
 /storage/*.key
 /storage/app/*
+/storage/log/*
 .vscode
 .idea
 .env
