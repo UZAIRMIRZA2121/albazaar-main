@@ -1,0 +1,15 @@
+deployment:
+  tasks:
+    - export DEPLOY_PATH=/home2/msonsmed/public_html
+    - echo "Starting deployment to $DEPLOY_PATH"
+    - /bin/cp -r ./ $DEPLOY_PATH
+    - cd $DEPLOY_PATH
+    - echo "Installing dependencies with Composer..."
+    - /opt/cpanel/composer/bin/composer install --no-dev --optimize-autoloader
+    - echo "Running migrations..."
+    - php artisan migrate --force
+    - echo "Clearing cache..."
+    - php artisan cache:clear
+    - php artisan config:clear
+    - php artisan view:clear
+    - echo "Deployment completed successfully!"
