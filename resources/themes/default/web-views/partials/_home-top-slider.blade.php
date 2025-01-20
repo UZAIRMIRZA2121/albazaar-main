@@ -7,7 +7,7 @@
                 <style>
                     .carousel-item img {
                         width: 100%;
-                        height: 350px;
+                        height: 400px;
                         /* Set a consistent height */
                         object-fit: cover;
                     }
@@ -34,15 +34,10 @@
                                         </a>
                                     </div>
                                 @endforeach
-
-
                             </div>
                         </div>
                     </div>
-
                 </div>
-
-
             </div>
         </div>
     </section>
