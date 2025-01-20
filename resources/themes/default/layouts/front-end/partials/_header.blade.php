@@ -201,12 +201,12 @@
                                     @if ($data['status'] == 1)
                                         <li class="change-language" data-action="{{ route('change-language') }}"
                                             data-language-code="{{ $data['code'] }}">
-                                            <span class=" mr-2 text-capitalize">{{ $data['name'] }}</span>
+                                           
                                             <a class="dropdown-item pb-1" href="javascript:">
-                                                <img class="" width="20"
+                                                <img class="mr-2 " width="20"
                                                     src="{{ theme_asset(path: 'public/assets/front-end/img/flags/' . $data['code'] . '.png') }}"
                                                     alt="{{ $data['name'] }}" />
-                                            
+                                                    <span class="text-capitalize">{{ $data['name'] }}</span>
                                             </a>
                                         </li>
                                     @endif
