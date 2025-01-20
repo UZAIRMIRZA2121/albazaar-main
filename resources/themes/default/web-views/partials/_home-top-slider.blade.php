@@ -1,46 +1,57 @@
 @if (count($bannerTypeMainBanner) > 0)
 
-    <section class="pb-4 rtl">
-        <div class="">
-            <div>
+<section class="pb-4 rtl">
+    <div class="">
+        <div>
+            <style>
+                .carousel-item img {
+                    width: 100%;
+                    height: 400px;
+                    /* Set a consistent height */
+                    object-fit: cover;
+                }
 
-                <style>
-                    .carousel-item img {
-                        width: 100%;
-                        height: 400px;
-                        /* Set a consistent height */
-                        object-fit: cover;
-                    }
+                .carousel-inner {
+                    display: flex;
+                    flex-wrap: nowrap;
+                }
 
+                #imageCarousel {
+                    background-color: #000000;
+                }
+
+                @media (max-width: 768px) {
                     .carousel-inner {
-                        display: flex;
+                        flex-direction: column;
                     }
-
-                    #imageCarousel {
-                        background-color: #000000;
-                    }
-                </style>
-                <!-- Carousel Wrapper -->
-                <div id="imageCarousel" class="carousel slide" data-bs-interval="false">
-                    <div class="carousel-inner">
-                        <!-- Slide 1 -->
-                        <div class="carousel-item active">
-                            <div class="row">
-                                @foreach ($bannerTypeMainBanner as $key => $banner)
-                                    <div class="col-md-3">
-                                        <a href="{{ $banner['url'] }}" class="d-block" target="_blank">
-                                            <img src="{{ getStorageImages(path: $banner->photo_full_url, type: 'banner') }}"
-                                                alt="Image 4" class="img-fluid">
-                                        </a>
-                                    </div>
-                                @endforeach
-                            </div>
+                }
+            </style>
+            <!-- Carousel Wrapper -->
+            <div id="imageCarousel" class="carousel slide" data-bs-ride="carousel">
+                <div class="carousel-inner">
+                    @foreach ($bannerTypeMainBanner as $key => $banner)
+                        <div class="carousel-item {{ $key === 0 ? 'active' : '' }}">
+                            <a href="{{ $banner['url'] }}" class="d-block" target="_blank">
+                                <img src="{{ getStorageImages(path: $banner->photo_full_url, type: 'banner') }}"
+                                    alt="Image {{ $key + 1 }}" class="img-fluid">
+                            </a>
                         </div>
-                    </div>
+                    @endforeach
                 </div>
+                {{-- <!-- Controls -->
+                <a class="carousel-control-prev" href="#imageCarousel" role="button" data-bs-slide="prev">
+                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                    <span class="visually-hidden">Previous</span>
+                </a>
+                <a class="carousel-control-next" href="#imageCarousel" role="button" data-bs-slide="next">
+                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                    <span class="visually-hidden">Next</span>
+                </a> --}}
             </div>
         </div>
-    </section>
+    </div>
+</section>
+
 
 
     {{-- <section class="bg-transparent py-3">
