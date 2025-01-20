@@ -7,7 +7,6 @@
 /storage/log/*
 /resources/lang/
 /resources/lang/en/
-
 .vscode
 .idea
 .env

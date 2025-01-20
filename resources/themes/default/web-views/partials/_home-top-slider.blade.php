@@ -1,52 +1,59 @@
 @if (count($bannerTypeMainBanner) > 0)
-
 <section class="pb-4 rtl">
     <div class="">
         <div>
             <style>
+                /* Set image width and height */
                 .carousel-item img {
                     width: 100%;
-                    height: 400px;
-                    /* Set a consistent height */
+                    height: 450px; /* Fixed height for large screens */
                     object-fit: cover;
                 }
 
+                /* Responsively manage height for smaller screens */
+                @media (max-width: 767px) {
+                    .carousel-item img {
+                        height: auto; /* Adjust height for smaller screens */
+                    }
+                    #row {
+                        flex-wrap: unset;
+                    }
+                }
+
+                /* Carousel inner style */
                 .carousel-inner {
                     display: flex;
-                    flex-wrap: nowrap;
                 }
 
                 #imageCarousel {
                     background-color: #000000;
                 }
-
-                @media (max-width: 768px) {
-                    .carousel-inner {
-                        flex-direction: column;
-                    }
-                }
             </style>
             <!-- Carousel Wrapper -->
-            <div id="imageCarousel" class="carousel slide" data-bs-ride="carousel">
+            <div id="imageCarousel" class="carousel slide" data-bs-interval="false">
                 <div class="carousel-inner">
-                    @foreach ($bannerTypeMainBanner as $key => $banner)
-                        <div class="carousel-item {{ $key === 0 ? 'active' : '' }}">
-                            <a href="{{ $banner['url'] }}" class="d-block" target="_blank">
-                                <img src="{{ getStorageImages(path: $banner->photo_full_url, type: 'banner') }}"
-                                    alt="Image {{ $key + 1 }}" class="img-fluid">
-                            </a>
+                    <!-- Slide 1 -->
+                    <div class="carousel-item active">
+                        <div class="row " id="row">
+                            @foreach ($bannerTypeMainBanner as $key => $banner)
+                                <!-- Show only the first image on small screens (mobile), and all images on larger screens -->
+                                <div class="col-12 col-md-3">
+                                    @if ($key == 0)
+                                        <a href="{{ $banner['url'] }}" class="d-block" target="_blank">
+                                            <img src="{{ getStorageImages(path: $banner->photo_full_url, type: 'banner') }}"
+                                                alt="Image 4" class="img-fluid">
+                                        </a>
+                                    @elseif ($key > 0) <!-- Show additional images only for larger screens -->
+                                        <a href="{{ $banner['url'] }}" class="d-block" target="_blank">
+                                            <img src="{{ getStorageImages(path: $banner->photo_full_url, type: 'banner') }}"
+                                                alt="Image 4" class="img-fluid">
+                                        </a>
+                                    @endif
+                                </div>
+                            @endforeach
                         </div>
-                    @endforeach
+                    </div>
                 </div>
-                {{-- <!-- Controls -->
-                <a class="carousel-control-prev" href="#imageCarousel" role="button" data-bs-slide="prev">
-                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                    <span class="visually-hidden">Previous</span>
-                </a>
-                <a class="carousel-control-next" href="#imageCarousel" role="button" data-bs-slide="next">
-                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                    <span class="visually-hidden">Next</span>
-                </a> --}}
             </div>
         </div>
     </div>

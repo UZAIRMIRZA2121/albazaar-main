@@ -9,10 +9,10 @@
 @endif
 
 <header class="rtl __inline-10">
-    <div class="topbar">
-        <div class="container">
+    <div class="topbar" style="background-color: #fbf5f5">
+   
 
-            <div>
+             {{-- <div>
                 <div class="topbar-text dropdown d-md-none ms-auto">
                     <a class="topbar-link direction-ltr" href="tel: {{ $web_config['phone'] }}">
                         <i class="fa fa-phone"></i> {{ $web_config['phone'] }}
@@ -23,9 +23,9 @@
                         <i class="fa fa-phone"></i> {{ $web_config['phone'] }}
                     </a>
                 </div>
-            </div>
+            </div> --}}
 
-            <div>
+            {{-- <div>
                 @php($currency_model = getWebConfig(name: 'currency_model'))
                 @if ($currency_model == 'multi_currency')
                     <div class="topbar-text dropdown disable-autohide mr-4">
@@ -72,8 +72,12 @@
                         @endforeach
                     </ul>
                 </div>
-            </div>
-        </div>
+            </div> --}}
+
+            <p class="text-center d-block m-auto " style="color: #fc4d05"><b>Get 20% Discount</b> </p>
+         
+
+       
     </div>
 
     @php($categories = \App\Utils\CategoryManager::getCategoriesWithCountingAndPriorityWiseSorting(dataLimit: 11))
@@ -159,6 +163,60 @@
                             <i class="tio-search"></i>
                         </a>
                     </div>
+
+                    <div>
+                        @php($currency_model = getWebConfig(name: 'currency_model'))
+                        @if ($currency_model == 'multi_currency')
+                            <div class="topbar-text dropdown disable-autohide mr-4">
+                                <a class="topbar-link dropdown-toggle" href="#" data-toggle="dropdown">
+                                    <span>{{ session('currency_code') }} {{ session('currency_symbol') }}</span>
+                                </a>
+                                <ul
+                                    class="text-align-direction dropdown-menu dropdown-menu-{{ Session::get('direction') === 'rtl' ? 'right' : 'left' }} min-width-160px">
+                                    @foreach (\App\Models\Currency::where('status', 1)->get() as $key => $currency)
+                                        <li class="dropdown-item cursor-pointer get-currency-change-function"
+                                            data-code="{{ $currency['code'] }}">
+                                            {{ $currency->name }}
+                                        </li>
+                                    @endforeach
+                                </ul>
+                            </div>
+                        @endif
+        
+                        <div class="topbar-text dropdown disable-autohide  __language-bar text-capitalize">
+                            <a class="topbar-link dropdown-toggle" href="#" data-toggle="dropdown">
+                                @foreach ($web_config['language'] as $data)
+                                    @if ($data['code'] == getDefaultLanguage())
+                                    <span class="mr-2 text-capitalize">{{ strtoupper(substr($data['name'], 0, 2)) }}</span>
+                                        <img class="" width="20"
+                                            src="{{ theme_asset(path: 'public/assets/front-end/img/flags/' . $data['code'] . '.png') }}"
+                                            alt="{{ $data['name'] }}">
+                                       
+                                    @endif
+                                @endforeach
+                            </a>
+                            <ul
+                                class="text-align-direction dropdown-menu dropdown-menu-{{ Session::get('direction') === 'rtl' ? 'right' : 'left' }}">
+                                @foreach ($web_config['language'] as $key => $data)
+                                    @if ($data['status'] == 1)
+                                        <li class="change-language" data-action="{{ route('change-language') }}"
+                                            data-language-code="{{ $data['code'] }}">
+                                            <span class=" mr-2 text-capitalize">{{ $data['name'] }}</span>
+                                            <a class="dropdown-item pb-1" href="javascript:">
+                                                <img class="" width="20"
+                                                    src="{{ theme_asset(path: 'public/assets/front-end/img/flags/' . $data['code'] . '.png') }}"
+                                                    alt="{{ $data['name'] }}" />
+                                            
+                                            </a>
+                                        </li>
+                                    @endif
+                                @endforeach
+                            </ul>
+                        </div>
+                    </div>
+
+                    
+                    
                     <div
                         class="navbar-tool dropdown d-none d-md-block {{ Session::get('direction') === 'rtl' ? 'mr-md-3' : 'ml-md-3' }}">
                         <a class="navbar-tool-icon-box bg-secondary dropdown-toggle" href="{{ route('wishlists') }}">
