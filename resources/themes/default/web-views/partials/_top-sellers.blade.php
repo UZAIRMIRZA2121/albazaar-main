@@ -19,7 +19,6 @@
 
                 <div class="mt-3">
                     <div class="others-store-slider owl-theme owl-carousel">
-
                         @foreach ($topVendorsList as $vendorData)
                             <a href="{{route('shopView',['id'=> $vendorData['id']])}}" class="others-store-card text-capitalize">
                                 <div class="overflow-hidden other-store-banner">

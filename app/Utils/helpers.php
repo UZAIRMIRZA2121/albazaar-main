@@ -722,6 +722,7 @@ class Helpers
     public static function sales_commission_before_order($cart_group_id, $coupon_discount)
     {
         $carts = CartManager::get_cart(groupId: $cart_group_id);
+        
         $cart_summery = OrderManager::order_summary_before_place_order($carts, $coupon_discount);
     
         return self::seller_sales_commission($carts[0]['seller_is'], $carts[0]['seller_id'], $cart_summery['order_total']);
@@ -730,30 +731,42 @@ class Helpers
     public static function seller_sales_commission($seller_is, $seller_id, $order_total)
     {
         $commission_amount = 0;
-      
+    
+        // Check if the seller is valid
         if ($seller_is == 'seller') {
-           $commission = Commission::first();
-           $first_commission =  $commission->commission;
-           $first_commission_percentage =  $commission->commission_first_percentage;
-           $second_commission =  $commission->commission_second_price;
-           $second_commission_percentage =  $commission->commission_second_percentage;
-           if($order_total <= $first_commission){
-            $commission = $first_commission_percentage ;
-           }else{
-            $commission = $second_commission_percentage ;
-           }
-            // $seller = Seller::find($seller_id);
-            // if (isset($seller) && $seller['sales_commission_percentage'] !== null) {
-            //     $commission = $seller['sales_commission_percentage'];
-            // } else {
-            //     $commission = getWebConfig(name: 'sales_commission');
-            // }
-            $commission_amount = number_format(($order_total / 100) * $commission, 2);
-         
-            
+            // Fetch commission configuration
+            $commission = Commission::first();
+            // dd($order_total);
+            if ($commission) { 
+                // Extract commission details
+                $first_commission = $commission->commission;
+                $first_commission_percentage = $commission->commission_first_percentage;
+                $second_commission = $commission->commission_second_price;
+                $second_commission_percentage = $commission->commission_second_percentage;
+                $tax_percentage = $commission->tax_percentage;
+                
+                // Deduct tax from order total
+                $tax_total = ($order_total * $tax_percentage) / 100;
+                $order_total -= $tax_total;
+             
+                // Determine applicable commission percentage
+                if ($order_total <= $first_commission) {
+                    $commission_percentage = $first_commission_percentage;
+                } else {
+                    $commission_percentage = $second_commission_percentage;
+                }
+                // Calculate commission amount
+                $commission_amount = number_format(($order_total * $commission_percentage) / 100, 2);
+              
+            } else {
+                // Handle the case where no commission configuration is found
+                throw new \Exception('Commission configuration not found.');
+            }
+        }
+    
         return $commission_amount;
     }
-}
+    
 
     public static function categoryName($id)
     {

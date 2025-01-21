@@ -13,6 +13,11 @@ return [
     | a conventional file to locate the various service credentials.
     |
     */
+    'merchant_id' => env('PAYTABS_MERCHANT_ID'),
+    'server_key'  => env('PAYTABS_SERVER_KEY'),
+    'base_url'    => env('PAYTABS_BASE_URL', 'https://secure.paytabs.com'),
+
+    
     'tryotto' => [
         'base_url' => env('TRYOTTO_BASE_URL')
     ],

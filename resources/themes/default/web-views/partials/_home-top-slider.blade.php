@@ -7,6 +7,7 @@
                     .carousel-item img {
                         width: 100%;
                         height: auto;
+                        min-height: 450px;
                         /* Fixed height for large screens */
                         object-fit: cover;
                     }
@@ -17,7 +18,9 @@
                             height: auto;
                             /* Adjust height for smaller screens */
                         }
-
+                        .carousel-item img {
+                        min-height: unset !important;
+                    }
                     }
 
                     /* Carousel inner style */

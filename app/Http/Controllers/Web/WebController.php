@@ -508,6 +508,7 @@ class WebController extends Controller
 
     public function getCashOnDeliveryCheckoutComplete(Request $request): View|RedirectResponse|JsonResponse
     {
+    
         if ($request['payment_method'] != 'cash_on_delivery') {
             if ($request->ajax()) {
                 return response()->json([
@@ -517,6 +518,8 @@ class WebController extends Controller
             }
             return back()->with('error', 'Something_went_wrong');
         }
+
+       
         $uniqueID = OrderManager::gen_unique_id();
         $orderIds = [];
         $cartGroupIds = CartManager::get_cart_group_ids(request: $request, type: 'checked');
@@ -571,7 +574,7 @@ class WebController extends Controller
                     Toastr::error(translate('Already_registered'));
                     return back();
                 }
-
+              
                 $addCustomer = User::create([
                     'name' => $newCustomerRegister['name'],
                     'f_name' => $newCustomerRegister['name'],
@@ -583,7 +586,7 @@ class WebController extends Controller
                     'referral_code' => $newCustomerRegister['referral_code'],
                 ]);
                 session()->put('newRegisterCustomerInfo', $addCustomer);
-
+                dd($addCustomer);
                 $customerID = session()->has('guest_id') ? session('guest_id') : 0;
                 ShippingAddress::where(['customer_id' => $customerID, 'is_guest' => 1, 'id' => session('address_id')])
                     ->update(['customer_id' => $addCustomer['id'], 'is_guest' => 0]);
