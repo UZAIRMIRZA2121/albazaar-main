@@ -51,14 +51,6 @@
                                             </a>
                                         @endif
                                     </div>
-                                        <!-- Show only the first image on small screens (mobile), and all images on larger screens -->
-                                        <div class="col-3 ">
-                                            <a href="https://msonsmedicareservices.store/" class="d-block"
-                                                target="_blank">
-                                                <img src="http://127.0.0.1:8081/assets/front-end/img/placeholder/placeholder-2-1.png"
-                                                    alt="Image 4" class="img-fluid">
-                                            </a>
-                                        </div>
                                 @endforeach
                               
 
