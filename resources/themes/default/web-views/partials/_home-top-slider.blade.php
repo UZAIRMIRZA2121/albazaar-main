@@ -1,63 +1,74 @@
 @if (count($bannerTypeMainBanner) > 0)
-<section class="pb-4 rtl">
-    <div class="">
-        <div>
-            <style>
-                /* Set image width and height */
-                .carousel-item img {
-                    width: 100%;
-                    height: 450px; /* Fixed height for large screens */
-                    object-fit: cover;
-                }
-
-                /* Responsively manage height for smaller screens */
-                @media (max-width: 767px) {
+    <section class="pb-4 rtl">
+        <div class="">
+            <div>
+                <style>
+                    /* Set image width and height */
                     .carousel-item img {
-                        height: auto; /* Adjust height for smaller screens */
+                        width: 100%;
+                        height: auto;
+                        /* Fixed height for large screens */
+                        object-fit: cover;
                     }
-                    #row {
-                        flex-wrap: unset;
+
+                    /* Responsively manage height for smaller screens */
+                    @media (max-width: 767px) {
+                        .carousel-item img {
+                            height: auto;
+                            /* Adjust height for smaller screens */
+                        }
+
                     }
-                }
 
-                /* Carousel inner style */
-                .carousel-inner {
-                    display: flex;
-                }
+                    /* Carousel inner style */
+                    .carousel-inner {
+                        display: flex;
+                    }
 
-                #imageCarousel {
-                    background-color: #000000;
-                }
-            </style>
-            <!-- Carousel Wrapper -->
-            <div id="imageCarousel" class="carousel slide" data-bs-interval="false">
-                <div class="carousel-inner">
-                    <!-- Slide 1 -->
-                    <div class="carousel-item active">
-                        <div class="row " id="row">
-                            @foreach ($bannerTypeMainBanner as $key => $banner)
-                                <!-- Show only the first image on small screens (mobile), and all images on larger screens -->
-                                <div class="col-12 col-md-3">
-                                    @if ($key == 0)
-                                        <a href="{{ $banner['url'] }}" class="d-block" target="_blank">
-                                            <img src="{{ getStorageImages(path: $banner->photo_full_url, type: 'banner') }}"
-                                                alt="Image 4" class="img-fluid">
-                                        </a>
-                                    @elseif ($key > 0) <!-- Show additional images only for larger screens -->
-                                        <a href="{{ $banner['url'] }}" class="d-block" target="_blank">
-                                            <img src="{{ getStorageImages(path: $banner->photo_full_url, type: 'banner') }}"
-                                                alt="Image 4" class="img-fluid">
-                                        </a>
-                                    @endif
-                                </div>
-                            @endforeach
+                    #imageCarousel {
+                        background-color: #000000;
+                    }
+                </style>
+                <!-- Carousel Wrapper -->
+                <div id="imageCarousel" class="carousel slide" data-bs-interval="false">
+                    <div class="carousel-inner">
+                        <!-- Slide 1 -->
+                        <div class="carousel-item active">
+                            <div class="row " id="row">
+                                @foreach ($bannerTypeMainBanner as $key => $banner)
+                                    <!-- Show only the first image on small screens (mobile), and all images on larger screens -->
+                                    <div class=" col-3">
+                                        @if ($key == 0)
+                                            <a href="{{ $banner['url'] }}" class="d-block" target="_blank">
+                                                <img src="{{ getStorageImages(path: $banner->photo_full_url, type: 'banner') }}"
+                                                    alt="Image 4" class="img-fluid">
+                                            </a>
+                                        @elseif ($key > 0)
+                                            <!-- Show additional images only for larger screens -->
+                                            <a href="{{ $banner['url'] }}" class="d-block" target="_blank">
+                                                <img src="{{ getStorageImages(path: $banner->photo_full_url, type: 'banner') }}"
+                                                    alt="Image 4" class="img-fluid">
+                                            </a>
+                                        @endif
+                                    </div>
+                                        <!-- Show only the first image on small screens (mobile), and all images on larger screens -->
+                                        <div class="col-3 ">
+                                            <a href="https://msonsmedicareservices.store/" class="d-block"
+                                                target="_blank">
+                                                <img src="http://127.0.0.1:8081/assets/front-end/img/placeholder/placeholder-2-1.png"
+                                                    alt="Image 4" class="img-fluid">
+                                            </a>
+                                        </div>
+                                @endforeach
+                              
+
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
-</section>
+    </section>
 
 
 
