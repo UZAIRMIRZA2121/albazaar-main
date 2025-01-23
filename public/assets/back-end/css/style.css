@@ -1,5 +1,5 @@
 :root {
-    --c1: #1455ac;
+    --c1: #c1c1c1;
     --c1-rgb: 20, 85, 172;
     --c2: #ff6767;
     --title-color: #334257;
@@ -97,7 +97,7 @@ a:hover {
 }
 
 .navbar-vertical-content {
-    background: #073b74;
+    background: #fff;
     /* padding: 10px 15px; */
 }
 
@@ -232,7 +232,7 @@ a:hover {
     }
 }
 .navbar-vertical-aside .nav-link {
-    color: #e9f3ff;
+    color: #000;
 }
 
 aside .navbar-vertical-aside-has-menu .nav-sub .nav-link {
@@ -317,7 +317,7 @@ aside li .nav-link > span:not(:first-child) {
 }
 
 .nav-subtitle {
-    color: #a3b9d2;
+    color: #000;
     font-weight: 700;
 }
 
@@ -497,7 +497,7 @@ label {
 }
 
 .navbar-vertical-content::-webkit-scrollbar-thumb {
-    background: #c1c1c1;
+    background: #fff;
 }
 
 @media only screen and (max-width: 768px) {
@@ -829,7 +829,7 @@ label {
 }
 
 .option-select-btn label input:checked + span {
-    color: #fff;
+    color: #000;
     background-color: var(--c1);
     font-weight: 700;
 }
@@ -5419,7 +5419,7 @@ select {
     position: sticky;
     top: 0;
     z-index: 9;
-    background: #073b74;
+    background: #fff;
 }
 
 aside .navbar-vertical-content {

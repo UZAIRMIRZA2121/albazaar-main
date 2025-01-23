@@ -449,8 +449,7 @@ class OrderManager
 
     public static function generate_order($data)
     {
-
-
+        
         $req = array_key_exists('request', $data) ? $data['request'] : null;
         $user = Helpers::getCustomerInformation($req);
 
@@ -503,7 +502,6 @@ class OrderManager
             $coupon = Coupon::where(['code' => $coupon_code])
                 ->where('status', 1)
                 ->first();
-
             $coupon_process = $coupon ? self::coupon_process($data, $coupon) : $coupon_process;
         }
 

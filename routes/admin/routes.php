@@ -852,6 +852,7 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'middleware' => ['admin']],
 
             Route::controller(EnvironmentSettingsController::class)->group(function () {
                 Route::get(EnvironmentSettings::VIEW[URI], 'index')->name('environment-setup');
+                
                 Route::post(EnvironmentSettings::VIEW[URI], 'update');
                 Route::post(EnvironmentSettings::FORCE_HTTPS[URI], 'updateForceHttps')->name('environment-https-setup');
                 Route::post(EnvironmentSettings::OPTIMIZE_SYSTEM[URI], 'optimizeSystem')->name('optimize-system');

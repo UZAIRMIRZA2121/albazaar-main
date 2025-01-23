@@ -66,12 +66,23 @@
                         <div class="form-group">
                             <label class="title-color d-flex" for="exampleFormControlInput1">{{translate('phone')}}</label>
                             <div class="mb-3">
-                                <input class="form-control form-control-user phone-input-with-country-picker"
-                                       type="tel" id="exampleInputPhone" value="{{old('phone')}}"
-                                       placeholder="{{ translate('enter_phone_number') }}" required>
-                                <div class="">
-                                    <input type="text" class="country-picker-phone-number w-50" value="{{old('phone')}}" name="phone" hidden  readonly>
+                                <div class="input-group">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text">+966</span>
+                                    </div>
+                                    <input 
+                                        class="form-control form-control-user" 
+                                        type="tel" 
+                                        id="exampleInputPhone" 
+                                        value="{{ old('phone') }}" 
+                                        placeholder="{{ translate('enter_phone_number') }}" 
+                                        required 
+                                        name="phone"
+                                        pattern="[0-9]{9}" 
+                                        maxlength="9"
+                                    >
                                 </div>
+                                
                             </div>
                         </div>
                     </div>
@@ -297,11 +308,12 @@
                         </label>
                         <div class="input-group input-group-merge">
                             <select id="city" class="custom-select" name="city">
-                                <option value="Faislabad">Faislabad</option>
-                                <option value="Lahore">Lahore</option>
+                                <option value="Riyadh">Riyadh</option>
+                                <option value="Jeddah">Jeddah</option>
                             </select>
                         </div>
                     </div>
+                    
 
                     <div class="col-lg-6 form-group">
                         <label for="category" class="title-color d-flex gap-1 align-items-center">

@@ -73,6 +73,7 @@ class OrderController extends Controller
 
     public function place_order(Request $request): JsonResponse
     {
+  
         $user = Helpers::getCustomerInformation($request);
         $newCustomerRegister = null;
         $cartGroupIds = CartManager::get_cart_group_ids(request: $request, type: 'checked');
@@ -150,7 +151,6 @@ class OrderController extends Controller
                 'request' => $request,
                 'newCustomerRegister' => $newCustomerRegister,
             ];
-
             $orderId = OrderManager::generate_order($data);
 
             $order = Order::find($orderId);

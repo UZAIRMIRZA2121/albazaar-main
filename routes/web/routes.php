@@ -51,7 +51,6 @@ use App\Http\Controllers\Payment_Methods\SslCommerzPaymentController;
 use Laravel\Socialite\Facades\Socialite;
 
 
-
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -65,6 +64,7 @@ use Laravel\Socialite\Facades\Socialite;
 
 // use Illuminate\Http\Request;
 // use Anhskohbo\NoCaptcha\Facades\NoCaptcha;
+
 
 use Illuminate\Http\Request;
 
@@ -109,6 +109,8 @@ Route::get('/test-email', function () {
 
 
 
+
+
 Route::controller(WebController::class)->group(function () {
     Route::get('maintenance-mode', 'maintenance_mode')->name('maintenance-mode');
 });
@@ -129,20 +131,13 @@ Route::group(['namespace' => 'Web', 'middleware' => ['maintenance_mode', 'guestC
     Route::controller(HomeController::class)->group(function () {
         Route::get('/', 'index')->name('home');
     });
-
     Route::post('custome/vendors/add', [CustomVendorController::class, 'store'])->name('custome.vendors.store');
     Route::post('/send-otp', [CustomVendorController::class, 'sendOtp']);
-
     Route::get('login/{service}/callback', [SocialAuthController::class, 'handleProviderCallback'])->name('service-callback');
-
-
-
-
     Route::controller(WebController::class)->group(function () {
         Route::get('quick-view', 'getQuickView')->name('quick-view');
         Route::get('searched-products', 'getSearchedProducts')->name('searched-products');
     });
-
     Route::group(['middleware' => ['customer']], function () {
         Route::controller(ReviewController::class)->group(function () {
             Route::post(Review::ADD[URI], 'add')->name('review.store');
