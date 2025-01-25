@@ -14,6 +14,11 @@ enum Vendor
         VIEW => 'admin-views.vendor.add-new-vendor'
     ];
 
+    const EDIT = [
+        URI => 'edit',
+        VIEW => 'admin-views.vendor.edit-vendor'
+    ];
+
     const ORDER_LIST = [
         URI => 'order-list',
         VIEW => 'admin-views.vendor.order-list'

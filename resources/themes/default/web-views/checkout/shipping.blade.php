@@ -5,6 +5,8 @@
 @push('css_or_js')
     <link rel="stylesheet" href="{{ theme_asset(path: 'public/assets/front-end/css/bootstrap-select.min.css') }}">
     <link rel="stylesheet" href="{{ theme_asset(path: 'public/assets/front-end/plugin/intl-tel-input/css/intlTelInput.css') }}">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+
 @endpush
 
 @section('content')
@@ -15,6 +17,7 @@
                 <h3 class="font-weight-bold text-center text-lg-left">{{translate('checkout')}}</h3>
             </div>
             <section class="col-lg-8 px-max-md-0">
+                
                 <div class="checkout_details">
                 <div class="px-3 px-md-3">
                     @include('web-views.partials._checkout-steps',['step'=>2])
@@ -26,7 +29,41 @@
                         <div class="px-3 px-md-0">
                             <h4 class="pb-2 mt-4 fs-18 text-capitalize">{{ translate('shipping_address')}}</h4>
                         </div>
-
+                        <div class="container">
+                            <div class="row">
+                                <!-- Address Form -->
+                                <div class="col-md-12">
+                                    <div class="card">
+                                        <div class="card-header">Delivery Address</div>
+                                        <div class="card-body">
+                                            <form id="address-form">
+                                                <div class="form-group">
+                                                    <label>City</label>
+                                                    <input type="text" class="form-control" name="city" required>
+                                                </div>
+                                                <button type="submit" class="btn btn-primary">Get Shipping Options</button>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <!-- Shipping Options -->
+                                <div class="col-md-12">
+                                    <div class="card">
+                                        <div class="card-header">Available Shipping Options</div>
+                                        <div class="card-body">
+                                            <div id="shipping-options">
+                                                <!-- Shipping options will be rendered here -->
+                                            </div>
+                                            
+                                            <button id="proceed-to-payment" class="btn btn-success mt-3 w-100" disabled>
+                                                Proceed to Payment
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                         @php($shippingAddresses= \App\Models\ShippingAddress::where(['customer_id'=>auth('customer')->id(), 'is_guest'=>0])->get())
                         <form method="post" class="card __card" id="address-form">
                             <div class="card-body p-0">
@@ -59,6 +96,7 @@
                                                 </div>
                                             </div>
                                         @endif
+                                        
                                         <div id="accordion">
                                             <div class="">
                                                 <div class="mt-3">
@@ -469,6 +507,8 @@
 @push('script')
     <script src="{{ theme_asset(path: 'public/assets/front-end/plugin/intl-tel-input/js/intlTelInput.js') }}"></script>
     <script src="{{ theme_asset(path: 'public/assets/front-end/js/country-picker-init.js') }}"></script>
+<script src="{{ asset('js/shipping.js') }}"></script>
+
     <script>
         "use strict";
         const deliveryRestrictedCountries = @json($countriesName);

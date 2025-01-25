@@ -17,6 +17,7 @@ class ModulePermissionMiddleware
      */
     public function handle($request, Closure $next, $module)
     {
+      
         if (Helpers::module_permission_check($module)) {
             return $next($request);
         }

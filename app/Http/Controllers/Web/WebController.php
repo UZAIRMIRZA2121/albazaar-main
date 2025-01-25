@@ -393,6 +393,7 @@ class WebController extends Controller
 
     public function checkout_details(Request $request)
     {
+     
         if (
             (!auth('customer')->check() || Cart::where(['customer_id' => auth('customer')->id()])->count() < 1)
             && (!getWebConfig(name: 'guest_checkout') || !session()->has('guest_id') || !session('guest_id'))
@@ -400,7 +401,7 @@ class WebController extends Controller
             Toastr::error(translate('invalid_access'));
             return redirect('/');
         }
-
+   
         $response = self::checkValidationForCheckoutPages($request);
         if ($response['status'] == 0) {
             foreach ($response['message'] as $message) {
@@ -421,7 +422,7 @@ class WebController extends Controller
             'customer_id' => $user == 'offline' ? session('guest_id') : auth('customer')->id(),
             'is_guest' => $user == 'offline' ? 1 : '0',
         ])->get();
-
+    
         $countriesName = [];
         $countriesCode = [];
         foreach ($countries as $country) {

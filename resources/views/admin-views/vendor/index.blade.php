@@ -113,13 +113,23 @@
                                     </td>
                                     <td>
                                         <div class="d-flex justify-content-center gap-2">
+                                            <!-- View Button -->
                                             <a title="{{translate('view')}}"
                                                 class="btn btn-outline-info btn-sm square-btn"
-                                                href="{{route('admin.vendors.view',$seller->id)}}">
+                                                href="{{route('admin.vendors.view', $seller->id)}}">
                                                 <i class="tio-invisible"></i>
                                             </a>
+                                            
+                                            <!-- Edit Button -->
+                                            <a title="{{translate('edit')}}"
+                                            class="btn btn-outline-warning btn-sm square-btn"
+                                            href="{{ url('admin/vendors/edit/' . $seller->id) }}">
+                                            <i class="tio-edit"></i>
+                                        </a>
+                                        
                                         </div>
                                     </td>
+                                    
                                 </tr>
                             @endforeach
                             </tbody>

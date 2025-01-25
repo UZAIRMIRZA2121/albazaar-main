@@ -18,9 +18,12 @@ return [
     'base_url'    => env('PAYTABS_BASE_URL', 'https://secure.paytabs.com'),
 
     
-    'tryotto' => [
-        'base_url' => env('TRYOTTO_BASE_URL')
+    'tryoto' => [
+        'base_url' => env('TRYOTO_BASE_URL', 'https://staging-api.tryoto.com'),
+        'refresh_token' => env('TRYOTO_REFRESH_TOKEN', 'AMf-vBz6Hq1Bjats_V-QYXs9nFdteH6xS3R46Pyx6CKJ27R_z1XdXX5NF9HwN2WzDczUV1X4eKYflEXkZSF5Xmb4ZEQ0hQL9wyuB8Wtxm1PtEVa5ec5XonbEYFNtYa6aD7oIrZ_2oSwMimpSzhofgUCLCLQVqomPzxzitK870CGdNKL_5gEeHTavWtA1EWvXC3kwAxNFXvSVQMHIXujv7sxZ44u9ozCR4Q'),
+        'webhook_secret' => env('TRYOTO_WEBHOOK_SECRET'),
     ],
+
 
     'mailgun' => [
         'domain' => env('MAILGUN_DOMAIN'),
