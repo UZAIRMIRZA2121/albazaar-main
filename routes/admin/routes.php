@@ -427,14 +427,17 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'middleware' => ['admin']],
         });
     });
 
-    Route::get('admin/vendors/edit/{id}', [VendorController::class, 'edit'])->name('vendors.edit');
 
     Route::group(['prefix' => 'vendors', 'as' => 'vendors.', 'middleware' => ['module:user_section']], function () {
-  
+
+        
         Route::controller(VendorController::class)->group(function () {
             Route::get(Vendor::LIST[URI], 'index')->name('vendor-list');
             Route::get(Vendor::ADD[URI], 'getAddView')->name('add');
             Route::POST(Vendor::ADD[URI], 'add');
+
+            Route::get(Vendor::EDIT[URI] . '/{id}', 'edit')->name('edit');
+
 
             Route::get(Vendor::ORDER_LIST[URI] . '/{vendor_id}', 'getOrderListView')->name('order-list');
             Route::get(Vendor::ORDER_LIST_EXPORT[URI] . '/{vendor_id}', 'exportOrderList')->name('order-list-export');

@@ -123,7 +123,7 @@
                                             <!-- Edit Button -->
                                             <a title="{{translate('edit')}}"
                                             class="btn btn-outline-warning btn-sm square-btn"
-                                            href="{{ url('admin/vendors/edit/' . $seller->id) }}">
+                                            href="{{route('admin.vendors.edit', $seller->id)}}">
                                             <i class="tio-edit"></i>
                                         </a>
                                         

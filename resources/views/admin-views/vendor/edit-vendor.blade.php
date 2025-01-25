@@ -41,7 +41,7 @@
             border: 2px solid #E37070;
         }
     </style>
-    {{ $seller }}
+    {{-- {{ $seller }} --}}
     <div class="content container-fluid main-card {{ Session::get('direction') }}">
         <div class="mb-4">
             <h2 class="h1 mb-0 text-capitalize d-flex align-items-center gap-2">
@@ -288,7 +288,7 @@
                             class="mb-1" alt="">
                         {{ translate('shop_information') }}
                     </h5>
-                    {{ $seller->shop }}
+                    {{-- {{ $seller->shop }} --}}
                     <div class="row">
                         <div class="col-lg-6 form-group">
                             <label for="shop_address" class="title-color d-flex gap-1 align-items-center">

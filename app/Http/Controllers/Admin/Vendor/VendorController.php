@@ -613,9 +613,10 @@ class VendorController extends BaseController
 
     public function edit($seller_id): View
     {
+      
         // Retrieve the seller data by ID
         $seller = Seller::where('id',$seller_id)->first();
-      
+ 
    
         // Pass the seller data to the edit view
         return view('admin-views.vendor.edit-vendor', compact('seller'));

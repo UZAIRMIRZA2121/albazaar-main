@@ -16,7 +16,7 @@ enum Vendor
 
     const EDIT = [
         URI => 'edit',
-        VIEW => 'admin-views.vendor.edit-vendor'
+        VIEW => ''
     ];
 
     const ORDER_LIST = [
