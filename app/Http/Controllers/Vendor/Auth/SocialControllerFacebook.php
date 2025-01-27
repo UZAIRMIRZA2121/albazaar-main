@@ -57,8 +57,9 @@ class SocialControllerFacebook extends Controller
                     'google_id' => $user->id,
                     'password' => $user->password = Hash::make($uuid . now())
                 ]);
-                Auth::login($createUser);
-                  return redirect()->intended('dashboard');
+                session(['new_email' => $user->email]);
+
+                return redirect()->route('vendor.auth.registration.index');
             }
         } catch (\Throwable $th) {
             throw $th;
