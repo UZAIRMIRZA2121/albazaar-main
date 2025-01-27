@@ -24,6 +24,7 @@ use App\Exports\VendorOrderListExport;
 use App\Http\Controllers\BaseController;
 use App\Http\Requests\Admin\VendorAddRequest;
 use App\Models\Seller;
+use App\Models\Shop;
 use App\Services\ShopService;
 use App\Services\VendorService;
 use App\Traits\CommonTrait;
@@ -31,6 +32,7 @@ use App\Traits\EmailTemplateTrait;
 use App\Traits\PaginatorTrait;
 use App\Traits\PushNotificationTrait;
 use Brian2694\Toastr\Facades\Toastr;
+use Hash;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
@@ -39,6 +41,8 @@ use Illuminate\Support\Str;
 use Maatwebsite\Excel\Facades\Excel;
 use Mail;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
+
+
 
 class VendorController extends BaseController
 {
@@ -609,18 +613,70 @@ class VendorController extends BaseController
 
     }
 
+    public function update(Request $request, $id): RedirectResponse
+    {
+        // Find the seller by ID
+        $seller = Seller::find($id);
+        $shop = Shop::where('seller_id', $id)->first();
 
+        if (!$seller) {
+            return response()->json(['message' => translate('seller_not_found')], 404);
+        }
 
+        // Update shop data
+        $shop->update([
+            'name' => $request->input('shop_name'),
+            'address' => $request->input('shop_address'),
+            'contact' => $request->input('phone'),
+        ]);
+
+        // Update seller data
+        $seller->update([
+            'f_name' => $request->input('f_name'),
+            'l_name' => $request->input('l_name'),
+            'phone' => $request->input('phone'),
+            'email' => $request->input('email'),
+            'free_delivery_over_amount' => $request->input('free_delivery_over_amount'),
+            'image' => $request->file('image') ? $request->file('image')->store('sellers/images') : $seller->image,
+            'password' => $request->filled('password') ? Hash::make($request->input('password')) : $seller->password,
+            'status' => $request->input('status'),
+            'bank_name' => $request->input('bank_name'),
+            'branch' => $request->input('branch'),
+            'account_no' => $request->input('account_no'),
+            'holder_name' => $request->input('holder_name'),
+            'auth_token' => $request->input('auth_token'),
+            'sales_commission_percentage' => $request->input('sales_commission_percentage'),
+            'gst' => $request->input('gst'),
+            'cm_firebase_token' => $request->input('cm_firebase_token'),
+            'pos_status' => $request->input('pos_status'),
+            'minimum_order_amount' => $request->input('minimum_order_amount'),
+            'free_delivery_status' => $request->input('free_delivery_status'),
+            'app_language' => $request->input('app_language'),
+            'radio_check' => $request->input('radio_check'),
+            'business_day' => $request->input('business_day'),
+            'establishment' => $request->input('establishment'),
+            'upload_certifice' => $request->file('upload_certifice') ? $request->file('upload_certifice')->store('sellers/certificates') : $seller->upload_certifice,
+            'shop_name' => $request->input('shop_name'),
+            'shop_address' => $request->input('shop_address'),
+            'brief_here' => $request->input('brief_here'),
+            'latitude' => $request->input('latitude'),
+            'longitude' => $request->input('longitude'),
+            'city' => $request->input('city'),
+            'category' => $request->input('category'),
+            'google_id' => $request->input('google_id'),
+            'otp' => $request->input('otp'),
+        ]);
+
+        return redirect()->route('admin.vendors.vendor-list', ['all']);
+    }
     public function edit($seller_id): View
     {
-      
+
         // Retrieve the seller data by ID
-        $seller = Seller::where('id',$seller_id)->first();
- 
-   
+        $seller = Seller::where('id', $seller_id)->first();
         // Pass the seller data to the edit view
         return view('admin-views.vendor.edit-vendor', compact('seller'));
-  
+
     }
 
 }
