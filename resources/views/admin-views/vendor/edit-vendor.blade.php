@@ -50,9 +50,11 @@
                 {{ translate('Edit Vendor') }}
             </h2>
         </div>
-        <form class="user" action="{{ route('admin.vendors.add') }}" method="post" enctype="multipart/form-data"
-            id="add-vendor-form">
+        <form class="user" action="{{ route('admin.vendors.update', ['id' => $seller->id]) }}" method="post" enctype="multipart/form-data">
             @csrf
+            @method('PUT')
+             <!-- Specifies the HTTP PUT method -->
+            
             <div class="card">
                 <div class="card-body">
                     <input type="hidden" name="status" value="approved">
@@ -149,7 +151,7 @@
                             </label>
                             <div class="input-group input-group-merge">
                                 <input type="password" class="js-toggle-password form-control password-check"
-                                    name="password" required id="user_password" minlength="8"
+                                    name="password"  id="user_password" minlength="8"
                                     placeholder="{{ translate('password_minimum_8_characters') }}"
                                     data-hs-toggle-password-options='{
                                                          "target": "#changePassTarget",
@@ -170,7 +172,7 @@
                                 class="title-color d-flex gap-1 align-items-center">{{ translate('confirm_password') }}</label>
                             <div class="input-group input-group-merge">
                                 <input type="password" class="js-toggle-password form-control" name="confirm_password"
-                                    required id="confirm_password" placeholder="{{ translate('confirm_password') }}"
+                                     id="confirm_password" placeholder="{{ translate('confirm_password') }}"
                                     data-hs-toggle-password-options='{
                                                          "target": "#changeConfirmPassTarget",
                                                         "defaultClass": "tio-hidden-outlined",
@@ -290,14 +292,7 @@
                     </h5>
                     {{-- {{ $seller->shop }} --}}
                     <div class="row">
-                        <div class="col-lg-6 form-group">
-                            <label for="shop_address" class="title-color d-flex gap-1 align-items-center">
-                                Shop Address
-                            </label>
-                            <div class="input-group input-group-merge">
-                                <textarea id="shop_address" name="shop_address" class="form-control" rows="4" placeholder="Address">{{ $seller->shop->address }}</textarea>
-                            </div>
-                        </div>
+                  
 
                         <div class="col-lg-6 form-group">
                             <label for="brief_here" class="title-color d-flex gap-1 align-items-center">
@@ -494,9 +489,8 @@
                     <div class="d-flex align-items-center justify-content-end gap-10">
                         <input type="hidden" name="from_submit" value="admin">
                         <button type="reset" class="btn btn-secondary reset-button">{{ translate('reset') }} </button>
-                        <button type="button" class="btn btn--primary btn-user form-submit"
-                            data-form-id="add-vendor-form" data-redirect-route="{{ route('admin.vendors.vendor-list') }}"
-                            data-message="{{ translate('want_to_add_this_vendor') . '?' }}">{{ translate('submit') }}</button>
+                        <button type="submit" class="btn btn--primary btn-user"
+                           >{{ translate('submit') }}</button>
                     </div>
                 </div>
             </div>
@@ -509,32 +503,7 @@
     <script src="{{ dynamicAsset(path: 'public/assets/back-end/plugins/intl-tel-input/js/intlTelInput.js') }}"></script>
     <script src="{{ dynamicAsset(path: 'public/assets/back-end/js/country-picker-init.js') }}"></script>
     <script src="{{ dynamicAsset(path: 'public/assets/back-end/js/admin/vendor.js') }}"></script>
-    {{-- <script>
-        function initMap() {
-          // Interactive map initialize karna
-          const map = new google.maps.Map(document.getElementById("map"), {
-            center: { lat: 24.7136, lng: 46.6753 }, // Riyadh ke coordinates
-            zoom: 10,
-          });
-    
-          // Click event listener
-          map.addListener("click", (event) => {
-            const lat = event.latLng.lat(); // Latitude nikalna
-            const lng = event.latLng.lng(); // Longitude nikalna
-    
-            // Input fields mein values insert karna
-            document.getElementById("latitude").value = lat;
-            document.getElementById("longitude").value = lng;
-    
-            // Alert show karna
-            alert(`Latitude: ${lat}, Longitude: ${lng}`);
-          });
-        }
-    
-        // Map initialize karna jab page load ho
-        window.onload = initMap;
-      </script> --}}
-    <!-- Google Maps API Script -->
+ 
     <script
         src="https://maps.googleapis.com/maps/api/js?key=AIzaSyB3VTAihhs6gEYNld1LMwNkEiszH3TRcMQ&libraries=places&callback=initMap"
         async></script>

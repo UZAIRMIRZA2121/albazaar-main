@@ -126,6 +126,7 @@ class SocialAuthController extends Controller
             return self::actionCustomerLoginProcess($request, $user, $user['email']);
         }
     }
+}
 
     public function actionCustomerLoginProcess($request, $user, $email): JsonResponse|RedirectResponse
     {

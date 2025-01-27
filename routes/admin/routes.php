@@ -427,6 +427,8 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'middleware' => ['admin']],
         });
     });
 
+// routes/web.php or routes/api.php
+Route::put('/vendors/{id}', [VendorController::class, 'update'])->name('vendors.update');
 
     Route::group(['prefix' => 'vendors', 'as' => 'vendors.', 'middleware' => ['module:user_section']], function () {
 
@@ -437,6 +439,7 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'middleware' => ['admin']],
             Route::POST(Vendor::ADD[URI], 'add');
 
             Route::get(Vendor::EDIT[URI] . '/{id}', 'edit')->name('edit');
+            Route::put(Vendor::UPDATE[URI], 'update');
 
 
             Route::get(Vendor::ORDER_LIST[URI] . '/{vendor_id}', 'getOrderListView')->name('order-list');
