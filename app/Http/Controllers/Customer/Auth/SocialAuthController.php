@@ -51,7 +51,7 @@ class SocialAuthController extends Controller
                 'services.facebook.client_secret' => env('FACEBOOK_CLIENT_SECRET'),
                 'services.facebook.redirect' => env('FACEBOOK_REDIRECT_URL'),
             ]);
-        //  dd(Config::get('services.facebook'));
+       //  dd(Config::get('services'));
 
 
         }
@@ -78,6 +78,7 @@ class SocialAuthController extends Controller
                 'services.facebook.client_secret' => env('FACEBOOK_CLIENT_SECRET'),
                 'services.facebook.redirect' => env('FACEBOOK_REDIRECT_URL'),
             ]);
+      
         //  dd(Config::get('services.facebook'));
 
         $userSocialData = Socialite::driver($service)->stateless()->user();

@@ -35,7 +35,7 @@ class SocialControllerFacebook extends Controller
     
     public function loginWithFacebook()
     {
-        dd('loginWithFacebook');
+      
           // Dynamically set Facebook credentials
           Config::set('services.facebook.client_id', env('FACEBOOK_CLIENT_ID'));
           Config::set('services.facebook.client_secret', env('FACEBOOK_CLIENT_SECRET'));
