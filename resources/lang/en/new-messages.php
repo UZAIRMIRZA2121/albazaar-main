@@ -8843,8 +8843,6 @@ return [
 	"jazzcash" => "Jazzcash",
 	"if_you_enable_this_Withdraw_method_will_be_shown_in_the_vendor_app_and_vendor_panel" => "If you enable this Withdraw method will be shown in the vendor app and vendor panel",
 	"if_you_disable_this_Withdraw_method_will_not_be_shown_in_the_vendor_app_and_vendor_panel" => "If you disable this Withdraw method will not be shown in the vendor app and vendor panel",
-	"offline_Payment_allows_customers_to_use_external_payment_methods._They_must_share_payment_details_with_the_vendor_afterward._Admin_can_set_whether_customers_can_make_offline_payments_by_enabling/disabling_this_button.
-                                            " => "Offline Payment allows customers to use external payment methods. They must share payment details with the vendor afterward. Admin can set whether customers can make offline payments by enabling/disabling this button. ",
 	"Successfully_Updated" => "Successfully Updated",
 	"banner_image_type_jpg,_jpeg,_webp_or_png" => "Banner image type jpg  jpeg  webp or png",
 	"image_type_jpg,_jpeg,_webp_or_png" => "Image type jpg  jpeg  webp or png",
@@ -8860,4 +8858,6 @@ return [
 	"asd" => "Asd",
 	"10" => "10",
 	"no_coupon_found" => "No coupon found",
+	"Edit Vendor" => "Edit Vendor",
+	"seller_updated_successfully" => "Seller updated successfully",
 ];
