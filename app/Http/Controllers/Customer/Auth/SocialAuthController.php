@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Customer\Auth;
 use App\Contracts\Repositories\CustomerRepositoryInterface;
 use App\Contracts\Repositories\PhoneOrEmailVerificationRepositoryInterface;
 use App\Models\User;
+use App\Models\BusinessSetting;
 use App\Services\FirebaseService;
 use App\Services\Web\CustomerAuthService;
 use App\Utils\CustomerManager;
@@ -14,7 +15,6 @@ use App\Utils\CartManager;
 use Brian2694\Toastr\Facades\Toastr;
 use Carbon\Carbon;
 use Carbon\CarbonInterval;
-use Config;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
@@ -22,6 +22,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
 use Laravel\Socialite\Facades\Socialite;
+use Illuminate\Support\Facades\Config;
 
 class SocialAuthController extends Controller
 {
@@ -37,68 +38,54 @@ class SocialAuthController extends Controller
 
     public function redirectToProvider($service)
     {
-        if ($service == 'google') {
-            // Set the client ID, secret, and redirect URI directly
-            config([
-                'services.google.client_id' => env('GOOGLE_CLIENT_ID'),
-                'services.google.client_secret' => env('GOOGLE_CLIENT_SECRET'),
-                'services.google.redirect' => env('GOOGLE_REDIRECT_URI'),
-            ]);
-        }else if ($service == 'facebook') {
-            // Set the client ID, secret, and redirect URI directly
-            config([
-                'services.facebook.client_id' => env('FACEBOOK_CLIENT_ID'),
-                'services.facebook.client_secret' => env('FACEBOOK_CLIENT_SECRET'),
-                'services.facebook.redirect' => env('FACEBOOK_REDIRECT_URL'),
-            ]);
-       //  dd(Config::get('services'));
-
-
+        $business_setting = BusinessSetting::where('type', 'social_login')->first();
+    
+        if ($business_setting) {
+            // Decode the JSON string into an array
+            $socialLogins = json_decode($business_setting->value, true);
+    
+            foreach ($socialLogins as $socialLogin) {
+                if ($socialLogin['status'] == 1) { // Check if the login method is enabled
+                    if ($socialLogin['login_medium'] == $service) {
+                        // Set configuration dynamically based on the service
+                        config([
+                            "services.{$service}.client_id" => $socialLogin['client_id'],
+                            "services.{$service}.client_secret" => $socialLogin['client_secret'],
+                            "services.{$service}.redirect" => env(strtoupper($service) . '_REDIRECT_URL'), // Assuming the redirect URL is in the .env file
+                        ]);
+                        break;
+                    }
+                }
+            }
         }
-            return Socialite::driver($service)->redirect();
-   
-      
+    
+        // Redirect to the provider
+        return Socialite::driver($service)->redirect();
     }
     
-
     public function handleProviderCallback(Request $request, $service)
     {
-
-        if ($service == 'google') {
-            // Set the client ID, secret, and redirect URI directly
-            config([
-                'services.google.client_id' => env('GOOGLE_CLIENT_ID'),
-                'services.google.client_secret' => env('GOOGLE_CLIENT_SECRET'),
-                'services.google.redirect' => env('GOOGLE_REDIRECT_URI'),
-            ]);
-        }else if ($service == 'facebook') {
-            // Set the client ID, secret, and redirect URI directly
-            config([
-                'services.facebook.client_id' => env('FACEBOOK_CLIENT_ID'),
-                'services.facebook.client_secret' => env('FACEBOOK_CLIENT_SECRET'),
-                'services.facebook.redirect' => env('FACEBOOK_REDIRECT_URL'),
-            ]);
-      
-        //  dd(Config::get('services.facebook'));
-
-        $userSocialData = Socialite::driver($service)->stateless()->user();
+        try {
+            // Retrieve the user's social data
+            $userSocialData = Socialite::driver($service)->stateless()->user();
+        } catch (\Exception $e) {
+            // Handle the exception if callback fails
+            return redirect()->route('customer.auth.login')->with('error', 'Failed to login with ' . ucfirst($service) . '. Please try again.');
+        }
+    
         $user = $this->customerRepo->getFirstWhere(params: ['email' => $userSocialData->getEmail()]);
-
+    
         if (!$user || $user['login_medium'] != $service) {
-            $name = explode(' ', $userSocialData['name']);
-            if (count($name) > 1) {
-                $fastName = implode(" ", array_slice($name, 0, -1));
-                $lastName = end($name);
-            } else {
-                $fastName = implode(" ", $name);
-                $lastName = '';
-            }
-            $fullName = $fastName . ' ' . $lastName;
-
+            // Split name into first and last name
+            $name = explode(' ', $userSocialData->getName());
+            $firstName = implode(" ", array_slice($name, 0, -1));
+            $lastName = count($name) > 1 ? end($name) : '';
+    
+            // Store user data in the session for social login confirmation
             session()->forget('socialLoginEmailRemovedForOldUser');
             session()->put('social_login_new_customer', [
-                'name' => $fullName,
-                'f_name' => $fastName,
+                'name' => $userSocialData->getName(),
+                'f_name' => $firstName,
                 'l_name' => $lastName,
                 'email' => $userSocialData->getEmail(),
                 'phone' => '',
@@ -109,26 +96,28 @@ class SocialAuthController extends Controller
                 'is_phone_verified' => 0,
                 'is_email_verified' => 1,
                 'referral_code' => Helpers::generate_referer_code(),
-                'temporary_token' => Str::random(40)
+                'temporary_token' => Str::random(40),
             ]);
-
+    
+            // Redirect to social login confirmation page
             return redirect()->route('customer.auth.social-login-confirmation', [
                 'identity' => base64_encode($userSocialData->getEmail()),
-                'fullName' => base64_encode($fullName),
+                'fullName' => base64_encode($userSocialData->getName()),
             ]);
         } else {
+            // Update existing user details
             $this->customerRepo->updateWhere(params: ['email' => $user['email']], data: [
                 'is_email_verified' => 1,
                 'login_medium' => $service,
                 'social_id' => $userSocialData->id,
-                'temporary_token' => Str::random(40)
+                'temporary_token' => Str::random(40),
             ]);
-
+    
+            // Login the customer
             return self::actionCustomerLoginProcess($request, $user, $user['email']);
         }
     }
-}
-
+    
     public function actionCustomerLoginProcess($request, $user, $email): JsonResponse|RedirectResponse
     {
         // Need Verification Or Not
