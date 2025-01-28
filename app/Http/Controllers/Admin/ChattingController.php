@@ -132,7 +132,7 @@ class ChattingController extends BaseController
                 ]);
             }
         } elseif ($type == 'seller') {
-           
+         
             $allChattingUsers = $this->chattingRepo->getListWhereNotNull(
                 orderBy: ['created_at' => 'DESC'],
                 filters: ['admin_id' => 1],
@@ -140,9 +140,10 @@ class ChattingController extends BaseController
                 relations: ['seller'],
                 dataLimit: 'all'
             )->unique('seller_id');
-
+           
             if (count($allChattingUsers) > 0) {
-                $lastChatUser = $allChattingUsers[0]->customer;
+                $lastChatUser = $allChattingUsers[0]->seller;
+               
                 if ($lastChatUser) {
                     $this->chattingRepo->updateAllWhere(
                         params: ['admin_id' => $adminId, 'seller_id' => $lastChatUser['id']],

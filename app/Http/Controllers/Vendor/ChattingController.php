@@ -62,9 +62,10 @@ class ChattingController extends BaseController
      */
     public function getListView(string|array $type): View
     {
-       
+     
         $shop = $this->shopRepo->getFirstWhere(params: ['seller_id' => auth('seller')->id()]);
         $vendorId = auth('seller')->id();
+     
         if ($type == 'delivery-man') {
             $allChattingUsers = $this->chattingRepo->getListWhereNotNull(
                 orderBy: ['created_at' => 'DESC'],
@@ -127,6 +128,7 @@ class ChattingController extends BaseController
                 ]);
             }
         }elseif ($type == 'admin') {
+         
             $allChattingUsers = $this->chattingRepo->getListWhereNotNull(
                 orderBy: ['created_at' => 'DESC'],
                 filters: ['seller_id' => $vendorId],
@@ -136,7 +138,9 @@ class ChattingController extends BaseController
             )->unique('admin_id');
           
             if (count($allChattingUsers) > 0) {
-                $lastChatUser = $allChattingUsers[0]->customer;
+              
+                $lastChatUser = $allChattingUsers[0]->admin;
+               
                 $this->chattingRepo->updateAllWhere(
                     params: ['seller_id' => $vendorId, 'admin_id' =>1],
                     data: ['seen_by_admin' => 1]
@@ -265,6 +269,31 @@ class ChattingController extends BaseController
                 dataLimit: 'all'
             );
             $data = self::getRenderMessagesView(user: $customer, message: $chattingMessages, type: 'customer');
+        }elseif ($request->has(key: 'admin_id')) {
+
+         $a =   $this->chattingRepo->add(
+                data: $this->chattingService->getAdminChattingData(
+                    request: $request,
+                    shopId: $shop['id'],
+                    vendorId: $vendor['id'],
+                    
+                    )
+
+                    
+                );
+            Log::info($request->all());
+            Log::info($a);
+            Log::info('-------------------------------------------------');
+            $customer = Admin::first();
+            event(new ChattingEvent(key: 'message_from_seller', type: 'admin', userData: $customer, messageForm: $vendor));
+
+            $chattingMessages = $this->chattingRepo->getListWhereNotNull(
+                orderBy: ['created_at' => 'DESC'],
+                filters: ['seller_id' => $vendor['id'], 'admin_id' => 1],
+                whereNotNull: ['admin_id', 'seller_id'],
+                dataLimit: 'all'
+            );
+            $data = self::getRenderMessagesView(user: $customer, message: $chattingMessages, type: 'admin');
         }
         return response()->json($data);
     }

@@ -23,6 +23,7 @@ use App\Exports\VendorWithdrawRequest;
 use App\Exports\VendorOrderListExport;
 use App\Http\Controllers\BaseController;
 use App\Http\Requests\Admin\VendorAddRequest;
+use App\Models\Chatting;
 use App\Models\Seller;
 use App\Models\Shop;
 use App\Services\ShopService;
@@ -139,6 +140,7 @@ class VendorController extends BaseController
                     'userType' => 'vendor',
                     'templateName' => 'registration-approved',
                 ];
+                $message = translate('Vendor_Registration_Approved');
             } elseif ($request['status'] == "rejected") {
                 $data = [
                     'vendorName' => $vendor['f_name'],
@@ -148,6 +150,7 @@ class VendorController extends BaseController
                     'userType' => 'vendor',
                     'templateName' => 'registration-denied',
                 ];
+                $message = translate('Vendor_Registration_Denied');
             }
         } else {
             if ($request['status'] == "suspended") {
@@ -159,6 +162,8 @@ class VendorController extends BaseController
                     'userType' => 'vendor',
                     'templateName' => 'account-suspended',
                 ];
+                $message = translate('Account_Suspended');
+
             } else {
                 $data = [
                     'vendorName' => $vendor['f_name'],
@@ -168,12 +173,20 @@ class VendorController extends BaseController
                     'userType' => 'vendor',
                     'templateName' => 'account-activation',
                 ];
+                $message = translate('Account_Activate');
+
             }
         }
-
-
-
-
+        Chatting::create([
+            'seller_id' => $request['id'],
+            'admin_id' => 1,
+            'message' => 'Welcome to ALBAZAR',
+            'sent_by_admin' => 1,
+            'seen_by_admin' => 1,
+            'seen_by_seller' => 0,
+            'status' => 1,
+            'notification_receiver' => 'seller',
+        ]);
         event(new VendorRegistrationEvent(email: $vendor['email'], data: $data));
         return back();
     }

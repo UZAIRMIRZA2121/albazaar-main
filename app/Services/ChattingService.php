@@ -78,6 +78,25 @@ class ChattingService
             'created_at' => now(),
         ];
     }
+    public function getAdminChattingData(object $request , string|int $shopId, string|int $vendorId):array
+    {
+        $admin_id = $request['user_id'] ? null: 1;
+   
+        return [
+            'user_id' => $request['user_id'],
+            'seller_id' => $vendorId,
+            'shop_id' => $shopId,
+            'admin_id' => $admin_id,
+            'message' => $request->message,
+            'attachment' =>json_encode($this->getAttachment($request)),
+            'sent_by_seller' => 1,
+            'seen_by_seller' => 1,
+            'seen_by_admin' => 0,
+            'notification_receiver' => 'admin',
+            'created_at' => now(),
+        ];
+    }
+
 
     /**
      * @param object $request
