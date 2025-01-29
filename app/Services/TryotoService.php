@@ -35,55 +35,55 @@ class TryotoService
      * @param array $data
      * @return array
      */
-//     private function makeRequest($method, $endpoint, $data = [])
+    //     private function makeRequest($method, $endpoint, $data = [])
 // {
 //     $response = Http::withoutVerifying()  // Add this line here too
 //         ->withToken($this->accessToken)
 //         ->$method($this->baseUrl . $endpoint, $data);
-        
-//     if ($response->successful()) {
+
+    //     if ($response->successful()) {
 //         return $response->json();
 //     }
 //     throw new \Exception('API Request failed: ' . $response->body());
 // }
 
-private function makeRequest($method, $endpoint, $data = [])
-{
-      config([
+    private function makeRequest($method, $endpoint, $data = [])
+    {
+        config([
             'services.tryoto.webhook_secret' => env('TRYOTO_WEBHOOK_SECRET'),
             'services.tryoto.refresh_token' => env('TRYOTO_REFRESH_TOKEN'),
             'services.tryoto.base_url' => env('TRYOTO_BASE_URL'),
         ]);
-    try {
-        \Log::info("Making Tryoto API request:", [
-            'method' => $method,
-            'endpoint' => $endpoint,
-            'data' => $data,
-            'url' => $this->baseUrl . $endpoint
-        ]);
+        try {
+            \Log::info("Making Tryoto API request:", [
+                'method' => $method,
+                'endpoint' => $endpoint,
+                'data' => $data,
+                'url' => $this->baseUrl . $endpoint
+            ]);
 
-        $response = Http::withoutVerifying()
-            ->withToken($this->accessToken)
-            ->$method($this->baseUrl . $endpoint, $data);
+            $response = Http::withoutVerifying()
+                        ->withToken($this->accessToken)
+                ->$method($this->baseUrl . $endpoint, $data);
 
-        \Log::info("Tryoto API response:", [
-            'status' => $response->status(),
-            'body' => $response->body()
-        ]);
+            \Log::info("Tryoto API response:", [
+                'status' => $response->status(),
+                'body' => $response->body()
+            ]);
 
-        if ($response->successful()) {
-            return $response->json();
+            if ($response->successful()) {
+                return $response->json();
+            }
+
+            throw new \Exception('API Request failed: ' . $response->body());
+        } catch (\Exception $e) {
+            \Log::error('Tryoto API error:', [
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
+            throw $e;
         }
-
-        throw new \Exception('API Request failed: ' . $response->body());
-    } catch (\Exception $e) {
-        \Log::error('Tryoto API error:', [
-            'error' => $e->getMessage(),
-            'trace' => $e->getTraceAsString()
-        ]);
-        throw $e;
     }
-}
 
     /**
      * Create a new order in Tryoto.
@@ -99,25 +99,25 @@ private function makeRequest($method, $endpoint, $data = [])
     public function createOrder(array $orderData)
     {
         $endpoint = '/rest/v2/createOrder';
-        
+
         // Log the request data
         \Log::info('Creating order with data:', $orderData);
-    
+
         try {
             $response = Http::withoutVerifying()
                 ->withToken($this->accessToken)
                 ->post($this->baseUrl . $endpoint, $orderData);
-    
+
             // Log the response
             \Log::info('Tryoto API Response:', [
                 'status' => $response->status(),
                 'body' => $response->body()
             ]);
-    
+
             if ($response->successful()) {
                 return $response->json();
             }
-    
+
             throw new \Exception('API Request failed: ' . $response->body());
         } catch (\Exception $e) {
             \Log::error('Order creation failed:', ['error' => $e->getMessage()]);
@@ -134,16 +134,16 @@ private function makeRequest($method, $endpoint, $data = [])
     public function createShipment(string $orderId, int $deliveryOptionId)
     {
         $endpoint = '/rest/v2/createShipment';
-        
+
         \Log::info('Creating shipment:', [
             'orderId' => $orderId,
             'deliveryOptionId' => $deliveryOptionId
         ]);
-    
+
         try {
             // First verify order exists
             $this->verifyOrder($orderId);
-    
+
             $response = Http::withoutVerifying()
                 ->withToken($this->accessToken)
                 ->post($this->baseUrl . $endpoint, [
@@ -151,23 +151,23 @@ private function makeRequest($method, $endpoint, $data = [])
                     'deliveryOptionId' => $deliveryOptionId,
                     'createShipment' => 'true'
                 ]);
-    
+
             \Log::info('Shipment creation response:', [
                 'status' => $response->status(),
                 'body' => $response->body()
             ]);
-    
+
             if ($response->successful()) {
                 return $response->json();
             }
-    
+
             throw new \Exception('Failed to create shipment: ' . $response->body());
         } catch (\Exception $e) {
             \Log::error('Shipment creation failed:', ['error' => $e->getMessage()]);
             throw $e;
         }
     }
-    
+
     // Add this helper method
     private function verifyOrder($orderId)
     {
@@ -183,66 +183,114 @@ private function makeRequest($method, $endpoint, $data = [])
      */
     public function getDeliveryFees(array $data)
     {
-      
-        $tryotoConfig = [
+        // Log Tryoto service configuration
+        Log::info('Tryoto Service Configuration:', [
             'webhook_secret' => config('services.tryoto.webhook_secret'),
             'refresh_token' => config('services.tryoto.refresh_token'),
             'base_url' => config('services.tryoto.base_url'),
-        ];
-        Log::info('Tryoto Service Configuration:', $tryotoConfig);
+        ]);
+
         try {
-              // Get the checked cart items
-        $cart = CartManager::get_cart(type: 'checked');
-            
-        // Loop through the cart and access seller's city
-        foreach ($cart as $item) {
-            // Ensure that $item->product->seller is available
-            if ($item->product && $item->product->seller) {
-                $sellerCity = $item->product->seller->city;
-                Log::info('Seller City: ' . $sellerCity);
+            // Get the checked cart items
+            $cart = CartManager::get_cart(type: 'checked');
+
+            // Validate cart and extract seller's cities
+            $originCities = [];
+            foreach ($cart as $item) {
+                if ($item->product && $item->product->seller) {
+                    $originCities[] = $item->product->seller->city; // Store each seller's city in the array
+                }
             }
-        }
-            $originCity  = $sellerCity ;
+
+            // Log all seller cities outside the loop
+            // Ensure the city names are unique
+            $originCities = array_unique($originCities);
+
+            // Use the first seller's city as the origin city (or handle as needed)
+            $originCity = $originCities[0] ?? null;
+
+            if (!$originCity) {
+                throw new \Exception('Seller city not found in cart items.');
+            }
+
+            if (!$originCity) {
+                throw new \Exception('Seller city not found in cart items.');
+            }
+
             $destinationCity = $data['destinationCity'];
-            Log::info('Cities for getDeliveryFees:', [
-                'originCity' =>  $originCity,
-                'destinationCity' => $destinationCity,
-                '$this->baseUrl' => $this->baseUrl,
-                'withToken' => $this->accessToken,
-            ]);
-            $endpoint = '/rest/v2/checkOTODeliveryFee';
-            $response = Http::withoutVerifying()
-                ->withToken($this->accessToken)
-                ->post($this->baseUrl . $endpoint, [
-                    'weight' => $data['weight'],
-                    'originCity' =>  $originCity,
-                    'destinationCity' => $data['destinationCity'],
-                    'height' => $data['height'] ?? 30,
-                    'width' => $data['width'] ?? 30,
-                    'length' => $data['length'] ?? 30
+
+
+            foreach ($originCities as $cityname) {
+                // Log the current origin city
+                Log::info('Cities for getDeliveryFees:', [
+                    'originCity' => $cityname,
                 ]);
-                    Log::info($response);
-            // Check if the response is successful
-            if ($response->successful()) {
-                $data = $response->json();
-                return [
-                    'success' => $data['success'],
-                    'deliveryOptions' => $data['deliveryCompany']
-                ];
+
+                try {
+                    // Make API request for the current origin city
+                    $endpoint = '/rest/v2/checkOTODeliveryFee';
+                    $response = Http::withoutVerifying()
+                        ->withToken($this->accessToken)
+                        ->post($this->baseUrl . $endpoint, [
+                            'weight' => $data['weight'],
+                            'originCity' => $cityname, // Use $cityname instead of $originCity
+                            'destinationCity' => $destinationCity,
+                            'height' => $data['height'] ?? 30,
+                            'width' => $data['width'] ?? 30,
+                            'length' => $data['length'] ?? 30,
+                        ]);
+
+                    // Log the API response
+                    Log::info('API Response for ' . $cityname . ':', $response->json());
+
+                    // Handle the response (e.g., store or process it)
+                    if ($response->successful()) {
+                        // Process the successful response
+                        $responseData = $response->json();
+                        // Add your logic here to handle the response data
+                    } else {
+                        // Log the error if the request fails
+                        Log::error('Failed API Response for ' . $cityname . ':', $response->body());
+                    }
+                } catch (\Exception $e) {
+                    // Log any exceptions that occur during the API request
+                    Log::error('Error making API request for ' . $cityname . ': ' . $e->getMessage());
+                }
             }
-    
-            // Log failed response for debugging
-            Log::error('Failed Response: ' . $response->body());
-            throw new \Exception('Failed to get delivery fees: ' . $response->body());
-    
+
+
+            // Handle API response
+            if (!$response->successful()) {
+                Log::error('Failed Response: ' . $response->body());
+                throw new \Exception('Failed to get delivery fees: ' . $response->body());
+            }
+
+            // Filter delivery companies
+            $allowedKeywords = ['Sobol', 'Aramex', 'SMSA', 'J&T'];
+            $deliveryCompanies = $response->json()['deliveryCompany'] ?? [];
+            $filteredCompanies = array_filter($deliveryCompanies, function ($company) use ($allowedKeywords) {
+                foreach ($allowedKeywords as $keyword) {
+                    if (stripos($company['deliveryCompanyName'], $keyword) !== false) {
+                        return true;
+                    }
+                }
+                return false;
+            });
+
+            Log::info('Filtered Delivery Options:', array_values($filteredCompanies));
+
+            return [
+                'success' => true,
+                'deliveryOptions' => array_values($deliveryCompanies), // Re-index array
+            ];
+
         } catch (\Exception $e) {
-            // Log the error for debugging
             Log::error('Error getting delivery fees: ' . $e->getMessage());
             throw $e;
         }
     }
-    
-    
+
+
     /**
      * Track shipment by tracking number and delivery company name.
      *
@@ -260,7 +308,7 @@ private function makeRequest($method, $endpoint, $data = [])
         ];
         return $this->makeRequest('post', $endpoint, $data);
     }
-    
+
     public function getWebhooks()
     {
         $endpoint = '/rest/v2/webhook';
@@ -280,177 +328,177 @@ private function makeRequest($method, $endpoint, $data = [])
         return $this->makeRequest('post', $endpoint, $data);
     }
     public function updateWebhook($data)
-        {
-            $endpoint = '/rest/v2/webhook';
-            return $this->makeRequest('put', $endpoint, $data);
-        }
-      
+    {
+        $endpoint = '/rest/v2/webhook';
+        return $this->makeRequest('put', $endpoint, $data);
+    }
+
     public function getPickupLocations()
-{
-    $minDate = date('Y-m-d');  // Today
-    $maxDate = date('Y-m-d', strtotime('+30 days'));  // 30 days ahead
-    
-    \Log::info('Fetching pickup locations with dates:', [
-        'minDate' => $minDate,
-        'maxDate' => $maxDate
-    ]);
+    {
+        $minDate = date('Y-m-d');  // Today
+        $maxDate = date('Y-m-d', strtotime('+30 days'));  // 30 days ahead
 
-    $endpoint = '/rest/v2/getPickupLocationList';
-    $queryParams = [
-        'minDate' => $minDate,
-        'maxDate' => $maxDate,
-        'status' => 'active'
-    ];
-
-    try {
-        $response = Http::withoutVerifying()
-            ->withToken($this->accessToken)
-            ->get($this->baseUrl . $endpoint, $queryParams);
-
-        \Log::info('Pickup locations response:', [
-            'status' => $response->status(),
-            'body' => $response->body()
+        \Log::info('Fetching pickup locations with dates:', [
+            'minDate' => $minDate,
+            'maxDate' => $maxDate
         ]);
 
-        if ($response->successful()) {
-            return $response->json();
-        }
+        $endpoint = '/rest/v2/getPickupLocationList';
+        $queryParams = [
+            'minDate' => $minDate,
+            'maxDate' => $maxDate,
+            'status' => 'active'
+        ];
 
-        throw new \Exception('API Request failed: ' . $response->body());
-    } catch (\Exception $e) {
-        \Log::error('Failed to get pickup locations: ' . $e->getMessage());
-        throw $e;
-    }
-}
+        try {
+            $response = Http::withoutVerifying()
+                ->withToken($this->accessToken)
+                ->get($this->baseUrl . $endpoint, $queryParams);
 
-public function getOrder($orderId)
-{
-    $endpoint = '/rest/v2/getOrders';  // Changed endpoint
-    
-    try {
-        // Using query parameters instead of body
-        $response = Http::withoutVerifying()
-            ->withToken($this->accessToken)
-            ->get($this->baseUrl . $endpoint, [
-                'orderId' => strval($orderId),
-                'limit' => 1,
-                'page' => 1
+            \Log::info('Pickup locations response:', [
+                'status' => $response->status(),
+                'body' => $response->body()
             ]);
 
-        \Log::info('Get order response:', [
-            'status' => $response->status(),
-            'body' => $response->body(),
-            'orderId' => $orderId,
-            'url' => $this->baseUrl . $endpoint
-        ]);
+            if ($response->successful()) {
+                return $response->json();
+            }
 
-        if (!$response->successful()) {
-            throw new \Exception('Failed to get order details: ' . $response->body());
+            throw new \Exception('API Request failed: ' . $response->body());
+        } catch (\Exception $e) {
+            \Log::error('Failed to get pickup locations: ' . $e->getMessage());
+            throw $e;
         }
-
-        return $response->json();
-    } catch (\Exception $e) {
-        \Log::error('Get order failed:', [
-            'error' => $e->getMessage(),
-            'orderId' => $orderId
-        ]);
-        throw $e;
     }
-}
-public function getAllOrderDetails($orderId) 
-{
-    try {
-        $endpoint = '/rest/v2/getOrderStatus';  // Changed endpoint
-        $response = Http::withoutVerifying()
-            ->withToken($this->accessToken)
-            ->post($this->baseUrl . $endpoint, [
+
+    public function getOrder($orderId)
+    {
+        $endpoint = '/rest/v2/getOrders';  // Changed endpoint
+
+        try {
+            // Using query parameters instead of body
+            $response = Http::withoutVerifying()
+                ->withToken($this->accessToken)
+                ->get($this->baseUrl . $endpoint, [
+                    'orderId' => strval($orderId),
+                    'limit' => 1,
+                    'page' => 1
+                ]);
+
+            \Log::info('Get order response:', [
+                'status' => $response->status(),
+                'body' => $response->body(),
                 'orderId' => $orderId,
-                'otoId' => str_replace('TEST-', '', $orderId)  // Also try with numeric ID
+                'url' => $this->baseUrl . $endpoint
             ]);
 
-        \Log::info('Get order status response:', [
-            'status' => $response->status(),
-            'body' => $response->body(),
-            'orderId' => $orderId,
-            'url' => $this->baseUrl . $endpoint
-        ]);
+            if (!$response->successful()) {
+                throw new \Exception('Failed to get order details: ' . $response->body());
+            }
 
-        if (!$response->successful()) {
-            throw new \Exception('Failed to get order status: ' . $response->body());
-        }
-
-        return $response->json();
-    } catch (\Exception $e) {
-        \Log::error('Failed to get order status:', [
-            'error' => $e->getMessage(),
-            'orderId' => $orderId
-        ]);
-        throw $e;
-    }
-}
-public function getOrderTracking($orderId)
-{
-    try {
-        $endpoint = '/rest/v2/getOrderStatus';
-        $response = Http::withoutVerifying()
-            ->withToken($this->accessToken)
-            ->post($this->baseUrl . $endpoint, [
+            return $response->json();
+        } catch (\Exception $e) {
+            \Log::error('Get order failed:', [
+                'error' => $e->getMessage(),
                 'orderId' => $orderId
             ]);
-
-        \Log::info('Tracking response:', [
-            'status' => $response->status(),
-            'body' => $response->body()
-        ]);
-
-        if ($response->successful()) {
-            $data = $response->json();
-            return [
-                'status' => $data['status'] ?? 'unknown',
-                'trackingNumber' => $data['trackingNumber'] ?? null,
-                'trackingUrl' => $data['brandedTrackingURL'] ?? null
-            ];
+            throw $e;
         }
-
-        throw new \Exception('Failed to get tracking info');
-    } catch (\Exception $e) {
-        \Log::error('Tracking error:', ['error' => $e->getMessage()]);
-        throw $e;
     }
-}
-public function getAccessToken(): string
-{
-    try {
-        $response = Http::withoutVerifying()
-            ->post($this->baseUrl . '/rest/v2/refreshToken', [
-                'refresh_token' => $this->refreshToken,
+    public function getAllOrderDetails($orderId)
+    {
+        try {
+            $endpoint = '/rest/v2/getOrderStatus';  // Changed endpoint
+            $response = Http::withoutVerifying()
+                ->withToken($this->accessToken)
+                ->post($this->baseUrl . $endpoint, [
+                    'orderId' => $orderId,
+                    'otoId' => str_replace('TEST-', '', $orderId)  // Also try with numeric ID
+                ]);
+
+            \Log::info('Get order status response:', [
+                'status' => $response->status(),
+                'body' => $response->body(),
+                'orderId' => $orderId,
+                'url' => $this->baseUrl . $endpoint
             ]);
-            
-        if ($response->successful()) {
-            return $response->json()['access_token'];
+
+            if (!$response->successful()) {
+                throw new \Exception('Failed to get order status: ' . $response->body());
+            }
+
+            return $response->json();
+        } catch (\Exception $e) {
+            \Log::error('Failed to get order status:', [
+                'error' => $e->getMessage(),
+                'orderId' => $orderId
+            ]);
+            throw $e;
         }
-        
-        throw new \Exception('Failed to fetch access token: ' . $response->body());
-    } catch (\Exception $e) {
-        return 'dummy_token';
     }
-}
+    public function getOrderTracking($orderId)
+    {
+        try {
+            $endpoint = '/rest/v2/getOrderStatus';
+            $response = Http::withoutVerifying()
+                ->withToken($this->accessToken)
+                ->post($this->baseUrl . $endpoint, [
+                    'orderId' => $orderId
+                ]);
 
-public function getAWB(string $orderId): array
-{
-    try {
-        $response = Http::withToken($this->getAccessToken())
-            ->withoutVerifying()
-            ->get("{$this->baseUrl}/rest/v2/print/{$orderId}");
+            \Log::info('Tracking response:', [
+                'status' => $response->status(),
+                'body' => $response->body()
+            ]);
 
-        if (!$response->successful()) {
-            throw new Exception('Failed to get AWB: ' . $response->body());
+            if ($response->successful()) {
+                $data = $response->json();
+                return [
+                    'status' => $data['status'] ?? 'unknown',
+                    'trackingNumber' => $data['trackingNumber'] ?? null,
+                    'trackingUrl' => $data['brandedTrackingURL'] ?? null
+                ];
+            }
+
+            throw new \Exception('Failed to get tracking info');
+        } catch (\Exception $e) {
+            \Log::error('Tracking error:', ['error' => $e->getMessage()]);
+            throw $e;
         }
-
-        return $response->json();
-    } catch (Exception $e) {
-        logger()->error('Tryoto AWB retrieval failed: ' . $e->getMessage());
-        throw $e;
     }
-}
+    public function getAccessToken(): string
+    {
+        try {
+            $response = Http::withoutVerifying()
+                ->post($this->baseUrl . '/rest/v2/refreshToken', [
+                    'refresh_token' => $this->refreshToken,
+                ]);
+
+            if ($response->successful()) {
+                return $response->json()['access_token'];
+            }
+
+            throw new \Exception('Failed to fetch access token: ' . $response->body());
+        } catch (\Exception $e) {
+            return 'dummy_token';
+        }
+    }
+
+    public function getAWB(string $orderId): array
+    {
+        try {
+            $response = Http::withToken($this->getAccessToken())
+                ->withoutVerifying()
+                ->get("{$this->baseUrl}/rest/v2/print/{$orderId}");
+
+            if (!$response->successful()) {
+                throw new Exception('Failed to get AWB: ' . $response->body());
+            }
+
+            return $response->json();
+        } catch (Exception $e) {
+            logger()->error('Tryoto AWB retrieval failed: ' . $e->getMessage());
+            throw $e;
+        }
+    }
 }

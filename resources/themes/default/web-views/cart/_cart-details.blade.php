@@ -1,5 +1,5 @@
 <h3 class="mt-4 mb-3 text-center text-lg-left mobile-fs-20 fs-18 font-bold">{{ translate('shopping_cart')}}</h3>
-
+<meta name="csrf-token" content="{{ csrf_token() }}">
 @php($shippingMethod=getWebConfig(name: 'shipping_method'))
 @php($cart=\App\Models\Cart::whereHas('product', function ($query) {
                 return $query->active();
@@ -8,6 +8,8 @@
 
 <div class="row g-3 mx-max-md-0 mb-3">
     <section class="col-lg-8 px-max-md-0">
+   
+        <script src="{{ asset('js/shipping.js') }}"></script>
         @if(count($cart)==0)
             @php($isPhysicalProductExist = false)
         @endif
@@ -125,7 +127,44 @@
                                 @endif
 
                                 @php($chosenShipping=\App\Models\CartShipping::where(['cart_group_id'=>$cartItem['cart_group_id']])->first())
+{{$chosenShipping ->id}}
 
+<div class="shipping-form">
+    <div class="container mt-4">
+        <div class="row">
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header">Delivery Address</div>
+                    <div class="card-body">
+                        <div class="form-group">
+                            <label>City</label>
+                            <input type="text" class="city-input form-control" required>
+                        </div>
+                        <button class="get-shipping-options btn btn-primary mt-2" data-chosenShipping-id="{{$chosenShipping->id }}">Get Shipping Options</button>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header">Available Shipping Options</div>
+                    <div class="card-body">
+                        <div class="shipping-options" data-chosenShipping-id="{{$chosenShipping->id }}">
+                            <!-- Shipping options will be rendered here -->
+                        </div>
+                        {{-- <button class="proceed-to-payment btn btn-success mt-3 w-100" disabled>
+                            Proceed to Payment
+                        </button> --}}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="{{ asset('js/shipping.js') }}"></script>
+
+<br><br>
                                 <div class=" bg-white select-method-border rounded">
                                     @if($isPhysicalProductExist && $shippingMethod=='sellerwise_shipping' && $shipping_type == 'order_wise')
                                         @if(isset($chosenShipping)==false)
@@ -846,4 +885,6 @@
 
 @push('script')
     <script src="{{ theme_asset(path: 'public/assets/front-end/js/cart-details.js') }}"></script>
+
+
 @endpush

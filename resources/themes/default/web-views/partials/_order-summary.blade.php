@@ -8,9 +8,11 @@
             @php($orderWiseShippingDiscount=\App\Utils\CartManager::order_wise_shipping_discount())
             @php($totalDiscountOnProduct=0)
             @php($cart=\App\Utils\CartManager::get_cart(type: 'checked'))
+            
             @foreach($cart as $item)
-            <p>{{ $item->product->seller->city }}</p>
-        @endforeach
+            <p>From  <b>{{ $item->product->seller->city }}</b></p>
+            @endforeach
+
             @php($cartGroupIds=\App\Utils\CartManager::get_cart_group_ids())
             @php($getShippingCost=\App\Utils\CartManager::get_shipping_cost(type: 'checked'))
             @php($getShippingCostSavedForFreeDelivery=\App\Utils\CartManager::get_shipping_cost_saved_for_free_delivery(type: 'checked'))
