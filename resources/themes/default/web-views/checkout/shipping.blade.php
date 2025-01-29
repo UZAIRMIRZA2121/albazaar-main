@@ -29,41 +29,7 @@
                         <div class="px-3 px-md-0">
                             <h4 class="pb-2 mt-4 fs-18 text-capitalize">{{ translate('shipping_address')}}</h4>
                         </div>
-                        <div class="container">
-                            <div class="row">
-                                <!-- Address Form -->
-                                <div class="col-md-12">
-                                    <div class="card">
-                                        <div class="card-header">Delivery Address</div>
-                                        <div class="card-body">
-                                            <form id="address-form">
-                                                <div class="form-group">
-                                                    <label>City</label>
-                                                    <input type="text" class="form-control" name="city" required>
-                                                </div>
-                                                <button type="submit" class="btn btn-primary">Get Shipping Options</button>
-                                            </form>
-                                        </div>
-                                    </div>
-                                </div>
-                                
-                                <!-- Shipping Options -->
-                                <div class="col-md-12">
-                                    <div class="card">
-                                        <div class="card-header">Available Shipping Options</div>
-                                        <div class="card-body">
-                                            <div id="shipping-options">
-                                                <!-- Shipping options will be rendered here -->
-                                            </div>
-                                            
-                                            <button id="proceed-to-payment" class="btn btn-success mt-3 w-100" disabled>
-                                                Proceed to Payment
-                                            </button>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+                       
                         @php($shippingAddresses= \App\Models\ShippingAddress::where(['customer_id'=>auth('customer')->id(), 'is_guest'=>0])->get())
                         <form method="post" class="card __card" id="address-form">
                             <div class="card-body p-0">
