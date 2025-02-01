@@ -145,7 +145,7 @@
                                 </div>
                             </div>
                         @endif
-                        <div class="col-md-6 col-lg-4 col-xl-3">
+                        {{-- <div class="col-md-6 col-lg-4 col-xl-3">
                             <div class="form-group">
                                 <label class="title-color">
                                     {{ translate('product_type') }}
@@ -160,7 +160,8 @@
                                     @endif
                                 </select>
                             </div>
-                        </div>
+                        </div> --}}
+                        <input type="hidden" name="product_type" value="physical">
 
                         <div class="col-md-6 col-lg-4 col-xl-3 digital-product-sections-show">
                             <label class="title-color">

@@ -233,7 +233,7 @@
                         <th>{{translate('total_Amount')}}</th>
                         <th>{{translate('product_Discount')}}</th>
                         <th>{{translate('coupon_Discount')}}</th>
-                        <th>{{translate('shipping_Charge')}}</th>
+                        {{-- <th>{{translate('shipping_Charge')}}</th> --}}
                         <th>{{translate('VAT/TAX')}}</th>
                         <th>{{translate('commission')}}</th>
                         <th>{{translate('deliveryman_incentive')}}</th>
@@ -251,7 +251,7 @@
                             <td>{{ setCurrencySymbol(amount: usdToDefaultCurrency(amount: $order->order_amount), currencyCode: getCurrencyCode()) }}</td>
                             <td>{{ setCurrencySymbol(amount: usdToDefaultCurrency(amount: $order->details_sum_discount), currencyCode: getCurrencyCode()) }}</td>
                             <td>{{ setCurrencySymbol(amount: usdToDefaultCurrency(amount: $order->discount_amount), currencyCode: getCurrencyCode()) }}</td>
-                            <td>{{ setCurrencySymbol(amount: usdToDefaultCurrency(amount: $order->shipping_cost - ($order->extra_discount_type == 'free_shipping_over_order_amount' ? $order->extra_discount : 0)), currencyCode: getCurrencyCode()) }}</td>
+                            {{-- <td>{{ setCurrencySymbol(amount: usdToDefaultCurrency(amount: $order->shipping_cost - ($order->extra_discount_type == 'free_shipping_over_order_amount' ? $order->extra_discount : 0)), currencyCode: getCurrencyCode()) }}</td> --}}
                             <td>{{ setCurrencySymbol(amount: usdToDefaultCurrency(amount: $order->details_sum_tax), currencyCode: getCurrencyCode()) }}</td>
                             <td>{{ setCurrencySymbol(amount: usdToDefaultCurrency(amount: $order->admin_commission), currencyCode: getCurrencyCode()) }}</td>
                             <td>{{ setCurrencySymbol(amount: usdToDefaultCurrency(amount: $order->deliveryman_charge), currencyCode: getCurrencyCode()) }}</td>

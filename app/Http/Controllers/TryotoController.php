@@ -290,11 +290,12 @@ class TryotoController extends Controller
         $optionId = $request->input('option_id');
         $price = $request->input('price');
         $chosen_shipping_id = $request->input('chosen_shipping_id');
-
+        $price = $price * 1.10;
         
         $chosenShipping = CartShipping::where('id', $request->chosen_shipping_id)->first();
         
         $chosenShipping->shipping_cost = $price;
+        
         $chosenShipping->save();
         log::info($request->all());
         log::info('----------------------------------------------------');

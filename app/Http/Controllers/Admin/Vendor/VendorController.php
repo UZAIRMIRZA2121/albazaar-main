@@ -112,6 +112,7 @@ class VendorController extends BaseController
             'userType' => 'vendor',
             'templateName' => 'registration',
         ];
+        
         event(new VendorRegistrationEvent(email: $request['email'], data: $data));
         return response()->json(['message' => translate('vendor_added_successfully')]);
     }

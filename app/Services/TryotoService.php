@@ -225,7 +225,7 @@ class TryotoService
                 Log::info('Cities for getDeliveryFees:', [
                     'originCity' => $cityname,
                 ]);
-
+                $cityname = 'jeddah' ;
                 try {
                     // Make API request for the current origin city
                     $endpoint = '/rest/v2/checkOTODeliveryFee';

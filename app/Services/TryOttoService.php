@@ -10,7 +10,7 @@ class TryOttoService
 
     public function __construct()
     {
-        $this->baseUrl = config('services.tryotto.base_url');
+        $this->baseUrl = config('services.tryoto.base_url');
     }
 
     public function getApiAccessToken()
@@ -18,9 +18,12 @@ class TryOttoService
         $data = [
             'refresh_token' => "AMf-vBxZSeMMlhGDWJTWYFbGs5CUJxnLS_0XUA2jviHNkhjFy23v9kVlNueM4FpawMKwrVfVOIaZlsx5Q_bh8X55lP6h6hwPsw_t2QQ2dgLP3SIcrD4gYeVjT9X4qQzfTCzzoTK1ZOU-WMAM2iX46fP8vcdWioU2p0wffaU6ALRPK-VXmXAKw1cbwkwAJfDxzW8rBOqn0S-TCUFLtLgLWZqlm0JzHwNRzg",
         ];
+   
         $response = Http::withOptions([
             'verify' => false,
         ])->post("{$this->baseUrl}refreshToken", $data);
+
+
         if ($response->successful()) {
             return $response->json()['access_token'];
         }

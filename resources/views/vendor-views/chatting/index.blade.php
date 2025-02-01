@@ -26,7 +26,7 @@
                             </div>
                         </form>
                         <ul class="nav nav-tabs gap-3 border-0 mb-3 mx-4" id="pills-tab" role="tablist">
-                            <li class="nav-item" role="presentation">
+                            {{-- <li class="nav-item" role="presentation">
                                 <a class="nav-link bg-transparent p-2 {{ request('type') == 'customer' ? 'active' : '' }}"
                                     href="{{ route('vendor.messages.index', ['type' => 'customer']) }}">
                                     {{ translate('customer') }}
@@ -37,7 +37,7 @@
                                     href="{{ route('vendor.messages.index', ['type' => 'delivery-man']) }}">
                                     {{ translate('delivery_Man') }}
                                 </a>
-                            </li>
+                            </li> --}}
                             <li class="nav-item" role="presentation">
                                 <a class="nav-link bg-transparent p-2 {{ request('type') == 'admin' ? 'active' : '' }}"
                                     href="{{ route('vendor.messages.index', ['type' => 'admin']) }}">

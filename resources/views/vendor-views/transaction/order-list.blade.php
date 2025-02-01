@@ -202,7 +202,7 @@
                         <th>{{translate('coupon_discount')}}</th>
                         <th>{{translate('discounted_amount')}}</th>
                         <th>{{translate('VAT/TAX')}}</th>
-                        <th>{{translate('shipping_charge')}}</th>
+                        {{-- <th>{{translate('shipping_charge')}}</th> --}}
                         <th>{{translate('order_amount')}}</th>
                         <th>{{translate('delivered_by')}}</th>
                         <th>{{translate('deliveryman_incentive')}}</th>
@@ -238,7 +238,7 @@
                                 <td>{{ setCurrencySymbol(amount: usdToDefaultCurrency(amount: $transaction->order->discount_amount), currencyCode: getCurrencyCode()) }}</td>
                                 <td>{{ setCurrencySymbol(amount: usdToDefaultCurrency(amount: $transaction->orderDetails[0]->order_details_sum_price - $transaction->orderDetails[0]->order_details_sum_discount - (isset($transaction->order->coupon) && $transaction->order->coupon->coupon_type != 'free_delivery'?$transaction->order->discount_amount:0)), currencyCode: getCurrencyCode()) }}</td>
                                 <td>{{ setCurrencySymbol(amount: usdToDefaultCurrency(amount: $transaction['tax']), currencyCode: getCurrencyCode()) }}</td>
-                                <td>{{ setCurrencySymbol(amount: usdToDefaultCurrency(amount: $transaction->order->shipping_cost), currencyCode: getCurrencyCode()) }}</td>
+                                {{-- <td>{{ setCurrencySymbol(amount: usdToDefaultCurrency(amount: $transaction->order->shipping_cost), currencyCode: getCurrencyCode()) }}</td> --}}
                                 <td>{{ setCurrencySymbol(amount: usdToDefaultCurrency(amount: $transaction->order->order_amount), currencyCode: getCurrencyCode()) }}</td>
                                 <td>{{$transaction['delivered_by']}}</td>
                                 <td>{{setCurrencySymbol(amount: usdToDefaultCurrency(amount: ($transaction->order->delivery_type == 'self_delivery' && $transaction->order->shipping_responsibility == 'sellerwise_shipping') ? $transaction->order->deliveryman_charge : 0), currencyCode: getCurrencyCode()) }}</td>
