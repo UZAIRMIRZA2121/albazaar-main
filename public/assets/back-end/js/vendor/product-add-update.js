@@ -525,6 +525,7 @@ function getProductAddRequirementsCheck() {
             });
 
             if (submitStatus === 1) {
+              
                 let formData = new FormData(
                     document.getElementById("product_form")
                 );
@@ -544,6 +545,7 @@ function getProductAddRequirementsCheck() {
                         $("#loading").fadeIn();
                     },
                     success: function (data) {
+                        
                         if (data.errors) {
                             for (let i = 0; i < data.errors.length; i++) {
                                 toastr.error(data.errors[i].message, {

@@ -128,10 +128,10 @@
                                 <div class="form-group">
                                     <label class="title-color">
                                         {{ translate('brand') }}
-                                        <span class="input-required-icon">*</span>
+                                        {{-- <span class="input-required-icon">*</span> --}}
                                     </label>
-                                    <select class="js-select2-custom form-control" name="brand_id" required>
-                                        <option value="{{ null }}" selected disabled>
+                                    <select class="js-select2-custom form-control" name="brand_id" >
+                                        <option value="{{ null }}" selected >
                                             {{ translate('select_Brand') }}</option>
                                         @foreach ($brands as $brand)
                                             <option value="{{ $brand['id'] }}">{{ $brand['defaultName'] }}</option>
