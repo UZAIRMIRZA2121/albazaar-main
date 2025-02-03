@@ -643,13 +643,13 @@ class ProductController extends Controller
         }
 
         $brandSetting = BusinessSetting::where('type', 'product_brand')->first()->value;
-        if ($brandSetting && empty($request->brand_id) && $request['product_type'] == 'physical') {
-            $validator->after(function ($validator) {
-                $validator->errors()->add(
-                    'brand_id', 'Brand is required!'
-                );
-            });
-        }
+        // if ($brandSetting && empty($request->brand_id) && $request['product_type'] == 'physical') {
+        //     $validator->after(function ($validator) {
+        //         $validator->errors()->add(
+        //             'brand_id', 'Brand is required!'
+        //         );
+        //     });
+        // }
 
         if ($request['discount_type'] == 'percent') {
             $discount = ($request['unit_price'] / 100) * $request['discount'];

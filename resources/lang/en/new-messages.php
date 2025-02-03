@@ -8862,4 +8862,5 @@ return [
 	"seller_updated_successfully" => "Seller updated successfully",
 	"end_Date" => "End Date",
 	"all_copy_right_reserved_©_2025_" => "All copy right reserved © 2025 ",
+	"no_Coupon_Found" => "No Coupon Found",
 ];

@@ -112,6 +112,7 @@ class ProductController extends BaseController
 
     public function add(ProductAddRequest $request, ProductService $service): JsonResponse|RedirectResponse
     {
+        
         if ($request->ajax()) {
             return response()->json([], 200);
         }
