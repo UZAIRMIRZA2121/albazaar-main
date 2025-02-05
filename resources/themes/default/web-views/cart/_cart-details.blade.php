@@ -127,7 +127,6 @@
                                 @endif
 
                                 @php($chosenShipping=\App\Models\CartShipping::where(['cart_group_id'=>$cartItem['cart_group_id']])->first())
-{{$chosenShipping ->id}}
 
 <div class="shipping-form">
     <div class="container mt-4">

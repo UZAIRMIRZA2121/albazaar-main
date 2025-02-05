@@ -223,6 +223,7 @@
                                                                 <a href="{{route('product',[$product['slug']])}}" class="fs-14 font-semi-bold">
                                                                     {{isset($product['name']) ? Str::limit($product['name'], 60) : ''}}
                                                                 </a>
+                                                               
                                                                 @if($detail->refund_request == 1)
                                                                     <small> ({{translate('refund_pending')}}) </small>
                                                                     <br>
@@ -288,7 +289,7 @@
                                                                                     @endif
                                                                                 </button>
                                                                             @endif
-
+                                                                                
                                                                             @if($detail->refund_request !=0)
                                                                                 <button type="button"
                                                                                         class="btn btn-sm rounded btn--primary action-get-refund-details"
@@ -296,7 +297,8 @@
                                                                                     {{translate('refund_details')}}
                                                                                 </button>
                                                                             @endif
-                                                                            @if( $length <= $refund_day_limit && $detail->refund_request == 0)
+                                                                             
+                                                                            @if( $length <= $refund_day_limit )
                                                                                 <button
                                                                                     class="btn btn-sm rounded btn--primary"
                                                                                     data-toggle="modal"

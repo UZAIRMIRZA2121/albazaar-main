@@ -36,6 +36,7 @@ use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Log;
 
 class UserProfileController extends Controller
 {
@@ -383,6 +384,8 @@ class UserProfileController extends Controller
                 $detail['reviewData'] = $reviewData;
                 return $order;
             });
+
+            // dd(VIEW_FILE_NAMES['account_order_details']);
             return view(VIEW_FILE_NAMES['account_order_details'], [
                 'order' => $order,
                 'refund_day_limit' => getWebConfig(name: 'refund_day_limit'),
@@ -783,7 +786,7 @@ class UserProfileController extends Controller
     {
         $orderDetails = OrderDetail::find($id);
         $user = auth('customer')->user();
-
+     
         $loyaltyPointStatus = getWebConfig(name: 'loyalty_point_status');
         if ($loyaltyPointStatus == 1) {
             $loyaltyPoint = CustomerManager::count_loyalty_point_for_amount($id);
@@ -863,12 +866,13 @@ class UserProfileController extends Controller
 
     public function refund_details($id)
     {
+       
         $order_details = OrderDetail::find($id);
         $refund = RefundRequest::with(['product', 'order'])->where('customer_id', auth('customer')->id())
             ->where('order_details_id', $order_details->id)->first();
         $product = $this->product->find($order_details->product_id);
         $order = $this->order->find($order_details->order_id);
-
+      
         if (request()->ajax()) {
             if ($product) {
                 return response()->json([

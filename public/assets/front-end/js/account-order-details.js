@@ -2,10 +2,12 @@
 
 $('.action-get-refund-details').on('click', function (){
     let route = $(this).data('route');
+
     getRefundDetails(route)
 })
 
 function getRefundDetails(route) {
+  
     $.get(route, (response) => {
         if(response.status == 1) {
             $("#refund_details_field").html(response.view);
