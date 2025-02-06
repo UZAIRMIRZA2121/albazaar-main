@@ -39,6 +39,7 @@ use Illuminate\Contracts\View\View;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Log;
 use Maatwebsite\Excel\Facades\Excel;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Illuminate\Support\Facades\View as PdfView;
@@ -318,6 +319,8 @@ class OrderController extends BaseController
         OrderStatusHistoryService     $orderStatusHistoryService,
     ): JsonResponse
     {
+
+
         $order = $this->orderRepo->getFirstWhere(params: ['id' => $request['id']], relations: ['customer', 'seller.shop', 'deliveryMan']);
 
         if (!$order['is_guest'] && !isset($order['customer'])) {
@@ -325,6 +328,7 @@ class OrderController extends BaseController
         }
         $this->orderRepo->updateStockOnOrderStatusChange($request['id'], $request['order_status']);
         $this->orderRepo->update(id: $request['id'], data: ['order_status' => $request['order_status']]);
+     
         if ($request['order_status'] == 'delivered') {
             $this->orderRepo->update(id: $request['id'], data: ['payment_status' => 'paid']);
             $this->orderDetailRepo->updateWhere(params: ['order_id' => $order['id']], data: ['delivery_status' => $request['order_status'], 'payment_status' => 'paid']);
@@ -526,7 +530,9 @@ class OrderController extends BaseController
         if ($order['is_guest'] == '0' && !isset($order['customer'])) {
             return response()->json(['customer_status' => 0], 200);
         }
+  
         $this->orderRepo->update(id: $request['id'], data: ['payment_status' => $request['payment_status']]);
+   
         return response()->json($request['payment_status']);
     }
 

@@ -26,6 +26,10 @@ class Kernel extends ConsoleKernel
     {
         // $schedule->command('inspire')
         //          ->hourly();
+        $schedule->call(function () {
+            \Log::info('Cron job is running');
+        })->everyMinute();
+        $schedule->command('transfer:transactions')->everyMinute();
     }
 
     /**

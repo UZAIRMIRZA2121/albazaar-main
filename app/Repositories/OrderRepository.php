@@ -497,7 +497,7 @@ class OrderRepository implements OrderRepositoryInterface
                     $wallet->total_earning += ($orderAmount - $commission) + $orderSummary['total_tax'];
                 }
 
-                $wallet->save();
+                // $wallet->save();
             }
         } else {
             $transaction = $this->orderTransaction->where(['order_id' => $order['id']])->first();
