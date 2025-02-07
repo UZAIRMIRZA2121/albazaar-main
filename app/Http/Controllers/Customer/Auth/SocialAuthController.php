@@ -28,23 +28,25 @@ class SocialAuthController extends Controller
 {
 
     public function __construct(
-        private readonly CustomerRepositoryInterface $customerRepo,
+        private readonly CustomerRepositoryInterface                 $customerRepo,
         private readonly PhoneOrEmailVerificationRepositoryInterface $phoneOrEmailVerificationRepo,
-        private readonly CustomerAuthService $customerAuthService,
-        private readonly FirebaseService $firebaseService,
-    ) {
+        private readonly CustomerAuthService                         $customerAuthService,
+        private readonly FirebaseService                             $firebaseService,
+    )
+    {
     }
 
-    public function handleProviderCallback(Request $request, $service)
-    {
-        // Retrieve social login credentials dynamically
-        $business_setting = BusinessSetting::where('type', 'social_login')->first();
+public function redirectToProvider($service)
+{
+    $business_setting = BusinessSetting::where('type', 'social_login')->first();
 
-        if ($business_setting) {
-            $socialLogins = json_decode($business_setting->value, true);
+    if ($business_setting) {
+        // Decode the JSON string into an array
+        $socialLogins = json_decode($business_setting->value, true);
 
-            foreach ($socialLogins as $socialLogin) {
-                if ($socialLogin['status'] == 1 && $socialLogin['login_medium'] == $service) {
+        foreach ($socialLogins as $socialLogin) {
+            if ($socialLogin['status'] == 1) { // Check if the login method is enabled
+                if ($socialLogin['login_medium'] == $service) {
                     // Set configuration dynamically based on the service
                     config([
                         "services.{$service}.client_id" => $socialLogin['client_id'],
@@ -53,34 +55,59 @@ class SocialAuthController extends Controller
                             ? 'https://msonsmedicareservices.store/customer/auth/login/google/callback'
                             : 'https://msonsmedicareservices.store/customer/auth/login/facebook/callback',
                     ]);
+
+                 
                 }
             }
         }
+    }
 
-        // Debugging: Check if credentials are set correctly
-        // dd(config("services.$service"));
+  
 
-        try {
-            // Retrieve the user data from the social provider
-            $userSocialData = Socialite::driver($service)->stateless()->user();
-        } catch (\Exception $e) {
-            return redirect()->route('customer.auth.login')->with('error', 'Failed to authenticate with ' . ucfirst($service));
-        }
+    // Redirect to the provider
+    return Socialite::driver($service)->redirect();
+}
 
-        // Check if user already exists
-        $user = $this->customerRepo->getFirstWhere(['email' => $userSocialData->getEmail()]);
+
+
+    public function handleProviderCallback(Request $request, $service)
+    {
+      
+        if ($service == 'google') {
+            // Set the client ID, secret, and redirect URI directly
+            config([
+                'services.google.client_id' => env('GOOGLE_CLIENT_ID'),
+                'services.google.client_secret' => env('GOOGLE_CLIENT_SECRET'),
+                'services.google.redirect' => env('GOOGLE_REDIRECT_URI'),
+            ]);
+        }else if ($service == 'facebook') {
+            // Set the client ID, secret, and redirect URI directly
+            config([
+                'services.facebook.client_id' => env('FACEBOOK_CLIENT_ID'),
+                'services.facebook.client_secret' => env('FACEBOOK_CLIENT_SECRET'),
+                'services.facebook.redirect' => env('FACEBOOK_REDIRECT_URL'),
+            ]);
+      
+        //  dd(Config::get('services.facebook'));
+
+        $userSocialData = Socialite::driver($service)->stateless()->user();
+        $user = $this->customerRepo->getFirstWhere(params: ['email' => $userSocialData->getEmail()]);
 
         if (!$user || $user['login_medium'] != $service) {
-            $name = explode(' ', $userSocialData->getName());
-            $firstName = count($name) > 1 ? implode(" ", array_slice($name, 0, -1)) : $name[0];
-            $lastName = count($name) > 1 ? end($name) : '';
-
-            $fullName = $firstName . ' ' . $lastName;
+            $name = explode(' ', $userSocialData['name']);
+            if (count($name) > 1) {
+                $fastName = implode(" ", array_slice($name, 0, -1));
+                $lastName = end($name);
+            } else {
+                $fastName = implode(" ", $name);
+                $lastName = '';
+            }
+            $fullName = $fastName . ' ' . $lastName;
 
             session()->forget('socialLoginEmailRemovedForOldUser');
             session()->put('social_login_new_customer', [
                 'name' => $fullName,
-                'f_name' => $firstName,
+                'f_name' => $fastName,
                 'l_name' => $lastName,
                 'email' => $userSocialData->getEmail(),
                 'phone' => '',
@@ -99,21 +126,17 @@ class SocialAuthController extends Controller
                 'fullName' => base64_encode($fullName),
             ]);
         } else {
-            // Update existing user details
-            $this->customerRepo->updateWhere(
-                ['email' => $user['email']],
-                [
-                    'is_email_verified' => 1,
-                    'login_medium' => $service,
-                    'social_id' => $userSocialData->id,
-                    'temporary_token' => Str::random(40)
-                ]
-            );
+            $this->customerRepo->updateWhere(params: ['email' => $user['email']], data: [
+                'is_email_verified' => 1,
+                'login_medium' => $service,
+                'social_id' => $userSocialData->id,
+                'temporary_token' => Str::random(40)
+            ]);
 
             return self::actionCustomerLoginProcess($request, $user, $user['email']);
         }
     }
-
+}
 
     public function actionCustomerLoginProcess($request, $user, $email): JsonResponse|RedirectResponse
     {
@@ -330,7 +353,7 @@ class SocialAuthController extends Controller
                 'token' => $token,
             ]);
 
-            return redirect()->route('customer.auth.login.verify-account', ['identity' => base64_encode($request['phone']), 'action' => base64_encode('social-login-verify')]);
+            return redirect()->route('customer.auth.login.verify-account', ['identity' => base64_encode($request['phone']), 'action' => base64_encode('social-login-verify') ]);
         } else {
             Toastr::error($errorMsg);
             return redirect()->back();
@@ -393,7 +416,7 @@ class SocialAuthController extends Controller
 
                 $validateBlock = 1;
                 $time = $tempBlockTime - Carbon::parse($verificationData['temp_block_time'])->DiffInSeconds();
-                $errorMsg = translate('Too_many_attempts.') . ' ' . translate('please_try_again_after_') . CarbonInterval::seconds($time)->cascade()->forHumans();
+                $errorMsg = translate('Too_many_attempts.') .' '. translate('please_try_again_after_') . CarbonInterval::seconds($time)->cascade()->forHumans();
             }
             $verificationData = $this->phoneOrEmailVerificationRepo->getFirstWhere(params: ['phone_or_email' => $identity]);
             $this->phoneOrEmailVerificationRepo->updateOrCreate(params: ['phone_or_email' => $identity], value: [
@@ -414,7 +437,7 @@ class SocialAuthController extends Controller
             $tokenVerifyStatus = false;
             if ($firebaseOTPVerification && $firebaseOTPVerification['status']) {
                 $firebaseVerify = $this->firebaseService->verifyOtp($verificationData['token'], $verificationData['phone_or_email'], $request['token']);
-                $tokenVerifyStatus = (boolean) ($firebaseVerify['status'] == 'success');
+                $tokenVerifyStatus = (boolean)($firebaseVerify['status'] == 'success');
                 if (!$tokenVerifyStatus) {
                     $verificationData = $this->phoneOrEmailVerificationRepo->getFirstWhere(params: ['phone_or_email' => $identity]);
                     $this->phoneOrEmailVerificationRepo->updateOrCreate(params: ['phone_or_email' => $identity], value: [
@@ -426,7 +449,7 @@ class SocialAuthController extends Controller
                     return back();
                 }
             } else {
-                $tokenVerifyStatus = (boolean) $OTPVerificationData;
+                $tokenVerifyStatus = (boolean)$OTPVerificationData;
             }
 
             if ($tokenVerifyStatus) {
