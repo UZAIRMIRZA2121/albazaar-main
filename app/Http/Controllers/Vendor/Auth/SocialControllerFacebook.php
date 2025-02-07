@@ -41,20 +41,19 @@ class SocialControllerFacebook extends Controller
             $existingUser = Seller::where('facebook_id', $user->getId())->orWhere('email', $email)->first();
 
             if ($existingUser) {
-                Auth::login($existingUser);
-                return redirect()->intended('dashboard');
+                session(['new_email' => $existingUser->email]);
+                return redirect()->route('vendor.auth.registration.index');
             } else {
-                // Create new user
+                // Create a new user
+                $uuid = Str::uuid()->toString();
                 $newUser = Seller::create([
-                    'name' => $user->getName(),
-                    'email' => $email,
-                    'image' => $user->getAvatar(),
-                    'facebook_id' => $user->getId(),
-                    'password' => Hash::make(Str::random(16)) // Secure random password
+                    'f_name' => $user->name,
+                    'email' => $user->email,
+                    'image' => $user->avatar,
+                    'google_id' => $user->id,
+                    'password' => Hash::make($uuid . now())  // Password will be hashed
                 ]);
-
-                session(['new_email' => $email]);
-
+                session(['new_email' => $user->email]);
                 return redirect()->route('vendor.auth.registration.index');
             }
         } catch (\Exception $e) {
