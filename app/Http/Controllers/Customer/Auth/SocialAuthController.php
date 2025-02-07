@@ -55,7 +55,8 @@ public function redirectToProvider($service)
                             ? 'https://msonsmedicareservices.store/customer/auth/login/google/callback'
                             : 'https://msonsmedicareservices.store/customer/auth/login/facebook/callback',
                     ]);
-
+   // Debugging: Show the configured values
+//    dd(config("services.$service"));
                  
                 }
             }
