@@ -57,6 +57,7 @@ class SocialControllerFacebook extends Controller
                 return redirect()->route('vendor.auth.registration.index');
             }
         } catch (\Exception $e) {
+            dd($e->getMessage());
             return redirect()->route('vendor.auth.login')->with('error', 'Facebook login failed. Please try again.');
         }
     }
