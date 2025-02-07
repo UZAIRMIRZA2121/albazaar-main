@@ -94,7 +94,9 @@ class SocialAuthController extends Controller
         }
 
     
-           
+//   // Debugging: Show the configured values
+//   dd(config("services.$service"));
+                 
 
         $userSocialData = Socialite::driver($service)->stateless()->user();
         $user = $this->customerRepo->getFirstWhere(params: ['email' => $userSocialData->getEmail()]);

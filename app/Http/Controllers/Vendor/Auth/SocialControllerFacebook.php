@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Vendor\Auth;
 
+use App\Models\BusinessSetting;
 use Exception;
 use Validator;
 use App\Models\User;
@@ -23,31 +24,67 @@ class SocialControllerFacebook extends Controller
     public function facebookRedirect()
     {
         // Dynamically set Facebook credentials
-        Config::set('services.facebook.client_id', env('FACEBOOK_CLIENT_ID'));
-        Config::set('services.facebook.client_secret', env('FACEBOOK_CLIENT_SECRET'));
-        Config::set('services.facebook.redirect', env('FACEBOOK_REDIRECT_URL'));
-        // Debug the configuration to ensure values are correctly set
-        // dd(Config::get('services.facebook'));
-    
+        $business_setting = BusinessSetting::where('type', 'social_login')->first();
+        $service = 'facebook';
+        if ($business_setting) {
+            // Decode the JSON string into an array
+            $socialLogins = json_decode($business_setting->value, true);
+
+            foreach ($socialLogins as $socialLogin) {
+                if ($socialLogin['status'] == 1) { // Check if the login method is enabled
+                    if ($socialLogin['login_medium'] == $service) {
+                        // Set configuration dynamically based on the service
+                        config([
+                            "services.{$service}.client_id" => $socialLogin['client_id'],
+                            "services.{$service}.client_secret" => $socialLogin['client_secret'],
+                            "services.{$service}.redirect" => $service === 'google'
+                                ? 'https://msonsmedicareservices.store/vendor/auth/login/google/callback'
+                                : 'https://msonsmedicareservices.store/vendor/auth/facebook/callback',
+                        ]);
+
+                    }
+                }
+            }
+        }
+
         // Redirect to Facebook for authentication
         return Socialite::driver('facebook')->redirect();
     }
-    
+
     public function loginWithFacebook()
     {
-      
-          // Dynamically set Facebook credentials
-          Config::set('services.facebook.client_id', env('FACEBOOK_CLIENT_ID'));
-          Config::set('services.facebook.client_secret', env('FACEBOOK_CLIENT_SECRET'));
-          Config::set('services.facebook.redirect', env('FACEBOOK_REDIRECT_URL'));
-          // Debug the configuration to ensure values are correctly set
+
+        $business_setting = BusinessSetting::where('type', 'social_login')->first();
+        $service = 'facebook';
+        if ($business_setting) {
+            // Decode the JSON string into an array
+            $socialLogins = json_decode($business_setting->value, true);
+
+            foreach ($socialLogins as $socialLogin) {
+                if ($socialLogin['status'] == 1) { // Check if the login method is enabled
+                    if ($socialLogin['login_medium'] == $service) {
+                        // Set configuration dynamically based on the service
+                        config([
+                            "services.{$service}.client_id" => $socialLogin['client_id'],
+                            "services.{$service}.client_secret" => $socialLogin['client_secret'],
+                            "services.{$service}.redirect" => $service === 'google'
+                                ? 'https://msonsmedicareservices.store/vendor/auth/login/google/callback'
+                                : 'https://msonsmedicareservices.store/vendor/auth/facebook/callback',
+                        ]);
+
+                    }
+                }
+            }
+        }
+       
+        // Debug the configuration to ensure values are correctly set
         try {
             $user = Socialite::driver('facebook')->stateless()->user();
             $existingUser = Seller::where('google_id', $user->id)->first();
             $stms_code = random_int(1000, 9999);
             if ($existingUser) {
                 Auth::login($existingUser);
-                  return redirect()->intended('dashboard');
+                return redirect()->intended('dashboard');
             } else {
                 $uuid = Str::uuid()->toString();
                 $createUser = Seller::create([
