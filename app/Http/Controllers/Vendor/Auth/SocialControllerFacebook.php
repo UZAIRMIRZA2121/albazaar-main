@@ -76,7 +76,7 @@ class SocialControllerFacebook extends Controller
                 }
             }
         }
-       
+       dd(123);
         // Debug the configuration to ensure values are correctly set
         try {
             $user = Socialite::driver('facebook')->stateless()->user();
