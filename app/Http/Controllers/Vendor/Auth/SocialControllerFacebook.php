@@ -76,11 +76,12 @@ class SocialControllerFacebook extends Controller
                 }
             }
         }
-       dd(123);
+     
         // Debug the configuration to ensure values are correctly set
         try {
             $user = Socialite::driver('facebook')->stateless()->user();
             $existingUser = Seller::where('google_id', $user->id)->first();
+            dd($existingUser);
             $stms_code = random_int(1000, 9999);
             if ($existingUser) {
                 Auth::login($existingUser);
