@@ -50,7 +50,7 @@ class SocialControllerFacebook extends Controller
                     'f_name' => $user->name,
                     'email' => $user->email,
                     'image' => $user->avatar,
-                    'google_id' => $user->id,
+                    'facebook_id' => $user->id,
                     'password' => Hash::make($uuid . now())  // Password will be hashed
                 ]);
                 session(['new_email' => $user->email]);
