@@ -79,7 +79,8 @@ class SocialControllerFacebook extends Controller
      
         // Debug the configuration to ensure values are correctly set
         try {
-            $user = Socialite::driver('facebook')->stateless()->user();
+            $user = Socialite::driver('facebook')->user();
+
             $existingUser = Seller::where('google_id', $user->id)->first();
             dd($existingUser);
             $stms_code = random_int(1000, 9999);
