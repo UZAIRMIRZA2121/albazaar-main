@@ -28,67 +28,73 @@ class SocialAuthController extends Controller
 {
 
     public function __construct(
-        private readonly CustomerRepositoryInterface                 $customerRepo,
+        private readonly CustomerRepositoryInterface $customerRepo,
         private readonly PhoneOrEmailVerificationRepositoryInterface $phoneOrEmailVerificationRepo,
-        private readonly CustomerAuthService                         $customerAuthService,
-        private readonly FirebaseService                             $firebaseService,
-    )
-    {
+        private readonly CustomerAuthService $customerAuthService,
+        private readonly FirebaseService $firebaseService,
+    ) {
     }
 
-public function redirectToProvider($service)
-{
-    $business_setting = BusinessSetting::where('type', 'social_login')->first();
+    public function redirectToProvider($service)
+    {
+        $business_setting = BusinessSetting::where('type', 'social_login')->first();
 
-    if ($business_setting) {
-        // Decode the JSON string into an array
-        $socialLogins = json_decode($business_setting->value, true);
+        if ($business_setting) {
+            // Decode the JSON string into an array
+            $socialLogins = json_decode($business_setting->value, true);
 
-        foreach ($socialLogins as $socialLogin) {
-            if ($socialLogin['status'] == 1) { // Check if the login method is enabled
-                if ($socialLogin['login_medium'] == $service) {
-                    // Set configuration dynamically based on the service
-                    config([
-                        "services.{$service}.client_id" => $socialLogin['client_id'],
-                        "services.{$service}.client_secret" => $socialLogin['client_secret'],
-                        "services.{$service}.redirect" => $service === 'google'
-                            ? 'https://msonsmedicareservices.store/customer/auth/login/google/callback'
-                            : 'https://msonsmedicareservices.store/customer/auth/login/facebook/callback',
-                    ]);
+            foreach ($socialLogins as $socialLogin) {
+                if ($socialLogin['status'] == 1) { // Check if the login method is enabled
+                    if ($socialLogin['login_medium'] == $service) {
+                        // Set configuration dynamically based on the service
+                        config([
+                            "services.{$service}.client_id" => $socialLogin['client_id'],
+                            "services.{$service}.client_secret" => $socialLogin['client_secret'],
+                            "services.{$service}.redirect" => $service === 'google'
+                                ? 'https://msonsmedicareservices.store/customer/auth/login/google/callback'
+                                : 'https://msonsmedicareservices.store/customer/auth/login/facebook/callback',
+                        ]);
 
-                 
+                    }
                 }
             }
         }
+
+
+
+        // Redirect to the provider
+        return Socialite::driver($service)->redirect();
     }
-
-  
-
-    // Redirect to the provider
-    return Socialite::driver($service)->redirect();
-}
 
 
 
     public function handleProviderCallback(Request $request, $service)
     {
-      
-        if ($service == 'google') {
-            // Set the client ID, secret, and redirect URI directly
-            config([
-                'services.google.client_id' => env('GOOGLE_CLIENT_ID'),
-                'services.google.client_secret' => env('GOOGLE_CLIENT_SECRET'),
-                'services.google.redirect' => env('GOOGLE_REDIRECT_URI'),
-            ]);
-        }else if ($service == 'facebook') {
-            // Set the client ID, secret, and redirect URI directly
-            config([
-                'services.facebook.client_id' => env('FACEBOOK_CLIENT_ID'),
-                'services.facebook.client_secret' => env('FACEBOOK_CLIENT_SECRET'),
-                'services.facebook.redirect' => env('FACEBOOK_REDIRECT_URL'),
-            ]);
-      
-        //  dd(Config::get('services.facebook'));
+        $business_setting = BusinessSetting::where('type', 'social_login')->first();
+
+        if ($business_setting) {
+            // Decode the JSON string into an array
+            $socialLogins = json_decode($business_setting->value, true);
+
+            foreach ($socialLogins as $socialLogin) {
+                if ($socialLogin['status'] == 1) { // Check if the login method is enabled
+                    if ($socialLogin['login_medium'] == $service) {
+                        // Set configuration dynamically based on the service
+                        config([
+                            "services.{$service}.client_id" => $socialLogin['client_id'],
+                            "services.{$service}.client_secret" => $socialLogin['client_secret'],
+                            "services.{$service}.redirect" => $service === 'google'
+                                ? 'https://msonsmedicareservices.store/customer/auth/login/google/callback'
+                                : 'https://msonsmedicareservices.store/customer/auth/login/facebook/callback',
+                        ]);
+
+                    }
+                }
+            }
+        }
+
+    
+           
 
         $userSocialData = Socialite::driver($service)->stateless()->user();
         $user = $this->customerRepo->getFirstWhere(params: ['email' => $userSocialData->getEmail()]);
@@ -136,7 +142,6 @@ public function redirectToProvider($service)
             return self::actionCustomerLoginProcess($request, $user, $user['email']);
         }
     }
-}
 
     public function actionCustomerLoginProcess($request, $user, $email): JsonResponse|RedirectResponse
     {
@@ -353,7 +358,7 @@ public function redirectToProvider($service)
                 'token' => $token,
             ]);
 
-            return redirect()->route('customer.auth.login.verify-account', ['identity' => base64_encode($request['phone']), 'action' => base64_encode('social-login-verify') ]);
+            return redirect()->route('customer.auth.login.verify-account', ['identity' => base64_encode($request['phone']), 'action' => base64_encode('social-login-verify')]);
         } else {
             Toastr::error($errorMsg);
             return redirect()->back();
@@ -416,7 +421,7 @@ public function redirectToProvider($service)
 
                 $validateBlock = 1;
                 $time = $tempBlockTime - Carbon::parse($verificationData['temp_block_time'])->DiffInSeconds();
-                $errorMsg = translate('Too_many_attempts.') .' '. translate('please_try_again_after_') . CarbonInterval::seconds($time)->cascade()->forHumans();
+                $errorMsg = translate('Too_many_attempts.') . ' ' . translate('please_try_again_after_') . CarbonInterval::seconds($time)->cascade()->forHumans();
             }
             $verificationData = $this->phoneOrEmailVerificationRepo->getFirstWhere(params: ['phone_or_email' => $identity]);
             $this->phoneOrEmailVerificationRepo->updateOrCreate(params: ['phone_or_email' => $identity], value: [
@@ -437,7 +442,7 @@ public function redirectToProvider($service)
             $tokenVerifyStatus = false;
             if ($firebaseOTPVerification && $firebaseOTPVerification['status']) {
                 $firebaseVerify = $this->firebaseService->verifyOtp($verificationData['token'], $verificationData['phone_or_email'], $request['token']);
-                $tokenVerifyStatus = (boolean)($firebaseVerify['status'] == 'success');
+                $tokenVerifyStatus = (boolean) ($firebaseVerify['status'] == 'success');
                 if (!$tokenVerifyStatus) {
                     $verificationData = $this->phoneOrEmailVerificationRepo->getFirstWhere(params: ['phone_or_email' => $identity]);
                     $this->phoneOrEmailVerificationRepo->updateOrCreate(params: ['phone_or_email' => $identity], value: [
@@ -449,7 +454,7 @@ public function redirectToProvider($service)
                     return back();
                 }
             } else {
-                $tokenVerifyStatus = (boolean)$OTPVerificationData;
+                $tokenVerifyStatus = (boolean) $OTPVerificationData;
             }
 
             if ($tokenVerifyStatus) {
