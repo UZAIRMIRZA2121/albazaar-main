@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Vendor\Auth;
 
 use App\Models\BusinessSetting;
+use App\Models\Chatting;
 use Illuminate\Support\Str;
 use App\Models\Seller;
 use Illuminate\Http\Request;
@@ -54,12 +55,28 @@ class SocialControllerFacebook extends Controller
                     'password' => Hash::make($uuid . now())  // Password will be hashed
                 ]);
                 session(['new_email' => $user->email]);
+                  // Start chat with user
+            $this->startChatting($user->id);
+
                 return redirect()->route('vendor.auth.registration.index');
             }
         } catch (\Exception $e) {
             dd($e->getMessage());
             return redirect()->route('vendor.auth.login')->with('error', 'Facebook login failed. Please try again.');
         }
+    }
+    private function startChatting($receiverId)
+    {
+        Chatting::create([
+            'seller_id' => $receiverId,
+            'admin_id' => 1,
+            'message' => 'Welcome to ALBAZAR',
+            'sent_by_admin' => 1,
+            'seen_by_admin' => 1,
+            'seen_by_seller' => 0,
+            'status' => 1,
+            'notification_receiver' => 'seller',
+        ]);
     }
 
     /**

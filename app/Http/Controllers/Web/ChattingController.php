@@ -160,14 +160,13 @@ class ChattingController extends BaseController
             $relation = ['admin'];
             $type = 'admin';
         } elseif ($request->has(key: 'admin_id')) {
-            Log::info(3);
-
+            
 
             $vendorData =
                 $this->chattingRepo->add(
                     data: $this->chattingService->addChattingDataForWeb(
                         request: $request,
-                        userId: 2,
+                        userId: $customerId,
                         type: 'admin',
                         adminId: 1,
 

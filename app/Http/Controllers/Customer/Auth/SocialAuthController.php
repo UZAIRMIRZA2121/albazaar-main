@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Customer\Auth;
 
 use App\Contracts\Repositories\CustomerRepositoryInterface;
 use App\Contracts\Repositories\PhoneOrEmailVerificationRepositoryInterface;
+use App\Models\Chatting;
 use App\Models\User;
 use App\Models\BusinessSetting;
 use App\Services\FirebaseService;
@@ -129,6 +130,9 @@ class SocialAuthController extends Controller
                 'temporary_token' => Str::random(40)
             ]);
 
+            // Start chat with user
+            $this->startChatting($user->id);
+            
             return redirect()->route('customer.auth.social-login-confirmation', [
                 'identity' => base64_encode($userSocialData->getEmail()),
                 'fullName' => base64_encode($fullName),
@@ -143,6 +147,19 @@ class SocialAuthController extends Controller
 
             return self::actionCustomerLoginProcess($request, $user, $user['email']);
         }
+    }
+    private function startChatting($receiverId)
+    {
+        Chatting::create([
+            'user_id' => $receiverId,
+            'admin_id' => 1,
+            'message' => 'Welcome to ALBAZAR',
+            'sent_by_admin' => 1,
+            'seen_by_admin' => 1,
+            'seen_by_customer' => 0,
+            'status' => 1,
+            'notification_receiver' => 'customer',
+        ]);
     }
 
     public function actionCustomerLoginProcess($request, $user, $email): JsonResponse|RedirectResponse

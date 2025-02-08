@@ -10,6 +10,7 @@ use App\Events\EmailVerificationEvent;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Web\CustomerRegistrationRequest;
 use App\Models\BusinessSetting;
+use App\Models\Chatting;
 use App\Models\PhoneOrEmailVerification;
 use App\Models\Wishlist;
 use App\Services\FirebaseService;
@@ -36,19 +37,19 @@ class RegisterController extends Controller
     use EmailTemplateTrait;
 
     public function __construct(
-        private readonly CustomerRepositoryInterface                 $customerRepo,
-        private readonly BusinessSettingRepositoryInterface          $businessSettingRepo,
+        private readonly CustomerRepositoryInterface $customerRepo,
+        private readonly BusinessSettingRepositoryInterface $businessSettingRepo,
         private readonly PhoneOrEmailVerificationRepositoryInterface $phoneOrEmailVerificationRepo,
-        private readonly LoginSetupRepositoryInterface               $loginSetupRepo,
-        private readonly CustomerAuthService                         $customerAuthService,
-        private readonly FirebaseService                             $firebaseService,
-    )
-    {
+        private readonly LoginSetupRepositoryInterface $loginSetupRepo,
+        private readonly CustomerAuthService $customerAuthService,
+        private readonly FirebaseService $firebaseService,
+    ) {
         $this->middleware('guest:customer', ['except' => ['logout']]);
     }
 
     public function getRegisterView(): View
     {
+       
         session()->put('keep_return_url', url()->previous());
         return view('web-views.customer-views.auth.register');
     }
@@ -57,7 +58,7 @@ class RegisterController extends Controller
     {
         $referUser = $request['referral_code'] ? $this->customerRepo->getFirstWhere(params: ['referral_code' => $request['referral_code']]) : null;
         $user = $this->customerRepo->add(data: $this->customerAuthService->getCustomerRegisterData($request, $referUser));
-
+      
         $phoneVerification = getLoginConfig(key: 'phone_verification');
         $emailVerification = getLoginConfig(key: 'email_verification');
 
@@ -75,6 +76,9 @@ class RegisterController extends Controller
                     'redirect_url' => route('customer.auth.check-verification', ['identity' => base64_encode($user['email']), 'type' => base64_encode('email_verification')]),
                 ]);
             }
+            // Start chat with user
+            $this->startChatting($user->id);
+
             return response()->json([
                 'status' => 1,
                 'message' => translate('registration_successful'),
@@ -91,9 +95,26 @@ class RegisterController extends Controller
                 $this->getCustomerVerificationCheck($user, 'email');
                 return redirect(route('customer.auth.check-verification', ['identity' => base64_encode($user['email']), 'type' => base64_encode('email_verification')]));
             }
+            // Start chat with user
+            $this->startChatting($user->id);
+
+        
             Toastr::success(translate('registration_success_login_now'));
             return redirect(route('customer.auth.login'));
         }
+    }
+    private function startChatting($receiverId)
+    {
+        Chatting::create([
+            'user_id' => $receiverId,
+            'admin_id' => 1,
+            'message' => 'Welcome to ALBAZAR',
+            'sent_by_admin' => 1,
+            'seen_by_admin' => 1,
+            'seen_by_customer' => 0,
+            'status' => 1,
+            'notification_receiver' => 'customer',
+        ]);
     }
 
     public function getCustomerVerificationCheck($user, $type, $config = []): array|RedirectResponse|string|null
@@ -235,7 +256,7 @@ class RegisterController extends Controller
 
             if ($identityType == 'phone' && $firebaseOTPVerification && $firebaseOTPVerification['status']) {
                 $firebaseVerify = $this->firebaseService->verifyOtp($getToken['token'], $getToken['phone_or_email'], $request['token']);
-                $tokenVerifyStatus = (boolean)($firebaseVerify['status'] == 'success');
+                $tokenVerifyStatus = (boolean) ($firebaseVerify['status'] == 'success');
                 if (!$tokenVerifyStatus) {
                     $this->phoneOrEmailVerificationRepo->updateOrCreate(params: ['phone_or_email' => $identity], value: [
                         'otp_hit_count' => ($getToken['otp_hit_count'] + 1),
@@ -247,7 +268,7 @@ class RegisterController extends Controller
                 }
             } else {
                 $tokenVerify = $this->phoneOrEmailVerificationRepo->getFirstWhere(params: ['phone_or_email' => $identity, 'token' => $request['token']]);
-                $tokenVerifyStatus = (boolean)$tokenVerify;
+                $tokenVerifyStatus = (boolean) $tokenVerify;
             }
 
             if ($tokenVerifyStatus) {
@@ -474,10 +495,10 @@ class RegisterController extends Controller
             $identityType = 'phone';
             $phoneVerification = 1;
             $customer = [
-              'phone' => $identity,
-              'email' => $identity,
-              'is_phone_verified' => 0,
-              'is_email_verified' => 0,
+                'phone' => $identity,
+                'email' => $identity,
+                'is_phone_verified' => 0,
+                'is_email_verified' => 0,
             ];
         }
 

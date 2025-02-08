@@ -107,8 +107,8 @@
             @php($business_mode = getWebConfig(name: 'business_mode'))
             <div>
                 <div class="widget-title">
-                    <a class="{{Request::is('chat/vendor')?'active-menu': '' }} {{Request::is('chat/delivery-man')?'active-menu': '' }}" href="{{route('chat', ['type' => $business_mode == 'multi' ? 'vendor' : 'delivery-man'])}}">
-                    <span>
+                    <a class="{{Request::is('chat/vendor')?'active-menu': '' }} {{Request::is('chat/delivery-man')?'active-menu': '' }}"  href="{{route('chat', ['type' => 'admin'])}}"
+                  >  <span>
                         <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none">
                         <g clip-path="url(#clip0_776_10801)">
                             <path fill-rule="evenodd" clip-rule="evenodd" d="M10.0032 0.00341797C15.526 0.00341797 20.0032 4.47947 20.0032 10.0048C20.0032 15.5273 15.526 20.0034 10.0032 20.0034C4.48041 20.0034 0.00326538 15.5275 0.00326538 10.0048C0.00326538 4.47947 4.48069 0.00341797 10.0032 0.00341797ZM3.75323 13.7922L8.25713 9.92588L3.75514 6.06123C3.75389 6.07194 3.75324 6.08271 3.75319 6.0935L3.75323 13.7922ZM8.67315 10.2831L4.12803 14.185H15.8787L11.3332 10.2831L10.1794 11.2736C10.1299 11.3159 10.0668 11.339 10.0017 11.3386C9.93653 11.3382 9.8737 11.3144 9.82467 11.2715L8.67315 10.2831ZM11.7494 9.92588L16.2533 13.7922V6.0935C16.2534 6.08271 16.2527 6.07192 16.2512 6.06123L11.7494 9.92596L11.7494 9.92588ZM4.30834 5.82178L10.0032 10.7105L15.698 5.82178H4.30834Z" fill="currentColor"/>

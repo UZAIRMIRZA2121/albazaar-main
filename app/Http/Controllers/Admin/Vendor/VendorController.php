@@ -113,9 +113,25 @@ class VendorController extends BaseController
             'templateName' => 'registration',
         ];
         
+          // Start chat with user
+        $this->startChatting($vendor->id);
         event(new VendorRegistrationEvent(email: $request['email'], data: $data));
         return response()->json(['message' => translate('vendor_added_successfully')]);
     }
+    private function startChatting($receiverId)
+    {
+        Chatting::create([
+            'seller_id' => $receiverId,
+            'admin_id' => 1,
+            'message' => 'Welcome to ALBAZAR',
+            'sent_by_admin' => 1,
+            'seen_by_admin' => 1,
+            'seen_by_seller' => 0,
+            'status' => 1,
+            'notification_receiver' => 'seller',
+        ]);
+    }
+    
 
     public function updateStatus(Request $request): RedirectResponse
     {
