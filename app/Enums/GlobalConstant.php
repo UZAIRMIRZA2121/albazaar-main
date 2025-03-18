@@ -1166,19 +1166,19 @@ enum GlobalConstant{
     const THEME_LIFESTYLE = "theme_fashion";
 
     const DEFAULT_PAYMENT_GATEWAYS = [
-        'ssl_commerz',
-        'paypal',
-        'stripe',
-        'razor_pay',
-        'paystack',
-        'senang_pay',
-        'paymob_accept',
-        'flutterwave',
-        'paytm',
+        // 'ssl_commerz',
+        // 'paypal',
+        // 'stripe',
+        // 'razor_pay',
+        // 'paystack',
+        // 'senang_pay',
+        // 'paymob_accept',
+        // 'flutterwave',
+        // 'paytm',
         'paytabs',
-        'liqpay',
-        'mercadopago',
-        'bkash'
+        // 'liqpay',
+        // 'mercadopago',
+        // 'bkash'
     ];
 
     const DEFAULT_SMS_GATEWAYS = [

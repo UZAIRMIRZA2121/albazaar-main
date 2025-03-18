@@ -127,7 +127,7 @@
                                 @endif
 
                                 @php($chosenShipping=\App\Models\CartShipping::where(['cart_group_id'=>$cartItem['cart_group_id']])->first())
-
+{{$chosenShipping}}
 <div class="shipping-form">
     <div class="container mt-4">
         <div class="row">
@@ -139,7 +139,7 @@
                             <label>City</label>
                             <input type="text" class="city-input form-control" required>
                         </div>
-                        <button class="get-shipping-options btn btn-primary mt-2" data-chosenShipping-id="{{$chosenShipping->id }}">Get Shipping Options</button>
+                        <button class="get-shipping-options btn btn-primary mt-2" data-chosenShipping-id="{{$chosenShipping->id ?? '' }}">Get Shipping Options</button>
                     </div>
                 </div>
             </div>
@@ -148,7 +148,7 @@
                 <div class="card">
                     <div class="card-header">Available Shipping Options</div>
                     <div class="card-body">
-                        <div class="shipping-options" data-chosenShipping-id="{{$chosenShipping->id }}">
+                        <div class="shipping-options" data-chosenShipping-id="{{$chosenShipping->id ?? '' }}"  data-cartgroup-id="{{$chosenShipping->cart_group_id ?? '' }}"  >
                             <!-- Shipping options will be rendered here -->
                         </div>
                         {{-- <button class="proceed-to-payment btn btn-success mt-3 w-100" disabled>
@@ -160,8 +160,6 @@
         </div>
     </div>
 </div>
-
-<script src="{{ asset('js/shipping.js') }}"></script>
 
 <br><br>
                                 <div class=" bg-white select-method-border rounded">
@@ -883,6 +881,9 @@
 </div>
 
 @push('script')
+
+<script src="{{ asset('js/shipping.js') }}"></script>
+
     <script src="{{ theme_asset(path: 'public/assets/front-end/js/cart-details.js') }}"></script>
 
 

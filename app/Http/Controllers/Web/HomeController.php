@@ -64,7 +64,8 @@ class HomeController extends Controller
         $bestSellProduct = $this->cacheBestSellProductList();
         $recommendedProduct = $this->cacheHomePageRandomSingleProductItem();
         $bannerTypeMainBanner = $this->cacheBannerForTypeMainBanner();
-        $bannerTypeMainSectionBanner = $this->cacheBannerTable(bannerType: 'Main Section Banner');
+        $bannerTypeMainSectionBanner = $this->cacheBannerTable('Main Section Banner', 10);
+
         $topVendorsList = ProductManager::getPriorityWiseTopVendorQuery($this->cacheHomePageTopVendorsList());
         $bannerTypeFooterBanner = $this->cacheBannerTable(bannerType: 'Footer Banner', dataLimit: 10);
 

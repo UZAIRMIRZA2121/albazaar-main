@@ -24,13 +24,13 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
-        // $schedule->command('inspire')
-        //          ->hourly();
         $schedule->call(function () {
             \Log::info('Cron job is running');
         })->everyMinute();
+    
         $schedule->command('transfer:transactions')->everyMinute();
     }
+    
 
     /**
      * Register the commands for the application.

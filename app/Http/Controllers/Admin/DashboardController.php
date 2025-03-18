@@ -14,6 +14,7 @@ use App\Contracts\Repositories\VendorRepositoryInterface;
 use App\Contracts\Repositories\VendorWalletRepositoryInterface;
 use App\Enums\ViewPaths\Admin\Dashboard;
 use App\Http\Controllers\BaseController;
+use App\Models\Promotion;
 use App\Services\DashboardService;
 use Carbon\Carbon;
 use Illuminate\Contracts\View\View;
@@ -265,5 +266,12 @@ class DashboardController extends BaseController
             'restockProductCount' => $restockProductList->count(),
             'restockProduct' => $restockProduct
         ]);
+    }
+    public function promotion_index()
+    {
+
+        $promotions = Promotion::all();
+       
+        return view('admin-views.promotions.index', compact('promotions'));
     }
 }

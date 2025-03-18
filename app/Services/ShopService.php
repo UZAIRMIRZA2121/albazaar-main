@@ -31,11 +31,14 @@ class ShopService
      */
     public function getShopDataForUpdate(object $request , object $shop):array
     {
+       
         $storage = config('filesystems.disks.default') ?? 'public';
         $image = $request['image'] ? $this->update(dir:'shop/', oldImage: $shop['image'], format: 'webp',image:  $request->file('image')) : $shop['image'];
         $banner = $request['banner'] ? $this->update(dir: 'shop/banner/',oldImage:  $shop['banner'], format: 'webp',image:  $request->file('banner')): $shop['banner'];
         $bottomBanner = $request['bottom_banner'] ? $this->update(dir: 'shop/banner/', oldImage: $shop['bottom_banner'], format: 'webp', image: $request->file('bottom_banner')) : $shop['bottom_banner'];
         $offerBanner = $request['offer_banner'] ? $this->update(dir: 'shop/banner/', oldImage: $shop['offer_banner'], format: 'webp',image:  $request->file('offer_banner')) : $shop['offer_banner'];
+
+        
         return [
             'name'=>$request['name'],
             'address'=>$request['address'],
@@ -48,6 +51,8 @@ class ShopService
             'bottom_banner_storage_type'=> $request->has('bottom_banner') ? $storage : $shop['bottom_banner_storage_type'],
             'offer_banner'=> $offerBanner,
             'offer_banner_storage_type'=> $request->has('offer_banner') ? $storage : $shop['offer_banner_storage_type'],
+
+
         ];
     }
 

@@ -83,6 +83,10 @@ class Order extends Model
         'coupon_discount_bearer',
         'shipping_responsibility',
         'shipping_method_id',
+
+        'shipping_commission',
+        'option_id',
+        'services_name',
         'shipping_cost',
         'is_shipping_free',
         'order_group_id',

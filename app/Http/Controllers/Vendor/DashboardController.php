@@ -14,6 +14,7 @@ use App\Enums\OrderStatus;
 use App\Enums\ViewPaths\Vendor\Dashboard;
 use App\Http\Controllers\BaseController;
 use App\Http\Requests\Vendor\WithdrawRequest;
+use App\Models\Promotion;
 use App\Repositories\BrandRepository;
 use App\Repositories\OrderTransactionRepository;
 use App\Services\DashboardService;
@@ -303,5 +304,13 @@ class DashboardController extends BaseController
             'restockProductCount' => $restockProductList->count(),
             'restockProduct' => $restockProduct
         ]);
+    }
+
+    public function promotion_index()
+    {
+
+        $promotions = Promotion::all();
+       
+        return view('vendor-views.promotion', compact('promotions'));
     }
 }

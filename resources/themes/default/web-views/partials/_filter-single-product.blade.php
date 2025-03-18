@@ -3,6 +3,14 @@
 <div class="product-single-hover style--card">
     <div class="overflow-hidden position-relative">
         <div class=" inline_product clickable d-flex justify-content-center">
+            
+            @if ($product->featured == 1)
+            <span class="for-discount-value p-1 pl-2 pr-2 font-bold fs-13" style="inset-inline-end: 75px !important;inset-inline-start: unset;">
+                <span class="direction-ltr d-block"> Featured
+                </span>
+            </span>
+            @endif
+         
             @if($product->discount > 0)
                 <span class="for-discount-value p-1 pl-2 pr-2 font-bold fs-13">
                     <span class="direction-ltr d-block">
@@ -29,6 +37,7 @@
                     <i class="czi-eye align-middle"></i>
                 </a>
             </div>
+            
             @if($product->product_type == 'physical' && $product->current_stock <= 0)
                 <span class="out_fo_stock">{{translate('out_of_stock')}}</span>
             @endif

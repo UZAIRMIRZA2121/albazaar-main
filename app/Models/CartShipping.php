@@ -32,6 +32,11 @@ class CartShipping extends Model
         'cart_group_id',
         'shipping_method_id',
         'shipping_cost',
+        
+        'option_id',
+        'service_name',
+        'shipping_comission',
+
     ];
 
     public function cart(): BelongsTo

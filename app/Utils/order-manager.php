@@ -561,6 +561,7 @@ class OrderManager
                 $shipping_type = isset($seller_shipping) == true ? $seller_shipping->shipping_type : 'order_wise';
             }
         }
+
         $or = [
             'id' => $order_id,
             'verification_code' => rand(100000, 999999),
@@ -588,6 +589,15 @@ class OrderManager
             'billing_address_data' => ShippingAddress::find($billing_address_id),
             'shipping_responsibility' => getWebConfig(name: 'shipping_method'),
             'shipping_cost' => CartManager::get_shipping_cost(groupId: $data['cart_group_id'], type: 'checked'),
+
+            'shipping_commission' => CartManager::get_shipping_commission(groupId: $data['cart_group_id'], type: 'checked'),
+            'option_id' => CartManager::get_shipping_option_id(groupId: $data['cart_group_id'], type: 'checked'),
+            'service_name' => CartManager::get_shipping_service_name(groupId: $data['cart_group_id'], type: 'checked'),
+            'delivery_service_name' => CartManager::get_shipping_service_name(groupId: $data['cart_group_id'], type: 'checked') ?? '',
+
+
+
+
             'extra_discount' => $free_shipping_discount,
             'extra_discount_type' => $free_shipping_type,
             'free_delivery_bearer' => $seller_data->seller_is == 'seller' ? $free_shipping_responsibility : 'admin',

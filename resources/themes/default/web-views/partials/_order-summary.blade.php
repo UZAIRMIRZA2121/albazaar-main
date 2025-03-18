@@ -62,7 +62,7 @@
             </div>
             <div class="d-flex justify-content-between">
                 <span class="cart_title">{{translate('shipping')}}</span>
-                <span class="cart_value">
+                <span class="cart_value new-shipping-cost" >
                     {{ webCurrencyConverter(amount: $totalShippingCost) }}
                 </span>
             </div>

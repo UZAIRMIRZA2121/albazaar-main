@@ -190,12 +190,14 @@ class ProductController extends BaseController
         if ($request->ajax()) {
             return response()->json([], 200);
         }
+
         $dataArray = $service->getAddProductData(request: $request, addedBy: 'seller');
         $savedProduct = $this->productRepo->add(data: $dataArray);
+     
         $this->productRepo->addRelatedTags(request: $request, product: $savedProduct);
         $this->translationRepo->add(request: $request, model: 'App\Models\Product', id: $savedProduct->id);
         $this->updateProductAuthorAndPublishingHouse(request: $request, product: $savedProduct);
-
+       
         // Digital Product Variation
         $digitalFileArray = $service->getAddProductDigitalVariationData(request: $request, product: $savedProduct);
         foreach ($digitalFileArray as $digitalFile) {

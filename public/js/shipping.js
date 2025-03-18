@@ -29,7 +29,7 @@ const ShippingManager = {
         try {
             const requestData = {
                 weight: "3",
-                originCity: "Riyadh",
+                originCity: "doha",
                 destinationCity: city,
                 height: 30,
                 width: 30,
@@ -80,7 +80,7 @@ const ShippingManager = {
                         <div class="card-body">
                             <div class="d-flex align-items-center mb-2">
                                 ${option.logo ? `<img src="${option.logo}" alt="${option.deliveryCompanyName}" height="40" width="40" class="me-2">` : ""}
-                                <h5 class="card-title mb-0">${option.deliveryOptionName}</h5>
+                                <h5 class="card-title mb-0 service-name" >${option.deliveryOptionName}</h5>
                             </div>
                             <p class="card-text">
                                 <strong>Price:</strong> <span class="price" data-id="${option.deliveryOptionId}">${option.price}</span> ${option.currency}<br>
@@ -105,34 +105,43 @@ const ShippingManager = {
     },
 
     selectShippingOption(button, shippingOptionsContainer, proceedToPaymentBtn) {
-        // Get the chosenShippingId from the selected option button
         const chosenShippingId = button.getAttribute("data-chosenShipping-id");
-        console.log("Chosen Shipping ID selected:", chosenShippingId); // log the chosenShippingId for selected option
-
+        console.log("Chosen Shipping ID selected:", chosenShippingId);
+    
+        // Remove 'selected' class from all options
         shippingOptionsContainer.querySelectorAll(".shipping-option").forEach(option => {
             option.classList.remove("selected");
         });
-
+    
         const selectedOption = button.closest(".shipping-option");
         selectedOption.classList.add("selected");
-
+    
         const deliveryOptionId = button.getAttribute("data-option-id");
         const priceElement = selectedOption.querySelector(".price[data-id='" + deliveryOptionId + "']");
         const price = priceElement ? priceElement.textContent.trim() : "0";
+        const newShippingCostElement = document.querySelector(".new-shipping-cost");
 
+
+        newShippingCostElement.textContent = `$${price}`;
+        // Get the service name
+        const serviceNameElement = selectedOption.querySelector(".service-name");
+        const serviceName = serviceNameElement ? serviceNameElement.textContent.trim() : "";
+    
         localStorage.setItem("selectedShippingOption", deliveryOptionId);
-        console.log("Selected Delivery Option:", deliveryOptionId, "Price:", price);
-
+        console.log("Selected Delivery Option:", deliveryOptionId, "Price:", price, "Service Name:", serviceName);
+    
         if (proceedToPaymentBtn) {
             proceedToPaymentBtn.disabled = false;
         }
-
+    
+        // Include service name in the data sent to the server
         const data = {
             option_id: deliveryOptionId,
             price: price,
-            chosen_shipping_id: chosenShippingId // Send the chosenShippingId when selecting an option
+            service_name: serviceName,  // Added service name
+            chosen_shipping_id: chosenShippingId
         };
-
+    
         fetch("/update-shipping-option", {
             method: "POST",
             headers: {
@@ -149,6 +158,7 @@ const ShippingManager = {
                 console.error("Error with AJAX request:", error);
             });
     }
+    
 };
 
 document.addEventListener("DOMContentLoaded", () => {

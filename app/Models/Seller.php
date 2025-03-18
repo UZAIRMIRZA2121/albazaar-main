@@ -38,6 +38,7 @@ use Illuminate\Support\Facades\DB;
  */
 class Seller extends Authenticatable
 {
+  
     use Notifiable, StorageTrait;
 
     protected $fillable = [
@@ -164,4 +165,10 @@ class Seller extends Authenticatable
         });
     }
 
+   
+
+    public function availabilities()
+    {
+        return $this->hasMany(SellerAvailability::class);
+    }
 }

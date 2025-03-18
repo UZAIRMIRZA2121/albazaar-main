@@ -23,6 +23,8 @@ use App\Enums\ViewPaths\Vendor\ShippingMethod;
 use App\Enums\ViewPaths\Vendor\ShippingType;
 use App\Enums\ViewPaths\Vendor\Shop;
 use App\Enums\ViewPaths\Vendor\Withdraw;
+use App\Http\Controllers\BannerController;
+use App\Http\Controllers\FeaturedProductController;
 use App\Http\Controllers\Vendor\Auth\ForgotPasswordController;
 use App\Http\Controllers\Vendor\Auth\LoginController;
 use App\Enums\ViewPaths\Vendor\Order;
@@ -55,6 +57,15 @@ use App\Http\Controllers\Vendor\Order\OrderController;
 use App\Http\Controllers\Vendor\TransactionReportController;
 use App\Http\Controllers\Vendor\ProductReportController;
 use App\Http\Controllers\Vendor\OrderReportController;
+use App\Http\Controllers\SellerAvailabilityController;
+use App\Enums\ViewPaths\Admin\PushNotification;
+use App\Http\Controllers\Admin\Notification\PushNotificationSettingsController;
+use App\Http\Controllers\PaymentController;
+
+Route::get('/payment', [PaymentController::class, 'createPayment'])->name('payment.create');
+Route::get('/payment/status', [PaymentController::class, 'handleReturn'])->name('payment.status');
+// Route::get('/payment/status/{tran_ref}', [PaymentController::class, 'checkTransaction'])
+//     ->name('payment.status');
 
 Route::group(['middleware' => ['maintenance_mode']], function () {
 
@@ -86,8 +97,10 @@ Route::group(['middleware' => ['maintenance_mode']], function () {
         });
         /* end authentication */
         Route::group(['middleware' => ['seller']], function () {
+
             Route::group(['prefix' => 'dashboard', 'as' => 'dashboard.'], function () {
                 Route::controller(DashboardController::class)->group(function () {
+                    Route::get('/promotion', 'promotion_index')->name('promotion.index'); // List all notifications
                     Route::get(Dashboard::INDEX[URI], 'index')->name('index');
                     Route::get(Dashboard::ORDER_STATUS[URI] . '/{type}', 'getOrderStatus')->name('order-status');
                     Route::get(Dashboard::EARNING_STATISTICS[URI], 'getEarningStatistics')->name('earning-statistics');
@@ -134,7 +147,7 @@ Route::group(['middleware' => ['maintenance_mode']], function () {
             /* product */
             Route::group(['prefix' => 'products', 'as' => 'products.'], function () {
                 Route::controller(ProductController::class)->group(function () {
-                    Route::get(Product::LIST[URI] . '/{type}', 'index')->name('list');
+                    Route::get(Product::LIST [URI] . '/{type}', 'index')->name('list');
                     Route::get(Product::ADD[URI], 'getAddView')->name('add');
                     Route::post(Product::ADD[URI], 'add');
                     Route::get(Product::GET_CATEGORIES[URI], 'getCategories')->name('get-categories');
@@ -160,13 +173,13 @@ Route::group(['middleware' => ['maintenance_mode']], function () {
                     Route::post(Product::DELETE_PREVIEW_FILE[URI], 'deletePreviewFile')->name('delete-preview-file');
                     Route::get(Product::REQUEST_RESTOCK_LIST[URI], 'getRequestRestockListView')->name('request-restock-list');
                     Route::get(Product::EXPORT_RESTOCK[URI], 'exportRestockList')->name('restock-export');
-                    Route::delete(Product::RESTOCK_DELETE[URI]. '/{id}', 'deleteRestock')->name('restock-delete');
+                    Route::delete(Product::RESTOCK_DELETE[URI] . '/{id}', 'deleteRestock')->name('restock-delete');
                 });
             });
 
             Route::group(['prefix' => 'orders', 'as' => 'orders.'], function () {
                 Route::controller(OrderController::class)->group(function () {
-                    Route::get(Order::LIST[URI] . '/{status}', 'index')->name('list');
+                    Route::get(Order::LIST [URI] . '/{status}', 'index')->name('list');
                     Route::get(Order::CUSTOMERS[URI], 'getCustomers')->name('customers');
                     Route::get(Order::EXPORT_EXCEL[URI] . '/{status}', 'exportList')->name('export-excel');
                     Route::get(Order::GENERATE_INVOICE[URI] . '/{id}', 'generateInvoice')->name('generate-invoice');
@@ -183,7 +196,7 @@ Route::group(['middleware' => ['maintenance_mode']], function () {
 
             Route::group(['prefix' => 'customer', 'as' => 'customer.'], function () {
                 Route::controller(CustomerController::class)->group(function () {
-                    Route::get(Customer::LIST[URI], 'getList')->name('list');
+                    Route::get(Customer::LIST [URI], 'getList')->name('list');
                     Route::post(Customer::ADD[URI], 'add')->name('add');
                 });
             });
@@ -219,8 +232,52 @@ Route::group(['middleware' => ['maintenance_mode']], function () {
                 });
             });
 
+
             Route::group(['prefix' => 'notification', 'as' => 'notification.'], function () {
                 Route::post(Notification::INDEX[URI], [NotificationController::class, 'getNotificationModalView'])->name('index');
+            });
+            // Route::resource('banners', BannerController::class);
+            /** Notification and push notification */
+            Route::group(['prefix' => 'Banner', 'as' => 'banner.'], function () {
+                Route::controller(BannerController::class)->group(function () {
+
+
+                    Route::get('/my-banners', 'my_banner')->name('my_banner'); // List all notifications
+                    Route::get('/payment-status', 'payment_status')->name('payment'); // List all notifications
+                    Route::get('/{id?}', 'index')->name('index'); // List all notifications
+
+                    Route::get('/create', 'banner_create')->name('create'); // Show create form
+                    Route::post('/', 'store')->name('store'); // Store new notification
+                    Route::get('/{id}/edit', 'banner_edit')->name('edit'); // Show edit form
+                    Route::put('/{id}', 'banner_update')->name('update');
+
+                    Route::delete('/{id}', 'banner_destroy')->name('destroy'); // Delete notification
+                    Route::get('/{id}', 'banner_show')->name('show'); // Show single notification
+                    Route::put('/push-notification/{id}/update-status', 'banner_update_status')->name('update-status'); //  single update-status
+                });
+            });
+            Route::group(['prefix' => 'Featured-Product', 'as' => 'featured-product.'], function () {
+                Route::controller(FeaturedProductController::class)->group(function () {
+                    Route::get('/{promotionId?}', 'index')->name('index');
+                    Route::post('/store', 'store')->name('store'); 
+                    Route::get('/payment/status', 'payment_return')->name('payment_return'); 
+                });
+            });
+            
+            /** Notification and push notification */
+            Route::group(['prefix' => 'push-notification', 'as' => 'push-notification.'], function () {
+                Route::controller(PushNotificationSettingsController::class)->group(function () {
+
+                    Route::get('/{id?}', 'vendor_index')->name('index'); // List all notifications
+                    Route::get('/create', 'vendor_create')->name('create'); // Show create form
+                    Route::post('/', 'vendor_store')->name('store'); // Store new notification
+                    Route::get('/{id}/edit', 'vendor_edit')->name('edit'); // Show edit form
+                    Route::put('/{id}', 'vendor_update')->name('update'); // Update notification
+                    Route::delete('/{id}', 'vendor_destroy')->name('destroy'); // Delete notification
+                    Route::get('/{id}', 'vendor_show')->name('show'); // Show single notification
+                    Route::put('/push-notification/{id}/update-status', 'vendor_update_status')->name('update-status'); //  single update-status
+
+                });
             });
 
             /* DeliveryMan */
@@ -228,7 +285,7 @@ Route::group(['middleware' => ['maintenance_mode']], function () {
                 Route::controller(DeliveryManController::class)->group(function () {
                     Route::get(DeliveryMan::INDEX[URI], 'index')->name('index');
                     Route::post(DeliveryMan::INDEX[URI], 'add');
-                    Route::get(DeliveryMan::LIST[URI], 'getListView')->name('list');
+                    Route::get(DeliveryMan::LIST [URI], 'getListView')->name('list');
                     Route::get(DeliveryMan::EXPORT[URI], 'exportList')->name('export');
                     Route::get(DeliveryMan::UPDATE[URI] . '/{id}', 'getUpdateView')->name('update');
                     Route::post(DeliveryMan::UPDATE[URI] . '/{id}', 'update');
@@ -289,7 +346,14 @@ Route::group(['middleware' => ['maintenance_mode']], function () {
                     Route::POST(Shop::VACATION[URI] . '/{id}', 'updateVacation')->name('update-vacation');
                     Route::POST(Shop::TEMPORARY_CLOSE[URI] . '/{id}', 'closeShopTemporary')->name('close-shop-temporary');
                     Route::POST(Shop::ORDER_SETTINGS[URI] . '/{id}', 'updateOrderSettings')->name('update-order-settings');
+                    // ✅ Corrected the availability route
+                    Route::get('availability', 'availability')->name('availability');
+                    Route::POST('availability/update/{id?}', 'updateAvailability')->name('update-availability');
+                 
+                
                 });
+
+
             });
 
             Route::group(['prefix' => 'business-settings', 'as' => 'business-settings.'], function () {

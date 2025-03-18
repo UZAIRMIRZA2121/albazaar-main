@@ -35,16 +35,31 @@ trait CacheManagerTrait
 
     public function cacheBannerTable($bannerType = null, $dataLimit = null)
     {
+        // Cache banners for 3 hours
         $banners = Cache::remember(CACHE_BANNER_TABLE, CACHE_FOR_3_HOURS, function () {
-            return Banner::with(['storage'])->where(['published' => 1, 'theme' => theme_root_path()])->orderBy('id', 'desc')->latest('created_at')->get();
+            return Banner::with(['storage'])
+                ->where([
+                    'published' => 1,
+                    'theme' => theme_root_path()
+                ])
+                ->latest('created_at') // Order by latest created date
+                ->get();
         });
+    
+        // If a banner type and data limit are provided, filter and limit results
         if ($bannerType && $dataLimit) {
-            return $banners?->where('banner_type', $bannerType)->take($dataLimit);
-        } else if ($bannerType) {
-            return $banners?->firstWhere('banner_type', $bannerType);
+            return $banners->where('banner_type', $bannerType)->take($dataLimit);
         }
+    
+        // If only a banner type is provided, return the first matching banner
+        if ($bannerType) {
+            return $banners->firstWhere('banner_type', $bannerType);
+        }
+    
+        // Return all banners if no filters are applied
         return $banners;
     }
+    
 
     public function cacheCurrencyTable()
     {

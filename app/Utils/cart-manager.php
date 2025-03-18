@@ -145,6 +145,84 @@ class CartManager
         }
         return ($orderWiseShippingCost + $cartShippingCost);
     }
+    public static function get_shipping_commission($groupId = null, $type = null)
+    {
+        $orderWiseShippingCostData = CartShipping::whereHas('cart', function ($query) use ($type) {
+                return $query->where(['product_type' => 'physical'])->whereHas('product', function ($query) {
+                    return $query->active();
+                })->when($type == 'checked', function ($query) {
+                    return $query->where(['is_checked' => 1]);
+                });
+            })->when(($groupId == null && $type != 'checked'), function ($query) {
+                return $query->whereIn('cart_group_id', CartManager::get_cart_group_ids());
+            })
+            ->when(($groupId == null && $type == 'checked'), function ($query) {
+                return $query->whereIn('cart_group_id', CartManager::get_cart_group_ids(type: 'checked'));
+            })
+            ->when(($groupId != null), function ($query) use ($groupId) {
+                return $query->where('cart_group_id', $groupId);
+            });
+
+        if ($groupId == null) {
+            $orderWiseShippingCost = $orderWiseShippingCostData->sum('shipping_comission');
+        } else {
+            $data = $orderWiseShippingCostData->first();
+            $shipping_comission = isset($data) ? $data->shipping_comission : 0;
+        }
+        return ($shipping_comission);
+    }
+    public static function get_shipping_option_id($groupId = null, $type = null)
+    {
+        $orderWiseShippingCostData = CartShipping::whereHas('cart', function ($query) use ($type) {
+                return $query->where(['product_type' => 'physical'])->whereHas('product', function ($query) {
+                    return $query->active();
+                })->when($type == 'checked', function ($query) {
+                    return $query->where(['is_checked' => 1]);
+                });
+            })->when(($groupId == null && $type != 'checked'), function ($query) {
+                return $query->whereIn('cart_group_id', CartManager::get_cart_group_ids());
+            })
+            ->when(($groupId == null && $type == 'checked'), function ($query) {
+                return $query->whereIn('cart_group_id', CartManager::get_cart_group_ids(type: 'checked'));
+            })
+            ->when(($groupId != null), function ($query) use ($groupId) {
+                return $query->where('cart_group_id', $groupId);
+            });
+
+        if ($groupId == null) {
+            $orderWiseShippingCost = $orderWiseShippingCostData->sum('option_id');
+        } else {
+            $data = $orderWiseShippingCostData->first();
+            $option_id = isset($data) ? $data->option_id : 0;
+        }
+        return ($option_id);
+    }
+    public static function get_shipping_service_name($groupId = null, $type = null)
+    {
+        $orderWiseShippingCostData = CartShipping::whereHas('cart', function ($query) use ($type) {
+                return $query->where(['product_type' => 'physical'])->whereHas('product', function ($query) {
+                    return $query->active();
+                })->when($type == 'checked', function ($query) {
+                    return $query->where(['is_checked' => 1]);
+                });
+            })->when(($groupId == null && $type != 'checked'), function ($query) {
+                return $query->whereIn('cart_group_id', CartManager::get_cart_group_ids());
+            })
+            ->when(($groupId == null && $type == 'checked'), function ($query) {
+                return $query->whereIn('cart_group_id', CartManager::get_cart_group_ids(type: 'checked'));
+            })
+            ->when(($groupId != null), function ($query) use ($groupId) {
+                return $query->where('cart_group_id', $groupId);
+            });
+
+        if ($groupId == null) {
+            $orderWiseShippingCost = $orderWiseShippingCostData->sum('service_name');
+        } else {
+            $data = $orderWiseShippingCostData->first();
+            $services_name = isset($data) ? $data->service_name : 0;
+        }
+        return ($services_name);
+    }
 
     public static function order_wise_shipping_discount()
     {

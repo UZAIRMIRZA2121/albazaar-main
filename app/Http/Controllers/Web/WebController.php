@@ -587,14 +587,14 @@ class WebController extends Controller
                     'referral_code' => $newCustomerRegister['referral_code'],
                 ]);
                 session()->put('newRegisterCustomerInfo', $addCustomer);
-                dd($addCustomer);
+          
                 $customerID = session()->has('guest_id') ? session('guest_id') : 0;
                 ShippingAddress::where(['customer_id' => $customerID, 'is_guest' => 1, 'id' => session('address_id')])
                     ->update(['customer_id' => $addCustomer['id'], 'is_guest' => 0]);
                 ShippingAddress::where(['customer_id' => $customerID, 'is_guest' => 1, 'id' => session('billing_address_id')])
                     ->update(['customer_id' => $addCustomer['id'], 'is_guest' => 0]);
             }
-
+        
             foreach ($cartGroupIds as $groupId) {
                 $data = [
                     'payment_method' => 'cash_on_delivery',
@@ -602,19 +602,29 @@ class WebController extends Controller
                     'payment_status' => 'unpaid',
                     'transaction_ref' => '',
                     'order_group_id' => $uniqueID,
-                    'cart_group_id' => $groupId
+                    'cart_group_id' => $groupId,
+
+                    'option_id' => $groupId,
+                    'service_name' => $groupId,
+                    'shipping_comission' => $groupId,
+
+
+
+
                 ];
+            
                 $orderId = OrderManager::generate_order($data);
                 $orderIds[] = $orderId;
+             
             }
-
+          
             $order = OrderDetail::with('product')->where('order_id', $orderIds)->first();
             $currentDateTime = Carbon::now();
             $userAddress = json_decode($order->shipping_address_data);
             $product = json_decode($order->product_details);
             $_orderOrder = Order::where('id', $orderIds[0])->first();
             $userAddress = $_orderOrder->shipping_address_data;
-
+           
             $data = [
                 "orderId" => $order?->order_id,
                 "deliveryOptionId" => rand(00000, 99999),
@@ -649,6 +659,7 @@ class WebController extends Controller
                     ]
                 ]
             ];
+
 
             $orderStatus = $this->tryOtto->createShipment($data);
 

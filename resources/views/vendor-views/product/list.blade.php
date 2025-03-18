@@ -151,6 +151,8 @@
                                 <th class="text-center text-capitalize">{{ translate('product_type') }}</th>
                                 <th class="text-center text-capitalize">{{ translate('unit_price') }}</th>
                                 <th class="text-center text-capitalize">{{ translate('verify_status') }}</th>
+                                <th class="text-center">{{ translate('Featured For') }}/{{ translate('Status') }}</th>
+
                                 @if($type != 'new-request' )
                                 <th class="text-center text-capitalize">{{ translate('active_status') }}</th>
                                 @endif
@@ -183,6 +185,15 @@
                                         @elseif($product->request_status == 1)
                                             <label class="badge badge-soft-success">{{translate('approved')}}</label>
                                         @elseif($product->request_status == 2)
+                                            <label class="badge badge-soft-danger">{{translate('denied')}}</label>
+                                        @endif
+                                    </td>
+                                    <td class="text-center">
+                                        @if($product->start_date )
+                                            <label class="badge badge-soft-warning">{{translate('pending')}}</label>
+                                        @elseif($product->featured == 1)
+                                            <label class="badge badge-soft-success">{{translate('approved')}}</label>
+                                        @elseif($product->featured == 0)
                                             <label class="badge badge-soft-danger">{{translate('denied')}}</label>
                                         @endif
                                     </td>

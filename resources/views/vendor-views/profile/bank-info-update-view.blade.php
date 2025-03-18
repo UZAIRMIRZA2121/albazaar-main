@@ -41,7 +41,7 @@
                                                required>
                                     </div>
                                     <div class="col-md-6 mb-3">
-                                        <label for="account_no" class="title-color">{{translate('account_No')}} <span class="text-danger">*</span></label>
+                                        <label for="account_no" class="title-color">{{translate('IBAN #')}} <span class="text-danger">*</span></label>
                                         <input type="number" name="account_no" value="{{$vendor->account_no}}"
                                                class="form-control" id="account_no"
                                                required>

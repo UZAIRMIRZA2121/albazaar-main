@@ -57,5 +57,14 @@ return [
         'client_secret' => env('TWITTER_CLIENT_SECRET'),
         'redirect' => env('TWITTER_SERVICE_CALLBACK'),
     ],
+    
+    'paytabs' => [
+        'server_key' => env('PAYTABS_SERVER_KEY'),
+        'profile_id' => env('PAYTABS_PROFILE_ID'),
+        'merchant_id' => env('PAYTABS_MERCHANT_ID'),
+        'base_url' => env('PAYTABS_BASE_URL'),
+        'callback_url' => env('PAYTABS_CALLBACK_URL'),
+        'return_url' => env('PAYTABS_RETURN_URL'),
+    ],
 
 ];

@@ -81,6 +81,15 @@ $eCommerceLogo = getWebConfig(name: 'company_web_logo');
                         </div>
                     </div>
                     <ul class="navbar-nav navbar-nav-lg nav-tabs">
+                        <li class="navbar-vertical-aside-has-menu {{Request::is('admin/dashboard/promotion*')?'show':''}}">
+                            <a class="js-navbar-vertical-aside-menu-link nav-link"
+                               href="{{route('admin.dashboard.promotion.index')}}" title="{{translate('Promotion Management')}}">
+                                <i class="tio-home-vs-1-outlined nav-icon"></i>
+                                <span class="navbar-vertical-aside-mini-mode-hidden-elements text-truncate">
+                                    {{translate('Promotion Management')}}
+                                </span>
+                            </a>
+                        </li>
                         <li class="navbar-vertical-aside-has-menu {{Request::is('admin/dashboard'.Dashboard::VIEW[URI])?'active':''}}">
                             <a class="js-navbar-vertical-aside-menu-link nav-link"
                                 title="{{translate('dashboard')}}"

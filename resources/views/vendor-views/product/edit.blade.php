@@ -163,7 +163,7 @@
                         </div> --}}
                         <input type="hidden" name="product_type" value="physical">
 
-                        <div class="col-md-6 col-lg-4 col-xl-3 digital-product-sections-show">
+                        {{-- <div class="col-md-6 col-lg-4 col-xl-3 digital-product-sections-show">
                             <label class="title-color">
                                 {{ translate("Author") }}/{{ translate("Creator") }}/{{ translate("Artist") }}
                             </label>
@@ -172,9 +172,9 @@
                                     <option value="{{ $authors['name'] }}" {{ in_array($authors['id'], $productAuthorIds) ? 'selected' : '' }}>{{ $authors['name'] }}</option>
                                 @endforeach
                             </select>
-                        </div>
+                        </div> --}}
 
-                        <div class="col-md-6 col-lg-4 col-xl-3 digital-product-sections-show">
+                        {{-- <div class="col-md-6 col-lg-4 col-xl-3 digital-product-sections-show">
                             <label class="title-color">{{ translate("Publishing_House") }}</label>
                             <select class="multiple-select2 form-control" name="publishing_house[]" multiple="multiple">
                                 @foreach($publishingHouseList as $publishingHouse)
@@ -182,7 +182,7 @@
                                         {{ in_array($publishingHouse['id'], $productPublishingHouseIds) ? 'selected' : '' }}>{{ $publishingHouse['name'] }}</option>
                                 @endforeach
                             </select>
-                        </div>
+                        </div> --}}
 
                         <div class="col-md-6 col-lg-4 col-xl-3" id="digital_product_type_show">
                             <div class="form-group">
@@ -225,7 +225,7 @@
                                 </label>
 
                                 <input type="text" id="generate_number" name="code" class="form-control"
-                                       value="{{request('product-gallery') ? ' ':$product->code}}" placeholder="{{translate('4FOITO')}}" required>
+                                       value="{{request('product-gallery') ? ' ': $product->code}}" placeholder="{{translate('4FOITO')}}" required>
                             </div>
                         </div>
                         <div class="col-md-6 col-lg-4 col-xl-3 physical_product_show">
@@ -239,6 +239,27 @@
                                             value={{ $unit}} {{ $product['unit'] == $unit ? 'selected' : ''}}>{{ $unit }}</option>
                                     @endforeach
                                 </select>
+                            </div>
+                        </div>
+                        <div class="col-md-6 col-lg-4 col-xl-3 physical_product_show">
+                            <div class="form-group">
+                                <label class="title-color">{{ translate('Refundable') }}</label> <br>
+                                <div class="ml-5">
+                                    <input type="radio" name="refundable" value="1" class="form-check-input" id="refundableYes" {{ $product['refundable']== 1 ? 'checked':'' }} >
+                                    <label for="refundableYes">{{ translate('Yes') }}</label>
+                                    <br>
+                                    <input type="radio" name="refundable" value="0" class="form-check-input" id="refundableNo" {{ $product['refundable']== 0 ? 'checked':'' }}>
+                                    <label for="refundableNo">{{ translate('No') }}</label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label class="title-color d-flex align-items-center gap-2">
+                                    {{ translate('Menufacture Days') }}
+                                </label>
+                                <input type="text" class="form-control" placeholder="{{ translate('Menufacture Days') }}"
+                                       name="menufacture_days"  value="{{ $product['menufacture_days'] }}">
                             </div>
                         </div>
                         <div class="col-md-9">

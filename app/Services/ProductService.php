@@ -442,6 +442,11 @@ class ProductService
             'meta_title' => $request['meta_title'],
             'meta_description' => $request['meta_description'],
             'meta_image' => $request->has('meta_image') ? $this->upload(dir: 'product/meta/', format: 'webp', image: $request['meta_image']) : $request->existing_meta_image,
+     
+            'refundable' => $request['refundable'] == '1' ? 1 : 0,
+            'menufacture_days' => $request['menufacture_days'],
+            
+     
         ];
     }
 
@@ -510,6 +515,10 @@ class ProductService
             'meta_title' => $request['meta_title'],
             'meta_description' => $request['meta_description'],
             'meta_image' => $request->file('meta_image') ? $this->update(dir: 'product/meta/', oldImage: $product['meta_image'], format: 'png', image: $request['meta_image']) : $product['meta_image'],
+
+            'refundable' => $request['refundable'] == '1' ? 1 : 0,
+            'menufacture_days' => $request['menufacture_days'],
+
         ];
 
         if ($request->file('image')) {

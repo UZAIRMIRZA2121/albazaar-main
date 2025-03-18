@@ -376,9 +376,11 @@
                 </div>
                 <div class="sidebar-overlay"></div>
             </aside>
-
+            {{$products}}
             <section class="col-lg-9">
                 <div class="row" id="ajax-products">
+                   
+                    @include('web-views.products._ajax-products-featured',['products'=>$products,'decimal_point_settings'=>$decimal_point_settings])
                     @include('web-views.products._ajax-products',['products'=>$products,'decimal_point_settings'=>$decimal_point_settings])
                 </div>
             </section>

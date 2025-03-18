@@ -1157,7 +1157,8 @@ const GATEWAYS_LANGUAGES = [
     ["code" => "za", "name" => "Zhuang, Chuang", "nativeName" => "Saɯ cueŋƅ, Saw cuengh"]
 ];
 
-const CACHE_FOR_3_HOURS = 60 * 60 * 3;
+// const CACHE_FOR_3_HOURS = 60 * 60 * 3;
+const CACHE_FOR_3_HOURS =  1;
 
 const CACHE_BUSINESS_SETTINGS_TABLE = 'cache_business_settings_table';
 const CACHE_LOGIN_SETUP_TABLE = 'cache_login_setup_table';

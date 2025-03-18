@@ -114,6 +114,19 @@ class Product extends Model
         'digital_file_ready_storage_type',
         'is_shipping_cost_updated',
         'temp_shipping_cost',
+
+
+        'promotion_id',
+        'start_date',
+        'end_date',
+        'payment_status',
+        'featured_till',
+
+        'menufacture_days',
+        'refundable',
+
+
+
     ];
 
     /**

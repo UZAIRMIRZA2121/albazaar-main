@@ -158,6 +158,12 @@
                                     <th class="text-capitalize">{{translate('customer_info')}}</th>
                                     <th>{{translate('store')}}</th>
                                     <th class="text-capitalize">{{translate('total_amount')}}</th>
+                                    <th class="text-capitalize">{{translate('Commission')}}</th>
+                                    <th class="text-capitalize">{{translate('Shipping cost')}}</th>
+                                    <th class="text-capitalize">{{translate('Shipping Commission')}}</th>
+                                    <th class="text-capitalize">{{translate('Shipping Services')}}</th>
+                                    <th class="text-capitalize">{{translate('Shipping Services Id')}}</th>
+                                    <th class="text-capitalize">{{translate('tax')}}</th>
                                     @if($status == 'all')
                                         <th class="text-center">{{translate('order_status')}} </th>
                                     @else
@@ -174,6 +180,7 @@
                                     <td class="">
                                         {{$orders->firstItem()+$key}}
                                     </td>
+
                                     <td >
                                         <a class="title-color" href="{{route('admin.orders.details',['id'=>$order['id']])}}">{{$order['id']}} {!! $order->order_type == 'POS' ? '<span class="text--primary">(POS)</span>' : '' !!}</a>
                                     </td>
@@ -228,6 +235,28 @@
                                             <span class="badge badge-soft-danger">{{translate('unpaid')}}</span>
                                         @endif
                                     </td>
+                                  
+                                        <td class="">
+                                            {{ setCurrencySymbol(amount: usdToDefaultCurrency(amount:  $order->admin_commission), currencyCode: getCurrencyCode()) }}
+                                        </td>
+                                        <td class="">
+                                            {{ setCurrencySymbol(amount: usdToDefaultCurrency(amount:  $order->shipping_cost), currencyCode: getCurrencyCode()) }}
+                                        </td>
+                                        <td class="">
+                                           $ {{   $order->shipping_commission}}
+                                        </td>
+
+
+                                        <td class="">
+                                            {{   $order->service_name}}
+                                        </td>
+                                        <td class="">
+                                            {{   $order->option_id}}
+                                           </td>
+                                  
+                                           <td class="">
+                                            {{ setCurrencySymbol(amount: usdToDefaultCurrency(amount:  $order->details->sum('tax')), currencyCode: getCurrencyCode()) }}
+                                        </td>
                                     @if($status == 'all')
                                         <td class="text-center text-capitalize">
                                             @if($order['order_status']=='pending')
@@ -271,6 +300,12 @@
                                                 href="{{route('admin.orders.generate-invoice',[$order['id']])}}">
                                                 <i class="tio-download-to"></i>
                                             </a>
+                                          
+                                                <button class="btn btn-outline-info square-btn btn-sm mr-1 view-details-btn"
+                                                    data-toggle="modal" data-target="#orderDetailsModal-{{$order['id']}}">
+                                                    <i class="tio-info-outlined"></i> View
+                                                </button>
+                                          
                                         </div>
                                     </td>
                                 </tr>
@@ -308,7 +343,52 @@
             </div>
         </div>
     </div>
-
+    @foreach($orders as $order)
+    <div class="modal fade" id="orderDetailsModal-{{$order['id']}}" tabindex="-1" role="dialog" aria-labelledby="orderDetailsModalLabel-{{$order['id']}}" aria-hidden="true">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Order #{{$order['id']}} Details</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Product</th>
+                                <th>Quantity</th>
+                                <th>Price</th>
+                                <th>Subtotal</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach($order->details as $detail)
+                            <tr>
+                                <td>{{$detail->product->name ?? 'N/A'}}</td>
+                                <td>{{$detail->quantity}}</td>
+                                <td>{{ setCurrencySymbol(amount: usdToDefaultCurrency(amount: $detail->price), currencyCode: getCurrencyCode()) }}</td>
+                                <td>{{ setCurrencySymbol(amount: usdToDefaultCurrency(amount: $detail->price * $detail->quantity), currencyCode: getCurrencyCode()) }}</td>
+                            </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                    <hr>
+                    <p><strong>Total Amount:</strong> {{ setCurrencySymbol(amount: usdToDefaultCurrency(amount: $order->details->sum('price')), currencyCode: getCurrencyCode()) }}</p>
+                    <p><strong>Shipping Cost:</strong> {{ setCurrencySymbol(amount: usdToDefaultCurrency(amount: $order->shipping_cost), currencyCode: getCurrencyCode()) }}</p>
+                    <p><strong>Tax:</strong> {{ setCurrencySymbol(amount: usdToDefaultCurrency(amount: $order->details->sum('tax')), currencyCode: getCurrencyCode()) }}</p>
+                    <p><strong>Payment Status:</strong> 
+                        <span class="badge {{ $order->payment_status == 'paid' ? 'badge-soft-success' : 'badge-soft-danger' }}">
+                            {{translate($order->payment_status)}}
+                        </span>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+    @endforeach
+    
     <span id="message-date-range-text" data-text="{{ translate("invalid_date_range") }}"></span>
     <span id="js-data-example-ajax-url" data-url="{{ route('admin.orders.customers') }}"></span>
 @endsection

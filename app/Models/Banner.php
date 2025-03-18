@@ -52,6 +52,12 @@ class Banner extends Model
         'sub_title',
         'button_text',
         'background_color',
+
+        'seller_id',
+        'start_date',
+        'end_date',
+        'status',
+
     ];
 
     protected $appends = ['photo_full_url'];

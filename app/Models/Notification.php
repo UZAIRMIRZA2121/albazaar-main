@@ -26,6 +26,8 @@ class Notification extends Model
 {
     use StorageTrait;
     protected $fillable = [
+        'seller_id',
+
         'sent_by',
         'sent_to',
         'title',

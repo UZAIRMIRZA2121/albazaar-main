@@ -9,6 +9,8 @@
     use App\Models\Order;
     use App\Models\RefundRequest;
     use App\Models\Shop;
+
+    use App\Enums\ViewPaths\Admin\PushNotification;
     use App\Enums\ViewPaths\Vendor\Order as OrderEnum;
     $shop=Shop::where(['seller_id'=>auth('seller')->id()])->first();
 @endphp
@@ -17,6 +19,8 @@
            class="js-navbar-vertical-aside navbar navbar-vertical-aside navbar-vertical navbar-vertical-fixed navbar-expand-xl navbar-bordered  ">
         <div class="navbar-vertical-container">
             <div class="navbar-brand-wrapper justify-content-between side-logo dashboard-navbar-side-logo-wrapper">
+             
+
                 <a class="navbar-brand" href="{{route('vendor.dashboard.index')}}" aria-label="Front">
                     @if (isset($shop))
                         <img class="navbar-brand-logo-mini for-seller-logo"
@@ -48,7 +52,27 @@
                                    placeholder="{{translate('search_menu').'...'}}">
                         </div>
                     </div>
+                
                     <ul class="navbar-nav navbar-nav-lg nav-tabs">
+                  
+                    <li class="navbar-vertical-aside-has-menu {{Request::is('vendor/banner/my-banner*')?'show':''}}">
+                        <a class="js-navbar-vertical-aside-menu-link nav-link"
+                           href="{{route('vendor.banner.my_banner')}}" title="{{translate('My Banners')}}">
+                            <i class="tio-home-vs-1-outlined nav-icon"></i>
+                            <span class="navbar-vertical-aside-mini-mode-hidden-elements text-truncate">
+                                {{translate('My Banners')}}
+                            </span>
+                        </a>
+                    </li>
+                        <li class="navbar-vertical-aside-has-menu {{Request::is('vendor/dashboard/promotion*')?'show':''}}">
+                            <a class="js-navbar-vertical-aside-menu-link nav-link"
+                               href="{{route('vendor.dashboard.promotion.index')}}" title="{{translate('Promotion Management')}}">
+                                <i class="tio-home-vs-1-outlined nav-icon"></i>
+                                <span class="navbar-vertical-aside-mini-mode-hidden-elements text-truncate">
+                                    {{translate('Promotion Management')}}
+                                </span>
+                            </a>
+                        </li>
                         <li class="navbar-vertical-aside-has-menu {{Request::is('vendor/dashboard*')?'show':''}}">
                             <a class="js-navbar-vertical-aside-menu-link nav-link"
                                href="{{route('vendor.dashboard.index')}}" title="{{translate('dashboard')}}">
@@ -97,6 +121,7 @@
                                         </span>
                                     </a>
                                 </li>
+                            
                                 <li class="nav-item {{Request::is('vendor/orders/'.OrderEnum::LIST[URI].'/pending')?'active':''}}">
                                     <a class="nav-link " href="{{route('vendor.orders.list',['pending'])}}" title="">
                                         <span class="tio-circle nav-indicator-icon"></span>
@@ -356,7 +381,7 @@
                                     class="navbar-vertical-aside-mini-mode-hidden-elements text-truncate">{{translate('coupons')}}</span>
                             </a>
                         </li> --}}
-                        <li class="nav-item">
+                        {{-- <li class="nav-item">
                             <small class="nav-subtitle">{{translate('help_&_support')}}</small>
                             <small class="tio-more-horizontal nav-subtitle-replacer"></small>
                         </li>
@@ -368,7 +393,7 @@
                                         {{translate('inbox')}}
                                     </span>
                             </a>
-                        </li>
+                        </li> --}}
                         <li class="nav-item {{(Request::is('vendor/transaction/order-list')) ? 'scroll-here':''}}">
                             <small class="nav-subtitle">{{translate('reports_&_analytics')}}</small>
                             <small class="tio-more-horizontal nav-subtitle-replacer"></small>
