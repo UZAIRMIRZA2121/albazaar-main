@@ -409,7 +409,7 @@ class WebController extends Controller
             }
             return isset($response['redirect']) ? redirect($response['redirect']) : redirect('/');
         }
-
+        
         $countryRestrictStatus = getWebConfig(name: 'delivery_country_restriction');
         $zipRestrictStatus = getWebConfig(name: 'delivery_zip_code_area_restriction');
         $countries = $countryRestrictStatus ? $this->get_delivery_country_array() : COUNTRIES;

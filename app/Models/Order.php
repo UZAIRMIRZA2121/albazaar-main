@@ -110,6 +110,13 @@ class Order extends Model
         'delivery_type',
         'delivery_service_name',
         'third_party_delivery_tracking_id',
+
+
+        'tryotto_payment_status',
+        'tryotto_order_status',
+        'tryotto_transaction_ref',
+        'tryotto_payment_by',
+        'tryotto_payment_method'
     ];
     protected $casts = [
         'customer_id' => 'integer',

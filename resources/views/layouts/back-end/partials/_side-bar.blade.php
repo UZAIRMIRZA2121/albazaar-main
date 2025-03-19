@@ -493,6 +493,34 @@ $eCommerceLogo = getWebConfig(name: 'company_web_logo');
                             </a>
                         </li>
                         @endif
+                        @if(Helpers::module_permission_check('tryotto_management'))
+                        <li class="nav-item {{(Request::is('admin/tryotto*') || Request::is('admin/tryotto*') )?'scroll-here':''}}">
+                            <small class="nav-subtitle"
+                                title="">{{translate('tryotto_management')}}</small>
+                            <small class="tio-more-horizontal nav-subtitle-replacer"></small>
+                        </li>
+                        <li class="navbar-vertical-aside-has-menu {{(Request::is('admin/tryotto*') || Request::is('admin/tryotto*') ) ?'active':''}}">
+                            <a class="js-navbar-vertical-aside-menu-link nav-link nav-link-toggle"
+                                href="javascript:" title="{{translate('tryotto_management')}}">
+                                <i class="tio-filter-list nav-icon"></i>
+                                <span class="navbar-vertical-aside-mini-mode-hidden-elements text-truncate">
+                                    {{translate('tryotto_management')}}
+                                </span>
+                            </a>
+                            <ul class="js-navbar-vertical-aside-submenu nav nav-sub"
+                                style="display: {{(Request::is('admin/tryotto*') )?'block':''}}">
+                                <li class="nav-item {{Request::is('admin/category/'.Category::LIST[URI])?'active':''}}">
+                                    <a class="nav-link " href="{{route('admin.tryotto.index')}}"
+                                        title="{{translate('tryotto_management_list')}}">
+                                        <span class="tio-circle nav-indicator-icon"></span>
+                                        <span class="text-truncate">{{translate('tryotto_management_list')}}</span>
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
+                     
+                     
+                        @endif
 
                         @if(Helpers::module_permission_check('promotion_management'))
                         <li class="nav-item {{(Request::is('admin/banner*') || (Request::is('admin/coupon*')) || (Request::is('admin/notification*')) || (Request::is('admin/deal*')))?'scroll-here':''}}">

@@ -51,6 +51,14 @@ class TransferOrderTransactions extends Command
       
         Log::info('Cron Job Started: Transferring Transactions');
 
+
+
+
+
+
+
+
+
         // Get transactions that are 10 days old and not yet transferred
         $tenDaysAgo = Carbon::now()->subDays(10);
         $orders = OrderTransaction::whereDate('created_at', '<=', $tenDaysAgo)
@@ -100,7 +108,7 @@ class TransferOrderTransactions extends Command
 
             // Update wallet with the earned values
             $wallet->update([
-                // 'total_earning' => $wallet->total_earning + $order->seller_amount,
+                'total_earning' => $wallet->total_earning + $order->seller_amount,
                 'pending_withdraw' => $wallet->pending_withdraw + $order->seller_amount,
                 'commission_given' => $wallet->commission_given,
                 'delivery_charge_earned' => $wallet->delivery_charge_earned,

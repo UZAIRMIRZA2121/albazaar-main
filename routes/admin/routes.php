@@ -171,6 +171,7 @@ use App\Http\Controllers\Admin\Settings\StorageConnectionSettingsController;
 use App\Http\Controllers\Admin\Settings\VendorRegistrationSettingController;
 use App\Http\Controllers\Admin\Notification\PushNotificationSettingsController;
 use App\Http\Controllers\PromotionController;
+use App\Http\Controllers\Admin\TryottoController;
 
 
 
@@ -194,6 +195,20 @@ Route::group(['prefix' => 'login'], function () {
 
 Route::group(['prefix' => 'admin', 'as' => 'admin.', 'middleware' => ['admin']], function () {
     Route::resource('promotions', PromotionController::class);
+    // Route::resource('tryotto', TryottoController::class);
+
+    Route::group(['prefix' => 'Tryotto', 'as' => 'tryotto.'], function () {
+        Route::controller(TryottoController::class)->group(function () {
+
+            Route::get('list', 'index')->name('index');
+            Route::Post('payout', 'payout')->name('payout');
+
+            Route::get('payout/success', 'payoutSuccess')->name('payout.success');
+            Route::post('payout/callback', 'payoutCallback')->name('payout.callback');
+
+        });
+    });
+
 
     Route::group(['prefix' => 'dashboard', 'as' => 'dashboard.'], function () {
         Route::controller(DashboardController::class)->group(function () {
@@ -207,7 +222,7 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'middleware' => ['admin']],
             Route::get(Dashboard::REAL_TIME_ACTIVITIES[URI], 'getRealTimeActivities')->name('real-time-activities');
         });
     });
-  
+
 
 
     Route::get('logout', [LoginController::class, 'logout'])->name('logout');

@@ -63,7 +63,7 @@
                     <div class="card h-100">
                         <div class="card-body">
                             <div class="text-capitalize d-flex align-items-center justify-content-between gap-2 border-bottom pb-3 mb-4">
-                                <h3 class="h3 mb-0">{{ $withdrawalMethod['method_name'].' '.' '.translate('info')}} </h3>
+                                {{-- <h3 class="h3 mb-0">{{ $withdrawalMethod['method_name'].' '.' '.translate('info')}} </h3> --}}
                                 <i class="tio tio-dollar-outlined"></i>
                             </div>
                             <div class="mt-2">
