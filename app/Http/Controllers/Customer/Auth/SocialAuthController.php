@@ -101,7 +101,7 @@ class SocialAuthController extends Controller
 
         $userSocialData = Socialite::driver($service)->stateless()->user();
         $user = $this->customerRepo->getFirstWhere(params: ['email' => $userSocialData->getEmail()]);
-
+        dd($user);
         if (!$user || $user['login_medium'] != $service) {
             $name = explode(' ', $userSocialData['name']);
             if (count($name) > 1) {
