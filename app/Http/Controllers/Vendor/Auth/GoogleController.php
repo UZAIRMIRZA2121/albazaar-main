@@ -30,7 +30,7 @@ class GoogleController extends Controller
 
     public function handleGoogleCallback()
     {
-        dd(423);
+    
         config([
             'services.vendor_google.client_id' => env('Vendor_GOOGLE_CLIENT_ID'),
             'services.vendor_google.client_secret' => env('Vendor_GOOGLE_CLIENT_SECRET'),
