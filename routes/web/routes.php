@@ -107,7 +107,7 @@ Route::get('/test-email', function () {
 });
 
 Route::get('vendor/auth/google', [GoogleController::class, 'redirectToGoogle'])->name('vendor.auth.login.google');
-Route::get('vendor/login/google/callback', [GoogleController::class, 'handleGoogleCallback']);
+Route::get('vendor/register/google/callback', [GoogleController::class, 'handleGoogleCallback']);
 
 
 
