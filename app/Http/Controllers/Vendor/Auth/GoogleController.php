@@ -37,6 +37,8 @@ class GoogleController extends Controller
         ]);
 
         try {
+            dd(Socialite::driver('google')->user());
+
             $user = Socialite::driver('google')->user();
 
             // Check if the user already exists
