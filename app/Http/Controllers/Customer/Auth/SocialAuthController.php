@@ -43,7 +43,6 @@ class SocialAuthController extends Controller
         if ($business_setting) {
             // Decode the JSON string into an array
             $socialLogins = json_decode($business_setting->value, true);
-
             foreach ($socialLogins as $socialLogin) {
                 if ($socialLogin['status'] == 1) { // Check if the login method is enabled
                     if ($socialLogin['login_medium'] == $service) {
@@ -60,9 +59,6 @@ class SocialAuthController extends Controller
                 }
             }
         }
-
-
-
         // Redirect to the provider
         return Socialite::driver($service)->redirect();
     }
@@ -101,7 +97,7 @@ class SocialAuthController extends Controller
 
         $userSocialData = Socialite::driver($service)->stateless()->user();
         $user = $this->customerRepo->getFirstWhere(params: ['email' => $userSocialData->getEmail()]);
-        dd($user);
+
         if (!$user || $user['login_medium'] != $service) {
             $name = explode(' ', $userSocialData['name']);
             if (count($name) > 1) {
