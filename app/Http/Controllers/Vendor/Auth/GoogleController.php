@@ -24,8 +24,7 @@ class GoogleController extends Controller
             'services.vendor_google.redirect' => env('Vendor_GOOGLE_REDIRECT_URI'),
         ]); 
         
-   // Debugging: Check if config is being set properly
-   dd(config('services.vendor_google'));
+
         return Socialite::driver('google')->redirect();
     }
 
