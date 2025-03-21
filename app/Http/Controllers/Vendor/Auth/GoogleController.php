@@ -23,6 +23,7 @@ class GoogleController extends Controller
             'services.vendor_google.client_secret' => env('Vendor_GOOGLE_CLIENT_SECRET'),
             'services.vendor_google.redirect' => env('Vendor_GOOGLE_REDIRECT_URI'),
         ]); 
+        
 
         return Socialite::driver('google')->redirect();
     }
@@ -35,8 +36,7 @@ class GoogleController extends Controller
             'services.vendor_google.client_secret' => env('Vendor_GOOGLE_CLIENT_SECRET'),
             'services.vendor_google.redirect' => env('Vendor_GOOGLE_REDIRECT_URI'),
         ]);
-   // Debugging: Check if config is being set properly
-   dd(config('services.vendor_google'));
+
         try {
             dd(Socialite::driver('google')->user());
 
