@@ -19,68 +19,80 @@ class GoogleController extends Controller
     {
         // Determine if the request is from "vendor" or "customer"
         $userType = request()->segment(1); // Get 'vendor' or 'customer' from the URL
-        
+
         // Generate dynamic redirect URI using APP_URL
-        $redirectUri = config('app.url') . "$userType/auth/login/google/callback";
-    
+        $redirectUri = config('app.url') . "/$userType/auth/login/google/callback";
+
         // Override the redirect URI for this request
         config(['services.google.redirect' => $redirectUri]);
-    
-    //    dd(config('services.google')); // Debugging to confirm dynamic value
-    
+
+        //    dd(config('services.google')); // Debugging to confirm dynamic value
+
         return Socialite::driver('google')->redirect();
     }
-    
-    
+
+
 
     public function handleGoogleCallback()
     {
-    
-     
-
+        dd(config('services.google')); // Debugging to confirm dynamic value
         try {
-            
+            // Determine user type dynamically from the URL
+            $userType = request()->segment(1); // 'vendor' or 'customer'
 
-            $user = Socialite::driver('google')->user();
+            // Get user details from Google
+            $googleUser = Socialite::driver('google')->user();
 
-            // Check if the user already exists
-            $finduser = Seller::where('google_id', $user->id)->first();
-
-            if ($finduser) {
-                session(['new_email' => $finduser->email]);
-                return redirect()->route('vendor.auth.registration.index');
+            // Check if the user exists in the appropriate table
+            if ($userType === 'vendor') {
+                $existingUser = Seller::where('google_id', $googleUser->id)->first();
             } else {
-                // Create a new user
-                $uuid = Str::uuid()->toString();
-                $newUser = Seller::create([
-                    'f_name' => $user->name,
-                    'email' => $user->email,
-                    'image' => $user->avatar,
-                    'google_id' => $user->id,
-                    'password' => Hash::make($uuid . now())  // Password will be hashed
-                ]);
-                session(['new_email' => $user->email]);
-                // Start chat with user
-                $this->startChatting($user->id);
-
-                return redirect()->route('vendor.auth.registration.index');
-                // return view('web-views.customer-views.auth.register', compact('newUser'));
-                // return view('themes\default\web-views\seller-view\auth\register', compact('newUser'));
-                // Log in the new user
-                // Auth::login($newUser);
-
-                // return redirect()->intended('dashboard');
+                $existingUser = User::where('google_id', $googleUser->id)->first();
             }
 
-        } catch (\Exception $e) {
-            dd('Google Callback Error: ' . $e->getMessage());
-            // Log the error message for debugging
-            Log::error('Google Callback Error: ' . $e->getMessage());
+            if ($existingUser) {
+                // Log in the existing user
+                Auth::login($existingUser);
 
-            // Optionally, you can return a custom message to the user
+                // Redirect based on user type
+                return redirect()->route($userType . '.dashboard');
+            } else {
+                // Create a new user dynamically
+                $uuid = Str::uuid()->toString();
+
+                if ($userType === 'vendor') {
+                    $newUser = Seller::create([
+                        'f_name' => $googleUser->name,
+                        'email' => $googleUser->email,
+                        'image' => $googleUser->avatar,
+                        'google_id' => $googleUser->id,
+                        'password' => Hash::make($uuid . now())
+                    ]);
+
+                    // Start chat for vendor
+                    $this->startChatting($googleUser->id);
+                } else {
+                    $newUser = User::create([
+                        'name' => $googleUser->name,
+                        'email' => $googleUser->email,
+                        'profile_photo' => $googleUser->avatar,
+                        'google_id' => $googleUser->id,
+                        'password' => Hash::make($uuid . now())
+                    ]);
+                }
+
+                // Log in the new user
+                Auth::login($newUser);
+
+                // Redirect user to their respective registration page
+                return redirect()->route($userType . '.auth.registration.index');
+            }
+        } catch (\Exception $e) {
+            Log::error('Google Callback Error: ' . $e->getMessage());
             return redirect()->route('login')->with('error', 'There was an issue logging in with Google. Please try again.');
         }
     }
+
     private function startChatting($receiverId)
     {
         Chatting::create([
