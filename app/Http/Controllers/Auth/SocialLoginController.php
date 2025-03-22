@@ -12,7 +12,7 @@ class SocialLoginController extends Controller
     // Redirect to Google
     public function redirectToGoogle()
     {
-        dd(config('services.google'));
+       
         return Socialite::driver('google')->redirect();
     }
 

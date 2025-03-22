@@ -43,7 +43,7 @@ class GoogleController extends Controller
     
             // Override the redirect URI for this request
             config(['services.google.redirect' => $redirectUri]);
-        // dd(config('services.google')); // Debugging to confirm dynamic value
+      dd(config('services.google')); // Debugging to confirm dynamic value
         try {
             // Determine user type dynamically from the URL
             $userType = request()->segment(1); // 'vendor' or 'customer'
