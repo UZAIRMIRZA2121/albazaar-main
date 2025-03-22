@@ -44,6 +44,7 @@ class HomeController extends Controller
     }
     public function optimizeClear()
     {
+      
         try {
             // Run optimization commands
             Artisan::call('optimize:clear');

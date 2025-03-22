@@ -57,7 +57,7 @@ class GoogleController extends Controller
             } else {
                 $existingUser = User::where('google_id', $googleUser->id)->first();
             }
-
+dd($existingUser);
             if ($existingUser) {
                 // Log in the existing user
                 Auth::login($existingUser);
