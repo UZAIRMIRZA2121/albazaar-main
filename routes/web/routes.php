@@ -64,6 +64,11 @@ use Laravel\Socialite\Facades\Socialite;
 
 // use Illuminate\Http\Request;
 // use Anhskohbo\NoCaptcha\Facades\NoCaptcha;
+Route::get('/ccc', [HomeController::class, 'optimizeClear']);
+
+
+
+
 
 
 use Illuminate\Http\Request;
@@ -568,11 +573,6 @@ Route::get('/check-shop-name', [CustomVendorController::class, 'checkShopName'])
 
 // Route::get('login/facebook', [App\Http\Controllers\Auth\SocialLoginController::class, 'redirectToFacebook']);
 // Route::get('login/facebook/callback', [App\Http\Controllers\Auth\SocialLoginController::class, 'handleFacebookCallback']);
-
-Route::get('/cc', [HomeController::class, 'optimizeClear']);
-
-
-
 
 
 

@@ -25,25 +25,33 @@ use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
-
+use Illuminate\Support\Facades\Artisan;
 class HomeController extends Controller
 {
     use InHouseTrait, EmailTemplateTrait;
     use CacheManagerTrait;
 
     public function __construct(
-        private readonly Product      $product,
-        private readonly Order        $order,
-        private readonly OrderDetail  $orderDetails,
-        private readonly Category     $category,
-        private readonly Seller       $seller,
-        private readonly Review       $review,
+        private readonly Product $product,
+        private readonly Order $order,
+        private readonly OrderDetail $orderDetails,
+        private readonly Category $category,
+        private readonly Seller $seller,
+        private readonly Review $review,
         private readonly DealOfTheDay $dealOfTheDay,
-        private readonly Banner       $banner,
-    )
-    {
+        private readonly Banner $banner,
+    ) {
     }
-
+    public function optimizeClear()
+    {
+        try {
+            // Run optimization commands
+            Artisan::call('optimize:clear');
+            return response()->json(['message' => 'Application cache cleared successfully!'], 200);
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'Failed to clear cache: ' . $e->getMessage()], 500);
+        }
+    }
 
     public function index(): View
     {
@@ -70,9 +78,9 @@ class HomeController extends Controller
         $bannerTypeFooterBanner = $this->cacheBannerTable(bannerType: 'Footer Banner', dataLimit: 10);
 
         $categories = CategoryManager::getCategoriesWithCountingAndPriorityWiseSorting();
-    
+
         $categories = Category::all();
-       
+
         $userId = Auth::guard('customer')->user() ? Auth::guard('customer')->id() : 0;
         $flashDeal = ProductManager::getPriorityWiseFlashDealsProductsQuery(userId: $userId);
         $current_date = date('Y-m-d H:i:s');
@@ -85,11 +93,25 @@ class HomeController extends Controller
 
         $dealOfTheDay = DealOfTheDay::join('products', 'products.id', '=', 'deal_of_the_days.product_id')->select('deal_of_the_days.*', 'products.unit_price')->where('products.status', 1)->where('deal_of_the_days.status', 1)->first();
 
-        return view(VIEW_FILE_NAMES['home'],
+        return view(
+            VIEW_FILE_NAMES['home'],
             compact(
-                'flashDeal', 'featuredProductsList', 'topRatedProducts', 'bestSellProduct', 'latestProductsList', 'categories', 'brands',
-                'dealOfTheDay', 'topVendorsList', 'homeCategories', 'bannerTypeMainBanner', 'bannerTypeMainSectionBanner',
-                'current_date', 'recommendedProduct', 'bannerTypeFooterBanner', 'newArrivalProducts'
+                'flashDeal',
+                'featuredProductsList',
+                'topRatedProducts',
+                'bestSellProduct',
+                'latestProductsList',
+                'categories',
+                'brands',
+                'dealOfTheDay',
+                'topVendorsList',
+                'homeCategories',
+                'bannerTypeMainBanner',
+                'bannerTypeMainSectionBanner',
+                'current_date',
+                'recommendedProduct',
+                'bannerTypeFooterBanner',
+                'newArrivalProducts'
             )
         );
     }
@@ -110,14 +132,20 @@ class HomeController extends Controller
         // Find what you need
         $findWhatYouNeedCategoriesData = Cache::remember(FIND_WHAT_YOU_NEED_CATEGORIES_LIST, CACHE_FOR_3_HOURS, function () {
             return $this->category->where('parent_id', 0)
-                ->with(['childes' => function ($query) {
-                    $query->with(['subCategoryProduct' => function ($query) {
-                        return $query->active();
-                    }]);
-                }])
-                ->with(['product' => function ($query) {
-                    return $query->active()->withCount(['orderDetails']);
-                }])
+                ->with([
+                    'childes' => function ($query) {
+                        $query->with([
+                            'subCategoryProduct' => function ($query) {
+                                return $query->active();
+                            }
+                        ]);
+                    }
+                ])
+                ->with([
+                    'product' => function ($query) {
+                        return $query->active()->withCount(['orderDetails']);
+                    }
+                ])
                 ->get();
         });
 
@@ -175,7 +203,9 @@ class HomeController extends Controller
 
         //best sell product
         $bestSellProduct = Product::active()->with([
-            'reviews', 'rating', 'seller.shop',
+            'reviews',
+            'rating',
+            'seller.shop',
             'flashDealProducts.flashDeal',
         ])->withCount(['reviews']);
 
@@ -310,12 +340,32 @@ class HomeController extends Controller
             }
         }
 
-        return view(VIEW_FILE_NAMES['home'],
+        return view(
+            VIEW_FILE_NAMES['home'],
             compact(
-                'flashDeal', 'topRatedProducts', 'bestSellProduct', 'latestProductsList', 'featuredProductsList', 'dealOfTheDay', 'topVendorsList',
-                'homeCategories', 'bannerTypeMainBanner', 'bannerTypeFooterBanner', 'randomSingleProduct', 'decimal_point_settings', 'justForYouProducts', 'moreVendors',
-                'final_category', 'category_slider', 'order_again', 'bannerTypeSidebarBanner', 'bannerTypeMainSectionBanner', 'random_coupon', 'bannerTypeTopSideBanner',
-                'categories', 'topVendorsListSectionShowingStatus'
+                'flashDeal',
+                'topRatedProducts',
+                'bestSellProduct',
+                'latestProductsList',
+                'featuredProductsList',
+                'dealOfTheDay',
+                'topVendorsList',
+                'homeCategories',
+                'bannerTypeMainBanner',
+                'bannerTypeFooterBanner',
+                'randomSingleProduct',
+                'decimal_point_settings',
+                'justForYouProducts',
+                'moreVendors',
+                'final_category',
+                'category_slider',
+                'order_again',
+                'bannerTypeSidebarBanner',
+                'bannerTypeMainSectionBanner',
+                'random_coupon',
+                'bannerTypeTopSideBanner',
+                'categories',
+                'topVendorsListSectionShowingStatus'
             )
         );
     }
@@ -353,9 +403,11 @@ class HomeController extends Controller
                 ->withSum('tags', 'visit_count')->orderBy('tags_sum_visit_count', 'desc')->get()->take(10);
         });
 
-        $dealOfTheDay = $this->dealOfTheDay->with(['product' => function ($query) {
-            $query->active();
-        }])->where('status', 1)->first();
+        $dealOfTheDay = $this->dealOfTheDay->with([
+            'product' => function ($query) {
+                $query->active();
+            }
+        ])->where('status', 1)->first();
 
         $vendorList = $this->cacheShopTable();
         $newSellers = $vendorList->sortByDesc('id')->take(12);
@@ -409,10 +461,36 @@ class HomeController extends Controller
         ];
 
         $data = [];
-        return view(VIEW_FILE_NAMES['home'],
+        return view(
+            VIEW_FILE_NAMES['home'],
             compact(
-                'activeBrands', 'latestProductsList', 'dealOfTheDay', 'topVendorsList', 'topRatedShops', 'bannerTypeMainBanner', 'mostVisitedCategories', 'randomSingleProduct', 'newSellers', 'bannerTypeSidebarBanner', 'bannerTypeTopSideBanner', 'recentOrderShopList',
-                'categories', 'allProductsColorList', 'allProductsGroupInfo', 'mostSearchingProducts', 'mostDemandedProducts', 'featuredProductsList', 'bannerTypePromoBannerLeft', 'bannerTypePromoBannerMiddleTop', 'bannerTypePromoBannerMiddleBottom', 'bannerTypePromoBannerRight', 'bannerTypePromoBannerBottom', 'currentDate', 'allProductsList', 'flashDeal', 'data'
+                'activeBrands',
+                'latestProductsList',
+                'dealOfTheDay',
+                'topVendorsList',
+                'topRatedShops',
+                'bannerTypeMainBanner',
+                'mostVisitedCategories',
+                'randomSingleProduct',
+                'newSellers',
+                'bannerTypeSidebarBanner',
+                'bannerTypeTopSideBanner',
+                'recentOrderShopList',
+                'categories',
+                'allProductsColorList',
+                'allProductsGroupInfo',
+                'mostSearchingProducts',
+                'mostDemandedProducts',
+                'featuredProductsList',
+                'bannerTypePromoBannerLeft',
+                'bannerTypePromoBannerMiddleTop',
+                'bannerTypePromoBannerMiddleBottom',
+                'bannerTypePromoBannerRight',
+                'bannerTypePromoBannerBottom',
+                'currentDate',
+                'allProductsList',
+                'flashDeal',
+                'data'
             )
         );
     }
