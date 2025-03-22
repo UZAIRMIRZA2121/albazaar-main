@@ -17,7 +17,15 @@ class GoogleController extends Controller
 {
     public function redirectToGoogle()
     {
-       
+        // Determine if the request is from "vendor" or "customer"
+        $userType = request()->segment(1); // Get 'vendor' or 'customer' from the URL
+
+        // Generate dynamic redirect URI using APP_URL
+        $redirectUri = config('app.url') . "/$userType/google/callback";
+
+        // Override the redirect URI for this request
+        config(['services.google.redirect' => $redirectUri]);
+
         //    dd(config('services.google')); // Debugging to confirm dynamic value
 
         return Socialite::driver('google')->redirect();
@@ -28,7 +36,15 @@ class GoogleController extends Controller
     public function handleGoogleCallback()
     {
     
-   
+      // Determine if the request is from "vendor" or "customer"
+      $userType = request()->segment(1); // Get 'vendor' or 'customer' from the URL
+
+      // Generate dynamic redirect URI using APP_URL
+      $redirectUri = config('app.url') . "/$userType/auth/login/google/callback";
+
+      // Override the redirect URI for this request
+      config(['services.google.redirect' => $redirectUri]);
+
 
         try {
          
