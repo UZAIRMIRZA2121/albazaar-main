@@ -107,7 +107,7 @@ Route::get('/test-email', function () {
 });
 
 Route::get('vendor/auth/google', [GoogleController::class, 'redirectToGoogle'])->name('vendor.auth.login.google');
-Route::get('vendor/register/google/callback', [GoogleController::class, 'handleGoogleCallback']);
+Route::get('vendor/auth/login/google/callback', [GoogleController::class, 'handleGoogleCallback']);
 
 
 
@@ -135,7 +135,12 @@ Route::group(['namespace' => 'Web', 'middleware' => ['maintenance_mode', 'guestC
     });
     Route::post('custome/vendors/add', [CustomVendorController::class, 'store'])->name('custome.vendors.store');
     Route::post('/send-otp', [CustomVendorController::class, 'sendOtp']);
+
+
     Route::get('login/{service}/callback', [SocialAuthController::class, 'handleProviderCallback'])->name('service-callback');
+
+
+
     Route::controller(WebController::class)->group(function () {
         Route::get('quick-view', 'getQuickView')->name('quick-view');
         Route::get('searched-products', 'getSearchedProducts')->name('searched-products');
@@ -560,11 +565,11 @@ Route::get('/send-otp', [CustomVendorController::class, 'sendOtp']);
 
 Route::get('/check-shop-name', [CustomVendorController::class, 'checkShopName'])->name('check.shop.name');
 
-// Route::get('login/google', [App\Http\Controllers\Auth\SocialLoginController::class, 'redirectToGoogle']);
-// Route::get('login/google/callback', [App\Http\Controllers\Auth\SocialLoginController::class, 'handleGoogleCallback']);
+Route::get('login/google', [App\Http\Controllers\Auth\SocialLoginController::class, 'redirectToGoogle']);
+Route::get('login/google/callback', [App\Http\Controllers\Auth\SocialLoginController::class, 'handleGoogleCallback']);
 
-// Route::get('login/facebook', [App\Http\Controllers\Auth\SocialLoginController::class, 'redirectToFacebook']);
-// Route::get('login/facebook/callback', [App\Http\Controllers\Auth\SocialLoginController::class, 'handleFacebookCallback']);
+Route::get('login/facebook', [App\Http\Controllers\Auth\SocialLoginController::class, 'redirectToFacebook']);
+Route::get('login/facebook/callback', [App\Http\Controllers\Auth\SocialLoginController::class, 'handleFacebookCallback']);
 
 Route::get('/cc', [HomeController::class, 'optimizeClear']);
 

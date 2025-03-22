@@ -17,25 +17,26 @@ class GoogleController extends Controller
 {
     public function redirectToGoogle()
     {
-
-        config([
-            'services.vendor_google.client_id' => env('Vendor_GOOGLE_CLIENT_ID'),
-            'services.vendor_google.client_secret' => env('Vendor_GOOGLE_CLIENT_SECRET'),
-            'services.vendor_google.redirect' => env('Vendor_GOOGLE_REDIRECT_URI'),
-        ]); 
-
-
+        // Determine if the request is from "vendor" or "customer"
+        $userType = request()->segment(1); // Get 'vendor' or 'customer' from the URL
+        
+        // Generate dynamic redirect URI using APP_URL
+        $redirectUri = config('app.url') . "$userType/auth/login/google/callback";
+    
+        // Override the redirect URI for this request
+        config(['services.google.redirect' => $redirectUri]);
+    
+        // dd(config('services.google')); // Debugging to confirm dynamic value
+    
         return Socialite::driver('google')->redirect();
     }
+    
+    
 
     public function handleGoogleCallback()
     {
     
-        config([
-            'services.vendor_google.client_id' => env('Vendor_GOOGLE_CLIENT_ID'),
-            'services.vendor_google.client_secret' => env('Vendor_GOOGLE_CLIENT_SECRET'),
-            'services.vendor_google.redirect' => env('Vendor_GOOGLE_REDIRECT_URI'),
-        ]);
+     
 
         try {
             
