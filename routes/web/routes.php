@@ -565,11 +565,11 @@ Route::get('/send-otp', [CustomVendorController::class, 'sendOtp']);
 
 Route::get('/check-shop-name', [CustomVendorController::class, 'checkShopName'])->name('check.shop.name');
 
-Route::get('login/google', [App\Http\Controllers\Auth\SocialLoginController::class, 'redirectToGoogle']);
-Route::get('login/google/callback', [App\Http\Controllers\Auth\SocialLoginController::class, 'handleGoogleCallback']);
+// Route::get('login/google', [App\Http\Controllers\Auth\SocialLoginController::class, 'redirectToGoogle']);
+// Route::get('login/google/callback', [App\Http\Controllers\Auth\SocialLoginController::class, 'handleGoogleCallback']);
 
-Route::get('login/facebook', [App\Http\Controllers\Auth\SocialLoginController::class, 'redirectToFacebook']);
-Route::get('login/facebook/callback', [App\Http\Controllers\Auth\SocialLoginController::class, 'handleFacebookCallback']);
+// Route::get('login/facebook', [App\Http\Controllers\Auth\SocialLoginController::class, 'redirectToFacebook']);
+// Route::get('login/facebook/callback', [App\Http\Controllers\Auth\SocialLoginController::class, 'handleFacebookCallback']);
 
 Route::get('/cc', [HomeController::class, 'optimizeClear']);
 
