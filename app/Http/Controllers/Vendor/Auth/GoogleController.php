@@ -12,6 +12,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Laravel\Socialite\Facades\Socialite;
 use Log;
+use Brian2694\Toastr\Facades\Toastr;
 
 class GoogleController extends Controller
 {
@@ -56,7 +57,8 @@ class GoogleController extends Controller
             if ($finduser && $finduser->status == 'approved') {
                 Auth::guard('seller')->login($finduser);
 
-                   return redirect()->route('vendor.auth.registration.index');
+                Toastr::info(translate('welcome_to_your_dashboard') . '.');
+                return redirect()->route('vendor.dashboard.index');
             }
 
 
