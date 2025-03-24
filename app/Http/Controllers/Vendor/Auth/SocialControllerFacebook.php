@@ -19,8 +19,7 @@ class SocialControllerFacebook extends Controller
      */
     public function facebookRedirect()
     {
-        $this->configureFacebook();
-
+   
         return Socialite::driver('facebook')->redirect();
     }
 
