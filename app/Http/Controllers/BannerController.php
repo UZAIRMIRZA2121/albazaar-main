@@ -106,9 +106,8 @@ class BannerController extends Controller
         ];
         $order['return'] = route('vendor.banner.payment');
 
-
         $paymentResponse = $this->paytabsService->createPayment($order);
-
+        $order
         session(['tran_ref' => $paymentResponse['tran_ref']]);
         $validatedData['promotion_type'] = $promotion->promotion_type ;
    // Store validated data along with image path in session

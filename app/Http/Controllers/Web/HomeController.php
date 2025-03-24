@@ -93,7 +93,7 @@ class HomeController extends Controller
         $newArrivalProducts = ProductManager::getPriorityWiseNewArrivalProductsQuery(query: $this->product->active(), dataLimit: 8);
 
         $dealOfTheDay = DealOfTheDay::join('products', 'products.id', '=', 'deal_of_the_days.product_id')->select('deal_of_the_days.*', 'products.unit_price')->where('products.status', 1)->where('deal_of_the_days.status', 1)->first();
-
+// dd(VIEW_FILE_NAMES['home']);
         return view(
             VIEW_FILE_NAMES['home'],
             compact(

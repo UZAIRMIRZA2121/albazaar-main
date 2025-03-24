@@ -7,20 +7,16 @@
                     .carousel-item img {
                         width: 100%;
                         height: auto;
-                        min-height: 450px;
-                        /* Fixed height for large screens */
+                        min-height: 450px; /* Fixed height for large screens */
                         object-fit: cover;
                     }
 
                     /* Responsively manage height for smaller screens */
                     @media (max-width: 767px) {
                         .carousel-item img {
-                            height: auto;
-                            /* Adjust height for smaller screens */
+                            height: auto; /* Adjust height for smaller screens */
+                            min-height: unset !important;
                         }
-                        .carousel-item img {
-                        min-height: unset !important;
-                    }
                     }
 
                     /* Carousel inner style */
@@ -32,90 +28,56 @@
                         background-color: #000000;
                     }
                 </style>
-                <!-- Carousel Wrapper -->
-                <div id="imageCarousel" class="carousel slide" data-bs-interval="false">
-                    <div class="carousel-inner">
-                        <!-- Slide 1 -->
-                        <div class="carousel-item active">
-                            <div class="row " id="row">
-                                @foreach ($bannerTypeMainBanner as $key => $banner)
-                                    <!-- Show only the first image on small screens (mobile), and all images on larger screens -->
-                                    <div class=" col-3">
-                                        @if ($key == 0)
-                                            <a href="{{ $banner['url'] }}" class="d-block" target="_blank">
-                                                <img src="{{ getStorageImages(path: $banner->photo_full_url, type: 'banner') }}"
-                                                    alt="Image 4" class="img-fluid">
-                                            </a>
-                                        @elseif ($key > 0)
-                                            <!-- Show additional images only for larger screens -->
-                                            <a href="{{ $banner['url'] }}" class="d-block" target="_blank">
-                                                <img src="{{ getStorageImages(path: $banner->photo_full_url, type: 'banner') }}"
-                                                    alt="Image 4" class="img-fluid">
-                                            </a>
-                                        @endif
-                                    </div>
-                                @endforeach
-                              
 
+                <!-- Bootstrap Carousel Wrapper -->
+                <div id="imageCarousel" class="carousel slide" data-bs-ride="carousel">
+                    <div class="carousel-inner">
+                        @php
+                            $totalSlides = ceil(count($bannerTypeMainBanner) / 4); // Calculate total slides needed
+                        @endphp
+
+                        @foreach ($bannerTypeMainBanner->chunk(4) as $chunkIndex => $bannerChunk)
+                            <div class="carousel-item {{ $chunkIndex == 0 ? 'active' : '' }}">
+                                <div class="row">
+                                    @foreach ($bannerChunk as $banner)
+                                        <div class="col-3">
+                                            <a href="{{ $banner['url'] }}" class="d-block" target="_blank">
+                                                <img src="{{ getStorageImages(path: $banner->photo_full_url, type: 'banner') }}"
+                                                    alt="Banner Image" class="img-fluid">
+                                            </a>
+                                        </div>
+                                    @endforeach
+                                </div>
                             </div>
-                        </div>
+                        @endforeach
                     </div>
+
+                    <!-- Carousel Controls (only show if more than 1 slide exists) -->
+                    {{-- @if ($totalSlides > 1)
+                        <button class="carousel-control-prev " type="button" data-bs-target="#imageCarousel" data-bs-slide="prev">
+                            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                            <span class="visually-hidden">Previous</span>
+                        </button>
+                        <button class="carousel-control-next" type="button" data-bs-target="#imageCarousel" data-bs-slide="next">
+                            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                            <span class="visually-hidden">Next</span>
+                        </button>
+                    @endif --}}
                 </div>
             </div>
         </div>
     </section>
 
+    <!-- Bootstrap JS (Ensure it's included) -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
-
-    {{-- <section class="bg-transparent py-3">
-    <div class="container position-relative">
-        <div class="row no-gutters position-relative rtl">
-            @if ($categories->count() > 0)
-                <div class="col-xl-3 position-static d-none d-xl-block __top-slider-cate">
-                    <div class="category-menu-wrap position-static">
-                        <ul class="category-menu mt-0">
-                            @foreach ($categories as $key => $category)
-                                <li>
-                                    <a href="{{route('products',['category_id'=> $category['id'],'data_from'=>'category','page'=>1])}}">{{$category->name}}</a>
-                                    @if ($category->childes->count() > 0)
-                                        <div class="mega_menu z-2">
-                                            @foreach ($category->childes as $sub_category)
-                                                <div class="mega_menu_inner">
-                                                    <h6><a href="{{route('products',['category_id'=> $sub_category['id'],'data_from'=>'category','page'=>1])}}">{{$sub_category->name}}</a></h6>
-                                                    @if ($sub_category->childes->count() > 0)
-                                                        @foreach ($sub_category->childes as $sub_sub_category)
-                                                            <div><a href="{{route('products',['category_id'=> $sub_sub_category['id'],'data_from'=>'category','page'=>1])}}">{{$sub_sub_category->name}}</a></div>
-                                                        @endforeach
-                                                    @endif
-                                                </div>
-                                            @endforeach
-                                        </div>
-                                    @endif
-                                </li>
-                            @endforeach
-                            <li class="text-center">
-                                <a href="{{route('categories')}}" class="text-primary font-weight-bold justify-content-center text-capitalize">
-                                    {{translate('view_all')}}
-                                </a>
-                            </li>
-                        </ul>
-                    </div>
-                </div>
-            @endif
-
-            <div class="col-12 col-xl-9 __top-slider-images">
-                <div class="{{Session::get('direction') === "rtl" ? 'pr-xl-2' : 'pl-xl-2'}}">
-                    <div class="owl-theme owl-carousel hero-slider">
-                        @foreach ($bannerTypeMainBanner as $key => $banner)
-                            <a href="{{$banner['url']}}" class="d-block" target="_blank">
-                                <img class="w-100 __slide-img" alt=""
-                                    src="{{ getStorageImages(path: $banner->photo_full_url, type: 'banner') }}">
-                            </a>
-                        @endforeach
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</section> --}}
+    <!-- Manual Carousel Initialization (Optional but helpful) -->
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            var myCarousel = new bootstrap.Carousel(document.getElementById('imageCarousel'), {
+                interval: 5000, // Auto-slide every 5 seconds
+                ride: 'carousel'
+            });
+        });
+    </script>
 @endif

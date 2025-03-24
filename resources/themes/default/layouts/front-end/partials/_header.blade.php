@@ -7,6 +7,36 @@
         <span class="__close-announcement web-announcement-slideUp">X</span>
     </div>
 @endif
+<!-- Custom CSS -->
+<style>
+    /* Custom Dropdown Styling */
+    .category-dropdown {
+        position: relative;
+    }
+    .custom-dropdown-menu {
+        display: none;
+        position: absolute;
+        top: 100%;
+        left: 0;
+        background: white;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        width: 100%;
+        max-height: 200px;
+        overflow-y: auto;
+        z-index: 1000;
+        padding: 0;
+        margin: 0;
+        list-style: none;
+    }
+    .custom-dropdown-menu li {
+        padding: 8px 15px;
+        cursor: pointer;
+    }
+    .custom-dropdown-menu li:hover {
+        background: #f1f1f1;
+    }
+</style>
 
 <header class="rtl __inline-10">
     <div class="topbar" style="background-color: #fbf5f5; position: relative;">
@@ -19,7 +49,35 @@
         });
     </script>
     
+<!-- JavaScript to Handle Dropdown -->
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const categoryButton = document.getElementById("categoryDropdown");
+        const dropdownMenu = document.getElementById("categoryDropdownMenu");
+        const categoryItems = document.querySelectorAll(".category-select");
+        const selectedCategoryInput = document.getElementById("selectedCategory");
 
+        categoryItems.forEach(item => {
+            item.addEventListener("click", function (event) {
+                event.preventDefault();
+                categoryButton.textContent = this.textContent; // Change button text
+                selectedCategoryInput.value = this.getAttribute("data-value"); // Set hidden input value
+            });
+        });
+
+        // Show/Hide dropdown on button click
+        categoryButton.addEventListener("click", function () {
+            dropdownMenu.classList.toggle("show");
+        });
+
+        // Close dropdown when clicking outside
+        document.addEventListener("click", function (event) {
+            if (!categoryButton.contains(event.target) && !dropdownMenu.contains(event.target)) {
+                dropdownMenu.classList.remove("show");
+            }
+        });
+    });
+</script>
     @php($categories = \App\Utils\CategoryManager::getCategoriesWithCountingAndPriorityWiseSorting(dataLimit: 11))
 
     <div class="navbar-sticky bg-light mobile-head">
@@ -37,52 +95,43 @@
                         src="{{ getStorageImages(path: $web_config['mob_logo'], type: 'logo') }}"
                         alt="{{ $web_config['company_name'] }}" />
                 </a>
-                <div class="input-group-overlay mx-lg-4 search-form-mobile text-align-direction">
-                    <form action="{{ route('products') }}" type="submit" class="search_form">
-                        <div class="d-flex align-items-center gap-2">
-                            <div class="dropdown show">
-                                <a class="btn  bg-light dropdown-toggle" href="#" role="button"
-                                    id="dropdowncategory" data-toggle="dropdown" aria-haspopup="true"
-                                    aria-expanded="false">
-                                    All Categories
-                                </a>
-                                <div class="dropdown-menu text-center" aria-labelledby="dropdowncategory"  style="min-width:180px !important;">
-                                    @foreach ($categories as $category)
-                                        <a <?php if ($category->childes->count() > 0) {
-                                            echo '';
-                                        } ?> class="dropdown-item"
-                                            href="{{ route('products', ['category_id' => $category['id'], 'data_from' => 'category', 'page' => 1]) }}">
-                                            <span class="text-center">{{ $category['name'] }}</span>
-                                        </a>
-                                    @endforeach
-                                </div>
-                            </div>
-                            <input class="form-control appended-form-control search-bar-input" type="search"
-                                autocomplete="off" data-given-value=""
-                                placeholder="{{ translate('search_for_items') }}..." name="name"
-                                value="{{ request('name') }}">
+               <!-- jQuery CDN -->
+<!-- jQuery CDN -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
-                            <button class="input-group-append-overlay search_button d-none d-md-block" type="submit">
-                                <span class="input-group-text __text-20px">
-                                    <i class="czi-search text-white"></i>
-                                </span>
-                            </button>
+<!-- Search Bar with Category Dropdown -->
+<div class="input-group-overlay mx-lg-4 search-form-mobile text-align-direction">
+    <form action="{{ route('products') }}" method="GET" class="d-flex border rounded overflow-hidden">
+        
+        <!-- Custom Category Dropdown -->
+        <div class="category-dropdown position-relative">
+            <button type="button" class="btn btn-light border-0 px-3 d-flex align-items-center" id="categoryButton">
+                <span id="selectedCategory">All Categories</span>
+                <i class="czi-arrow-down ms-2"></i>
+            </button>
 
-                            <span class="close-search-form-mobile fs-14 font-semibold text-muted d-md-none"
-                                type="submit">
-                                {{ translate('cancel') }}
-                            </span>
-                        </div>
+         
 
-                        <input name="data_from" value="search" hidden>
-                        <input name="page" value="1" hidden>
-                        <diV class="card search-card mobile-search-card">
-                            <div class="card-body">
-                                <div class="search-result-box __h-400px overflow-x-hidden overflow-y-auto"></div>
-                            </div>
-                        </diV>
-                    </form>
-                </div>
+            <input type="hidden" name="category_id" id="categoryInput" value="">
+        </div>
+
+        <!-- Search Input -->
+        <input class="form-control border-0" type="search" autocomplete="off" placeholder="Search for items..." name="name" value="{{ request('name') }}">
+        
+        <!-- Search Button -->
+        <button class="btn btn-primary px-4" type="submit">
+            <i class="czi-search text-white"></i>
+        </button>
+    </form>
+       <!-- Dropdown Menu Moved Inside -->
+       <ul class="custom-dropdown-menu" id="categoryMenu">
+        <li><a class="dropdown-item category-option" data-value="" href="#">All Categories</a></li>
+        @foreach ($categories as $category)
+            <li><a class="dropdown-item category-option" data-value="{{ $category['id'] }}" href="#">{{ $category['name'] }}</a></li>
+        @endforeach
+    </ul>
+</div>
+
 
                 <div class="navbar-toolbar d-flex flex-shrink-0 align-items-center">
                     <a class="navbar-tool navbar-stuck-toggler" href="#">
@@ -504,4 +553,34 @@
             .addClass("has-sub-item").find("> a")
             .append("<i class='czi-arrow-{{ Session::get('direction') === 'rtl' ? 'left' : 'right' }}'></i>");
     </script>
+    
+<!-- jQuery Script -->
+<script>
+    $(document).ready(function () {
+        // Toggle dropdown on button click
+        $("#categoryButton").click(function (event) {
+            event.stopPropagation(); // Prevents click from closing immediately
+            $("#categoryMenu").toggle(); // Show/hide dropdown
+        });
+
+        // Close dropdown when clicking outside
+        $(document).click(function (event) {
+            if (!$(event.target).closest(".category-dropdown").length) {
+                $("#categoryMenu").hide();
+            }
+        });
+
+        // Update button text and hidden input when selecting a category
+        $(".category-option").click(function (event) {
+            event.preventDefault();
+            var selectedText = $(this).text();
+            var selectedValue = $(this).data("value");
+
+            $("#selectedCategory").text(selectedText); // Update button text
+            $("#categoryInput").val(selectedValue); // Update hidden input
+            $("#categoryMenu").hide(); // Close dropdown
+        });
+    });
+</script>
+
 @endpush
