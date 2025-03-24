@@ -263,6 +263,7 @@ class SocialAuthController extends Controller
             ]);
             return self::actionCustomerLoginProcess($request, $user, $user['email']);
         } else {
+            dd(VIEW_FILE_NAMES['customer_auth_verify_otp_update_info']);
             return view(VIEW_FILE_NAMES['customer_auth_verify_otp_update_info'], [
                 'user' => $user,
                 'socialLoginNewCustomer' => $socialLoginNewCustomer,
