@@ -19,27 +19,47 @@ class SocialControllerFacebook extends Controller
      */
     public function facebookRedirect()
     {
-   
+        // Determine if the request is from "vendor" or "customer"
+        $userType = request()->segment(1); // Get 'vendor' or 'customer' from the URL
+    
+        // Generate dynamic redirect URI using APP_URL
+        $redirectUri = config('app.url') . "/$userType/facebook/callback"; // Corrected URL format
+    
+        // Override the redirect URI for this request
+        config(['services.facebook.redirect' => $redirectUri]);
+    
+        // Debugging output
+        // dd(config('services.facebook.redirect'));
+    
         return Socialite::driver('facebook')->redirect();
     }
+    
 
     /**
      * Handle Facebook login callback
      */
     public function loginWithFacebook()
     {
-        $this->configureFacebook();
-
+              // Determine if the request is from "vendor" or "customer"
+              $userType = request()->segment(1); // Get 'vendor' or 'customer' from the URL
+    
+              // Generate dynamic redirect URI using APP_URL
+              $redirectUri = config('app.url') . "/$userType/facebook/callback"; // Corrected URL format
+          
+              // Override the redirect URI for this request
+              config(['services.facebook.redirect' => $redirectUri]);
+          
+          
         try {
             // Retrieve user from Facebook
             $user = Socialite::driver('facebook')->stateless()->user();
 
             // Ensure email exists, otherwise, generate a placeholder
             $email = $user->getEmail() ?? 'fb_user_' . $user->getId() . '@facebook.com';
-
+            dd($email);
             // Check if user already exists
             $existingUser = Seller::where('facebook_id', $user->getId())->orWhere('email', $email)->first();
-dd(321);
+
             if ($existingUser) {
                 session(['new_email' => $existingUser->email]);
                 return redirect()->route('vendor.auth.registration.index');

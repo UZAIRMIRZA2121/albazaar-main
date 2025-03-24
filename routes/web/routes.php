@@ -158,7 +158,7 @@ Route::group(['namespace' => 'Web', 'middleware' => ['maintenance_mode', 'guestC
   
 
     Route::get('vendor/auth/facebook', [SocialControllerFacebook::class, 'facebookRedirect'])->name('vendor.auth.login.facebook');
-    Route::get('vendor/auth/facebook/callback', [SocialControllerFacebook::class, 'loginWithFacebook']);
+    Route::get('vendor/facebook/callback', [SocialControllerFacebook::class, 'loginWithFacebook']);
 
 
     Route::controller(WebController::class)->group(function () {
