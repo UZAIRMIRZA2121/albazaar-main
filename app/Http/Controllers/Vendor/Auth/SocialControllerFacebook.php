@@ -39,7 +39,7 @@ class SocialControllerFacebook extends Controller
 
             // Check if user already exists
             $existingUser = Seller::where('facebook_id', $user->getId())->orWhere('email', $email)->first();
-
+dd(321);
             if ($existingUser) {
                 session(['new_email' => $existingUser->email]);
                 return redirect()->route('vendor.auth.registration.index');
