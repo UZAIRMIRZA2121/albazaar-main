@@ -75,6 +75,7 @@ class Seller extends Authenticatable
         'city',
         'category',
         'google_id',
+        'facebook_id',
         'otp',
     ];
 
