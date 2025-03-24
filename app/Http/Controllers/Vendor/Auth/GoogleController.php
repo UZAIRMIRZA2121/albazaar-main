@@ -40,7 +40,7 @@ class GoogleController extends Controller
       $userType = request()->segment(1); // Get 'vendor' or 'customer' from the URL
 
       // Generate dynamic redirect URI using APP_URL
-      $redirectUri = config('app.url') . "/$userType/auth/login/google/callback";
+      $redirectUri = config('app.url') . "/$userType/google/callback";
 
       // Override the redirect URI for this request
       config(['services.google.redirect' => $redirectUri]);
