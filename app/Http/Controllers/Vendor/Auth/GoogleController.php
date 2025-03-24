@@ -21,12 +21,12 @@ class GoogleController extends Controller
         $userType = request()->segment(1); // Get 'vendor' or 'customer' from the URL
 
         // Generate dynamic redirect URI using APP_URL
-        $redirectUri = config('app.url') . "/$userType/google/callback";
+        $redirectUri = config('app.url') . "$userType/google/callback";
 
         // Override the redirect URI for this request
         config(['services.google.redirect' => $redirectUri]);
 
-      //    dd(config('services.google')); // Debugging to confirm dynamic value
+        //  dd(config('services.google')); // Debugging to confirm dynamic value
 
         return Socialite::driver('google')->redirect();
     }
@@ -35,23 +35,31 @@ class GoogleController extends Controller
 
     public function handleGoogleCallback()
     {
-    
-      // Determine if the request is from "vendor" or "customer"
-      $userType = request()->segment(1); // Get 'vendor' or 'customer' from the URL
 
-      // Generate dynamic redirect URI using APP_URL
-      $redirectUri = config('app.url') . "/$userType/google/callback";
+        // Determine if the request is from "vendor" or "customer"
+        $userType = request()->segment(1); // Get 'vendor' or 'customer' from the URL
 
-      // Override the redirect URI for this request
-      config(['services.google.redirect' => $redirectUri]);
+        // Generate dynamic redirect URI using APP_URL
+        $redirectUri = config('app.url') . "$userType/google/callback";
 
-    //   dd(config('services.google')); // Debugging to confirm dynamic value
+        // Override the redirect URI for this request
+        config(['services.google.redirect' => $redirectUri]);
+
+        //   dd(config('services.google')); // Debugging to confirm dynamic value
         try {
-      
+
             $user = Socialite::driver('google')->user();
 
             // Check if the user already exists
             $finduser = Seller::where('google_id', $user->id)->first();
+            
+            if ($finduser && $finduser->status == 'approved') {
+                Auth::guard('seller')->login($finduser);
+
+                   return redirect()->route('vendor.auth.registration.index');
+            }
+
+
 
             if ($finduser) {
                 session(['new_email' => $finduser->email]);
