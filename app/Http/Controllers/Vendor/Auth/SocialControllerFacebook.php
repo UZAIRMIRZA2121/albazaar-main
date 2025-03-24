@@ -10,6 +10,8 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Brian2694\Toastr\Facades\Toastr;
+
 use Laravel\Socialite\Facades\Socialite;
 
 class SocialControllerFacebook extends Controller
@@ -57,6 +59,12 @@ class SocialControllerFacebook extends Controller
          
             // Check if user already exists
             $existingUser = Seller::where('facebook_id', $user->getId())->orWhere('email', $email)->first();
+            if ($existingUser && $existingUser->status == 'approved') {
+                Auth::guard('seller')->login($existingUser);
+
+                Toastr::info(translate('welcome_to_your_dashboard') . '.');
+                return redirect()->route('vendor.dashboard.index');
+            }
 
             if ($existingUser) {
                 session(['new_email' => $existingUser->email]);
