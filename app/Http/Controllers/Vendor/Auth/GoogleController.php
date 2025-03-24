@@ -26,7 +26,7 @@ class GoogleController extends Controller
         // Override the redirect URI for this request
         config(['services.google.redirect' => $redirectUri]);
 
-        //    dd(config('services.google')); // Debugging to confirm dynamic value
+      //    dd(config('services.google')); // Debugging to confirm dynamic value
 
         return Socialite::driver('google')->redirect();
     }
@@ -49,7 +49,7 @@ class GoogleController extends Controller
         try {
          
             $user = Socialite::driver('google')->user();
-
+dd( $user);
             // Check if the user already exists
             $finduser = Seller::where('google_id', $user->id)->first();
 

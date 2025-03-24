@@ -54,10 +54,14 @@
                                     @elseif($updateType == 'social')
                                         <div class="form-group">
                                             <label class="form-label font-semibold">{{ translate('phone_number') }}</label>
-                                            <input class="form-control text-align-direction phone-input-with-country-picker"
-                                                   type="tel" value="{{ old('phone') }}"
-                                                   placeholder="{{ translate('enter_phone_number') }}" required>
-                                            <input type="hidden" class="country-picker-phone-number w-50" name="phone" readonly>
+<!-- Phone Input Field -->
+<input class="form-control text-align-direction"
+       id="phone"
+       type="tel"
+       value="+966"
+       placeholder="{{ translate('enter_phone_number') }}"
+       required>
+                                            <input type="hidden" class=" w-50" name="phone" readonly>
                                         </div>
                                     @endif
                                     <input type="hidden" name="identity" value="{{ $identity }}">
@@ -66,6 +70,7 @@
                                         <div id="recaptcha-container-verify-token" class="my-2"></div>
                                     @endif
                                 </div>
+
 
                                 <div class="col-sm-12">
                                     <button type="submit" class="btn btn--primary">{{ translate('Update')}}</button>
@@ -82,6 +87,9 @@
         @include(VIEW_FILE_NAMES['modal_for_social_media_user_view'])
     @endif
 @endsection
+<!-- Include intl-tel-input CSS and JS -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.19/css/intlTelInput.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.19/js/intlTelInput.min.js"></script>
 
 @push('script')
     <script src="{{ theme_asset(path: 'public/assets/front-end/plugin/intl-tel-input/js/intlTelInput.js') }}"></script>
@@ -93,4 +101,33 @@
             })
         </script>
     @endif
+<script>
+    // Select phone input
+    var input = document.querySelector("#phone");
+
+  
+
+    // Set the default value to "+966 "
+    input.value = "+966 ";
+
+    // Prevent user from removing "+966"
+    input.addEventListener("input", function () {
+        if (!input.value.startsWith("+966 ")) {
+            input.value = "+966 ";
+        }
+        // Allow only numbers after +966
+        input.value = "+966 " + input.value.slice(5).replace(/\D/g, "");
+    });
+
+    // Ensure only numbers are entered after "+966"
+    input.addEventListener("keydown", function (e) {
+        if (input.selectionStart < 5) {
+            e.preventDefault(); // Prevent editing the "+966" part
+        }
+        // Allow only numbers (0-9), Backspace, Delete, Arrow keys
+        if (!/[0-9]/.test(e.key) && !["Backspace", "Delete", "ArrowLeft", "ArrowRight"].includes(e.key)) {
+            e.preventDefault();
+        }
+    });
+</script>
 @endpush
