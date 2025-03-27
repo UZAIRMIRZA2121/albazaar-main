@@ -45,13 +45,13 @@ class FeaturedProductController extends Controller
         // Fetch selected products
         $products = Product::whereIn('id', $request->product_id)->get();
     
-        // // Check if any product is already featured
-        // foreach ($products as $product) {
-        //     if ($product->featured == 1) {
-        //         Toastr::error("Product '{$product->name}' is already featured", 'Error');
-        //         return redirect()->back();
-        //     }
-        // }
+       // Check if any product is already featured
+        foreach ($products as $product) {
+            if ($product->featured == 1) {
+                Toastr::error("Product '{$product->name}' is already featured", 'Error');
+                return redirect()->back();
+            }
+        }
     
         // Get promotion details
         $promotion = Promotion::findOrFail($request->promotion_id);
@@ -59,7 +59,7 @@ class FeaturedProductController extends Controller
         // Calculate total days
         $startDate = Carbon::parse($request->start_date);
         $endDate = Carbon::parse($request->end_date);
-        $daysDifference = $startDate->diffInDays($endDate) + 1;
+        $daysDifference = $startDate->diffInDays($endDate) ;
     
         // Calculate total price for all selected products
         $total_price = $promotion->price * $daysDifference * count($products);
