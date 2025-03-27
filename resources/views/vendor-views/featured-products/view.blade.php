@@ -172,125 +172,35 @@
             </div>
         </div>
 
-
-
-
-        {{-- <div class="row" id="banner-table">
-            <div class="col-md-12">
-                <div class="card">
-                    <div class="px-3 py-4">
-                        <div class="row align-items-center">
-                            <div class="col-md-4 col-lg-6 mb-2 mb-md-0">
-                                <h5 class="mb-0 text-capitalize d-flex gap-2">
-                                    {{ translate('banner_table') }}
-                                    <span
-                                        class="badge badge-soft-dark radius-50 fz-12"></span>
-                                </h5>
-                            </div>
-                            <div class="col-md-8 col-lg-6">
-                                <div class="row gy-2 gx-2 align-items-center text-left">
-                                    <div class="col-sm-12 col-md-9">
-                                        <form action="{{ url()->current() }}" method="GET">
-                                            <div class="row gy-2 gx-2 align-items-center text-left">
-                                                <div class="col-sm-12 col-md-9">
-                                                    <select class="form-control __form-control" name="searchValue" id="date_type">
-                                                        <option value="">{{ translate('all') }}</option>
-                                                        @foreach ($bannerTypes as $key => $banner)
-                                                            <option value="{{ $key }}" {{ request('searchValue') == $key ? 'selected':'' }}>{{ $banner }}</option>
-                                                        @endforeach
-                                                    </select>
-                                                </div>
-                                                <div class="col-sm-12 col-md-3">
-                                                    <button type="submit" class="btn btn--primary px-4 w-100 text-nowrap">
-                                                        {{ translate('filter') }}
-                                                    </button>
-                                                </div>
-                                            </div>
-                                        </form>
-                                    </div>
-                                    <div class="col-sm-12 col-md-3">
-                                        <div id="banner-btn">
-                                            <button id="main-banner-add" class="btn btn--primary text-nowrap text-capitalize">
-                                                <i class="tio-add"></i>
-                                                {{ translate('add_banner') }}
-                                            </button>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="table-responsive">
-                        <table id="columnSearchDatatable"
-                               class="table table-hover table-borderless table-thead-bordered table-nowrap table-align-middle card-table w-100">
-                            <thead class="thead-light thead-50 text-capitalize">
-                            <tr>
-                                <th class="pl-xl-5">{{ translate('SL') }}</th>
-                                <th>{{ translate('image') }}</th>
-                                <th>{{ translate('banner_type') }}</th>
-                                <th>{{ translate('published') }}</th>
-                                <th class="text-center">{{ translate('action') }}</th>
-                            </tr>
-                            </thead>
-                            @foreach ($banners as $key => $banner)
-                                <tbody>
-                                <tr id="data-{{ $banner->id}}">
-                                    <td>
-                                        <img class="ratio-4-2 rounded" width="80" alt=""
-                                             src="{{ getStorageImages(path: $banner->photo_full_url , type: 'backend-banner') }}">
-                                    </td>
-                                    <td>{{ translate(str_replace('_',' ',$banner->banner_type)) }}</td>
-                                    <td>
-                                        <form action="{{ route('admin.banner.status') }}" method="post" id="banner-status{{ $banner['id'] }}-form">
-                                            @csrf
-                                            <input type="hidden" name="id" value="{{ $banner['id'] }}">
-                                            <label class="switcher">
-                                                <input type="checkbox" class="switcher_input toggle-switch-message" name="status"
-                                                       id="banner-status{{ $banner['id'] }}" value="1" {{ $banner['published'] == 1 ? 'checked' : '' }}
-                                                       data-modal-id="toggle-status-modal"
-                                                       data-toggle-id="banner-status{{ $banner['id'] }}"
-                                                       data-on-image="banner-status-on.png"
-                                                       data-off-image="banner-status-off.png"
-                                                       data-on-title="{{ translate('Want_to_Turn_ON').' '.translate(str_replace('_',' ',$banner->banner_type)).' '.translate('status') }}"
-                                                       data-off-title="{{ translate('Want_to_Turn_OFF').' '.translate(str_replace('_',' ',$banner->banner_type)).' '.translate('status') }}"
-                                                       data-on-message="<p>{{ translate('if_enabled_this_banner_will_be_available_on_the_website_and_customer_app') }}</p>"
-                                                       data-off-message="<p>{{ translate('if_disabled_this_banner_will_be_hidden_from_the_website_and_customer_app') }}</p>">
-                                                <span class="switcher_control"></span>
-                                            </label>
-                                        </form>
-                                    </td>
-                                    <td>
-                                        <div class="d-flex gap-10 justify-content-center">
-                                            <a class="btn btn-outline--primary btn-sm cursor-pointer edit"
-                                               title="{{ translate('edit') }}"
-                                               href="{{ route('admin.banner.update',[$banner['id']]) }}">
-                                                <i class="tio-edit"></i>
-                                            </a>
-                                            <a class="btn btn-outline-danger btn-sm cursor-pointer banner-delete-button"
-                                               title="{{ translate('delete') }}"
-                                               id="{{ $banner['id'] }}">
-                                                <i class="tio-delete"></i>
-                                            </a>
-                                        </div>
-                                    </td>
-                                </tr>
-                                </tbody>
-                            @endforeach
-                        </table>
-                    </div>
-
-                </div>
-            </div>
-        </div>
-    </div> --}}
-
         <span id="route-admin-banner-store" data-url="{{ route('admin.banner.store') }}"></span>
         <span id="route-admin-banner-delete" data-url="{{ route('admin.banner.delete') }}"></span>
     @endsection
     <!-- Include jQuery (if not already included) -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<script>
+    $(document).ready(function () {
+        $("#start_date").on("change", function () {
+          
+            let startDate = $(this).val();
+            if (startDate) {
+                let minEndDate = new Date(startDate);
+                minEndDate.setDate(minEndDate.getDate() + 1); // Minimum next day
+         
+                let maxEndDate = new Date(startDate);
+                maxEndDate.setDate(maxEndDate.getDate() + 14); // Maximum 14 days ahead
+                
+                let minDateStr = minEndDate.toISOString().split("T")[0];
+                let maxDateStr = maxEndDate.toISOString().split("T")[0];
+
+                $("#end_date").attr("min", minDateStr);
+                $("#end_date").attr("max", maxDateStr);
+                $("#end_date").val(""); // Reset end date if already selected
+            }
+        });
+    });
+</script>
     <script>
         $(document).ready(function() {
             $('#product-select').on('change', function() {
@@ -485,6 +395,7 @@
 });
 
     </script>
+
 
 
 

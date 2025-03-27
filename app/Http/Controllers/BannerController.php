@@ -80,7 +80,7 @@ class BannerController extends Controller
         // Calculate the number of days
         $startDate = Carbon::parse($request->start_date);
         $endDate = Carbon::parse($request->end_date);
-        $daysDifference = $startDate->diffInDays($endDate) + 1; // Including the last day
+        $daysDifference = $startDate->diffInDays($endDate); // Including the last day
 
         $promotion = Promotion::find($request->promotion_id);
 
@@ -105,9 +105,11 @@ class BannerController extends Controller
             ]
         ];
         $order['return'] = route('vendor.banner.payment');
+     
 
         $paymentResponse = $this->paytabsService->createPayment($order);
-        $order
+
+     
         session(['tran_ref' => $paymentResponse['tran_ref']]);
         $validatedData['promotion_type'] = $promotion->promotion_type ;
    // Store validated data along with image path in session

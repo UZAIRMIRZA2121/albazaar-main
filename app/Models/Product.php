@@ -124,6 +124,7 @@ class Product extends Model
 
         'menufacture_days',
         'refundable',
+        'returnable',
 
 
 

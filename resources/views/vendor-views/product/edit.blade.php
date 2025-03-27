@@ -241,7 +241,7 @@
                                 </select>
                             </div>
                         </div>
-                        <div class="col-md-6 col-lg-4 col-xl-3 physical_product_show">
+                        {{-- <div class="col-md-6 col-lg-4 col-xl-3 physical_product_show">
                             <div class="form-group">
                                 <label class="title-color">{{ translate('Refundable') }}</label> <br>
                                 <div class="ml-5">
@@ -252,17 +252,22 @@
                                     <label for="refundableNo">{{ translate('No') }}</label>
                                 </div>
                             </div>
-                        </div>
-                        <div class="col-md-3">
+                        </div> --}}
+                        <div class="col-md-6 col-lg-2 col-xl-2 physical_product_show">
                             <div class="form-group">
-                                <label class="title-color d-flex align-items-center gap-2">
-                                    {{ translate('Menufacture Days') }}
-                                </label>
-                                <input type="text" class="form-control" placeholder="{{ translate('Menufacture Days') }}"
-                                       name="menufacture_days"  value="{{ $product['menufacture_days'] }}">
+                                <label class="title-color">{{ translate('Returnable') }}</label> <br>
+                                <div class="ml-5">
+                                    <input type="radio" name="returnable" value="1" class="form-check-input"
+                                        id="returnableYes" {{ $product['returnable']== 1 ? 'checked':'' }}>
+                                    <label for="returnableYes">{{ translate('Yes') }}</label>
+                                    <br>
+                                    <input type="radio" name="returnable" value="0" class="form-check-input"
+                                        id="returnableNo" {{ $product['returnable']== 0 ? 'checked':'' }}>
+                                    <label for="returnableNo">{{ translate('No') }}</label>
+                                </div>
                             </div>
                         </div>
-                        <div class="col-md-9">
+                        <div class="col-md-3">
                             <div class="form-group">
                                 <label class="title-color d-flex align-items-center gap-2">
                                     {{ translate('search_tags') }}
@@ -277,6 +282,47 @@
                                        data-role="tagsinput">
                             </div>
                         </div>
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label class="title-color d-flex align-items-center gap-2">
+                                    {{ translate('Product Availability') }}
+                                </label>
+                                <div class="d-flex gap-3">
+                                    <input type="radio" id="ready_made" name="availability" value="ready_made"  {{ $product['menufacture_days'] ? '':'checked' }}>
+                                    <label for="ready_made">{{ translate('Ready Made') }}</label>
+                        
+                                    <input type="radio" id="manufacture_days" name="availability" value="manufacture_days" {{ $product['menufacture_days'] ? 'checked':'' }}>
+                                    <label for="manufacture_days">{{ translate('Manufacture Days') }}</label>
+                                </div>
+                            </div>
+                        </div>
+                      
+                        <div class="col-md-3" id="menufacture_days_input" style="display: none;">
+                            <div class="form-group">
+                                <label for="manufacture_days">{{ translate('Manufacture Days') }}</label>
+                                <input type="text" class="form-control mt-2" placeholder="{{ translate('Manufacture Days') }}" name="menufacture_days" value="{{ $product['menufacture_days'] }}">
+                            </div>
+                        </div>
+                        
+                        <script>
+                            document.addEventListener("DOMContentLoaded", function () {
+                                const manufactureRadio = document.getElementById("manufacture_days");
+                                const readyMadeRadio = document.getElementById("ready_made");
+                                const manufactureInputDiv = document.getElementById("menufacture_days_input");
+                        
+                                function toggleManufactureInput() {
+                                    manufactureInputDiv.style.display = manufactureRadio.checked ? "block" : "none";
+                                }
+                        
+                                // Add event listeners
+                                manufactureRadio.addEventListener("change", toggleManufactureInput);
+                                readyMadeRadio.addEventListener("change", toggleManufactureInput);
+                        
+                                // Initialize visibility on page load
+                                toggleManufactureInput();
+                            });
+                        </script>
+
                     </div>
                 </div>
             </div>

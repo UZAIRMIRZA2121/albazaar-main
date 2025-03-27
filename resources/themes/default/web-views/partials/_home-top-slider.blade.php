@@ -7,15 +7,33 @@
                     .carousel-item img {
                         width: 100%;
                         height: auto;
-                        min-height: 450px; /* Fixed height for large screens */
+                        min-height: 450px;
+                        /* Fixed height for large screens */
                         object-fit: cover;
+                    }
+
+                    .desktop-view {
+                        display: block;
+                    }
+
+                    .mobile-view {
+                        display: none;
                     }
 
                     /* Responsively manage height for smaller screens */
                     @media (max-width: 767px) {
                         .carousel-item img {
-                            height: auto; /* Adjust height for smaller screens */
+                            height: auto;
+                            /* Adjust height for smaller screens */
                             min-height: unset !important;
+                        }
+
+                        .mobile-view {
+                            display: block;
+                        }
+
+                        .desktop-view {
+                            display: none;
                         }
                     }
 
@@ -30,7 +48,7 @@
                 </style>
 
                 <!-- Bootstrap Carousel Wrapper -->
-                <div id="imageCarousel" class="carousel slide" data-bs-ride="carousel">
+                <div id="imageCarousel" class="carousel slide desktop-view" data-bs-ride="carousel">
                     <div class="carousel-inner">
                         @php
                             $totalSlides = ceil(count($bannerTypeMainBanner) / 4); // Calculate total slides needed
@@ -52,17 +70,31 @@
                         @endforeach
                     </div>
 
-                    <!-- Carousel Controls (only show if more than 1 slide exists) -->
-                    {{-- @if ($totalSlides > 1)
-                        <button class="carousel-control-prev " type="button" data-bs-target="#imageCarousel" data-bs-slide="prev">
-                            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                            <span class="visually-hidden">Previous</span>
-                        </button>
-                        <button class="carousel-control-next" type="button" data-bs-target="#imageCarousel" data-bs-slide="next">
-                            <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                            <span class="visually-hidden">Next</span>
-                        </button>
-                    @endif --}}
+
+                </div>
+                <div id="imageCarousel" class="carousel slide mobile-view" data-bs-ride="carousel">
+                    <div class="carousel-inner">
+                        @php
+                            $totalSlides = ceil(count($bannerTypeMainBanner) / 4); // Calculate total slides needed
+                        @endphp
+
+                        @foreach ($bannerTypeMainBanner->chunk(2) as $chunkIndex => $bannerChunk)
+                            <div class="carousel-item {{ $chunkIndex == 0 ? 'active' : '' }}">
+                                <div class="row">
+                                    @foreach ($bannerChunk as $banner)
+                                        <div class="col-6">
+                                            <a href="{{ $banner['url'] }}" class="d-block" target="_blank">
+                                                <img src="{{ getStorageImages(path: $banner->photo_full_url, type: 'banner') }}"
+                                                    alt="Banner Image" class="img-fluid">
+                                            </a>
+                                        </div>
+                                    @endforeach
+                                </div>
+                            </div>
+                        @endforeach
+                    </div>
+
+
                 </div>
             </div>
         </div>

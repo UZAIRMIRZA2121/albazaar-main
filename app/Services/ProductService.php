@@ -444,6 +444,7 @@ class ProductService
             'meta_image' => $request->has('meta_image') ? $this->upload(dir: 'product/meta/', format: 'webp', image: $request['meta_image']) : $request->existing_meta_image,
      
             'refundable' => $request['refundable'] == '1' ? 1 : 0,
+            'returnable' => $request['returnable'] == '1' ? 1 : 0,
             'menufacture_days' => $request['menufacture_days'],
             
      
@@ -474,6 +475,12 @@ class ProductService
             $digitalFile = null;
             // $this->delete(filePath: 'product/digital-product/' . $product['digital_file_ready']);
         }
+
+      
+        if($request['availability'] == 'ready_made'){
+            $request['menufacture_days'] = null;
+        }
+    
 
         $digitalFileOptions = $this->getDigitalVariationOptions(request: $request);
         $digitalFileCombinations = $this->getDigitalVariationCombinations(arrays: $digitalFileOptions);

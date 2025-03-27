@@ -8570,4 +8570,12 @@ return [
 	"Tryotto" => "Tryotto",
 	"Tryotto " => "Tryotto ",
 	"Payout request created successfully." => "Payout request created successfully.",
+	"Product_Availability" => "Product Availability",
+	"Ready_Made" => "Ready Made",
+	"Manufacture_Days" => "Manufacture Days",
+	"Product Availability" => "Product Availability",
+	"Ready Made" => "Ready Made",
+	"Manufacture Days" => "Manufacture Days",
+	"Returnable" => "Returnable",
+	"transferred" => "Transferred",
 ];

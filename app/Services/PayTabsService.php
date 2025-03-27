@@ -27,13 +27,15 @@ class PayTabsService
 
     public function createPayment($order)
     {
-        $response = $this->client->post("{$this->baseUrl}/request", [
+
+
+        $response = $this->client->post("https://secure-global.paytabs.com/payment/request", [
             'headers' => [
                 'authorization' => $this->serverKey,
                 'content-type' => 'application/json',
             ],
             'json' => [
-                'profile_id' => (int) $this->profileId,
+                'profile_id' => $this->profileId,
                 'tran_type' => 'sale',
                 'tran_class' => 'ecom',
                 'cart_id' => $order['cart_id'],
@@ -51,13 +53,13 @@ class PayTabsService
 
     public function checkTransactionStatus($tran_ref)
     {
-        $response = $this->client->post("{$this->baseUrl}/query", [
+        $response = $this->client->post("https://secure-global.paytabs.com/payment/query", [
             'headers' => [
                 'authorization' => $this->serverKey,
                 'content-type' => 'application/json',
             ],
             'json' => [
-                'profile_id' => (int) $this->profileId,
+                'profile_id' => $this->profileId,
                 'tran_ref' => $tran_ref,
             ],
         ]);
