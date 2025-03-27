@@ -117,7 +117,9 @@ class FeaturedProductController extends Controller
 
     public function payment_return(Request $request)
     {
+
         $tranRef = session('tran_ref');
+        dd($tranRef);
         $featuredProductData = session('featured_product_data');
     
         if (!$tranRef || !$featuredProductData) {
