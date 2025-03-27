@@ -259,7 +259,7 @@ class ProductController extends BaseController
 
         $updatedProduct = $this->productRepo->getFirstWhere(params: ['id' => $product['id']]);
         $this->updateRestockRequestListAndNotify(product: $product, updatedProduct: $updatedProduct);
-dd($request->all());
+
         Toastr::success(translate('product_updated_successfully'));
         return redirect()->route(Product::VIEW[ROUTE], ['id' => $product['id']]);
 
