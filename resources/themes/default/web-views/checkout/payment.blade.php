@@ -34,7 +34,7 @@
                                 </div>
                                 <p class="text-capitalize mt-2">{{ translate('select_a_payment_method_to_proceed')}}</p>
                             </div>
-                            @if($cashOnDeliveryBtnShow && $cash_on_delivery['status'] || $digital_payment['status']==1)
+                            {{-- @if($cashOnDeliveryBtnShow && $cash_on_delivery['status'] || $digital_payment['status']==1)
                                 <div class="d-flex flex-wrap gap-3 mb-5">
                                     @if($cashOnDeliveryBtnShow && $cash_on_delivery['status'])
                                         <div id="cod-for-cart">
@@ -65,7 +65,7 @@
                                         </div>
                                     @endif
                                 </div>
-                            @endif
+                            @endif --}}
 
                             @if ($digital_payment['status']==1)
                                 <div class="d-flex flex-wrap gap-2 align-items-center mb-4 ">
@@ -145,7 +145,7 @@
         </div>
     </div>
 
-    @if(isset($offline_payment) && $offline_payment['status'])
+    {{-- @if(isset($offline_payment) && $offline_payment['status'])
         <div class="modal fade" id="selectPaymentMethod" tabindex="-1" aria-labelledby="selectPaymentMethodLabel" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered  modal-dialog-scrollable modal-lg">
                 <div class="modal-content">
@@ -175,7 +175,7 @@
                 </div>
             </div>
         </div>
-    @endif
+    @endif --}}
 
     @if(auth('customer')->check() && $wallet_status==1)
         <div class="modal fade" id="wallet_submit_button" aria-labelledby="exampleModalLongTitle" aria-hidden="true">

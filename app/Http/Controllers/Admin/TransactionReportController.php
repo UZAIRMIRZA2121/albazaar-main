@@ -391,6 +391,7 @@ class TransactionReportController extends Controller
 
     public function pdf_order_wise_transaction(Request $request)
     {
+     
         $company_phone = BusinessSetting::where('type', 'company_phone')->first()->value;
         $company_email = BusinessSetting::where('type', 'company_email')->first()->value;
         $company_name = BusinessSetting::where('type', 'company_name')->first()->value;
@@ -403,6 +404,7 @@ class TransactionReportController extends Controller
             ->where('order_id', $request->order_id)->first();
 
         $mpdf_view = View::make('admin-views.transaction.order_wise_pdf', compact('company_phone', 'company_name', 'company_email', 'company_web_logo', 'transaction'));
+      
         Helpers::gen_mpdf($mpdf_view, 'order_transaction_', $request->order_id);
 
     }

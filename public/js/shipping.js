@@ -38,7 +38,7 @@ const ShippingManager = {
 
             console.log("Sending request with data:", requestData);
 
-            const response = await fetch("/shipping-options", {
+            const response = await fetch("shipping-options", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",

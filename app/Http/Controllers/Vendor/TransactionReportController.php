@@ -297,6 +297,7 @@ class TransactionReportController extends Controller
 
     public function pdf_order_wise_transaction(Request $request)
     {
+       
         $company_phone = BusinessSetting::where('type', 'company_phone')->first()->value;
         $company_email = BusinessSetting::where('type', 'company_email')->first()->value;
         $company_name = BusinessSetting::where('type', 'company_name')->first()->value;

@@ -183,6 +183,7 @@ class ComposerStaticInit40a38a1437ad81a26fb793509859b2b1
             'PhpOption\\' => 10,
             'PhpOffice\\PhpSpreadsheet\\' => 25,
             'ParagonIE\\ConstantTime\\' => 23,
+            'PHPMailer\\PHPMailer\\' => 20,
         ),
         'O' => 
         array (
@@ -632,6 +633,10 @@ class ComposerStaticInit40a38a1437ad81a26fb793509859b2b1
         'ParagonIE\\ConstantTime\\' => 
         array (
             0 => __DIR__ . '/..' . '/paragonie/constant_time_encoding/src',
+        ),
+        'PHPMailer\\PHPMailer\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/phpmailer/phpmailer/src',
         ),
         'OpenSpout\\' => 
         array (
@@ -1512,6 +1517,7 @@ class ComposerStaticInit40a38a1437ad81a26fb793509859b2b1
         'App\\Http\\Controllers\\Admin\\ThirdParty\\SocialMediaChatController' => __DIR__ . '/../..' . '/app/Http/Controllers/Admin/ThirdParty/SocialMediaChatController.php',
         'App\\Http\\Controllers\\Admin\\TransactionController' => __DIR__ . '/../..' . '/app/Http/Controllers/Admin/TransactionController.php',
         'App\\Http\\Controllers\\Admin\\TransactionReportController' => __DIR__ . '/../..' . '/app/Http/Controllers/Admin/TransactionReportController.php',
+        'App\\Http\\Controllers\\Admin\\TryottoController' => __DIR__ . '/../..' . '/app/Http/Controllers/Admin/TryottoController.php',
         'App\\Http\\Controllers\\Admin\\VendorProductSaleReportController' => __DIR__ . '/../..' . '/app/Http/Controllers/Admin/VendorProductSaleReportController.php',
         'App\\Http\\Controllers\\Admin\\Vendor\\VendorController' => __DIR__ . '/../..' . '/app/Http/Controllers/Admin/Vendor/VendorController.php',
         'App\\Http\\Controllers\\Admin\\Vendor\\WithdrawalMethodController' => __DIR__ . '/../..' . '/app/Http/Controllers/Admin/Vendor/WithdrawalMethodController.php',
@@ -1535,9 +1541,11 @@ class ComposerStaticInit40a38a1437ad81a26fb793509859b2b1
         'App\\Http\\Controllers\\Customer\\PaymentController' => __DIR__ . '/../..' . '/app/Http/Controllers/Customer/PaymentController.php',
         'App\\Http\\Controllers\\Customer\\RewardPointController' => __DIR__ . '/../..' . '/app/Http/Controllers/Customer/RewardPointController.php',
         'App\\Http\\Controllers\\Customer\\SystemController' => __DIR__ . '/../..' . '/app/Http/Controllers/Customer/SystemController.php',
+        'App\\Http\\Controllers\\FeaturedProductController' => __DIR__ . '/../..' . '/app/Http/Controllers/FeaturedProductController.php',
         'App\\Http\\Controllers\\FirebaseController' => __DIR__ . '/../..' . '/app/Http/Controllers/FirebaseController.php',
         'App\\Http\\Controllers\\InstallController' => __DIR__ . '/../..' . '/app/Http/Controllers/InstallController.php',
         'App\\Http\\Controllers\\LoginController' => __DIR__ . '/../..' . '/app/Http/Controllers/LoginController.php',
+        'App\\Http\\Controllers\\PaymentController' => __DIR__ . '/../..' . '/app/Http/Controllers/PaymentController.php',
         'App\\Http\\Controllers\\Payment_Methods\\BkashPaymentController' => __DIR__ . '/../..' . '/app/Http/Controllers/Payment_Methods/BkashPaymentController.php',
         'App\\Http\\Controllers\\Payment_Methods\\FlutterwaveV3Controller' => __DIR__ . '/../..' . '/app/Http/Controllers/Payment_Methods/FlutterwaveV3Controller.php',
         'App\\Http\\Controllers\\Payment_Methods\\LiqPayController' => __DIR__ . '/../..' . '/app/Http/Controllers/Payment_Methods/LiqPayController.php',
@@ -1616,6 +1624,7 @@ class ComposerStaticInit40a38a1437ad81a26fb793509859b2b1
         'App\\Http\\Controllers\\RestAPI\\v3\\seller\\auth\\LoginController' => __DIR__ . '/../..' . '/app/Http/Controllers/RestAPI/v3/seller/auth/LoginController.php',
         'App\\Http\\Controllers\\RestAPI\\v3\\seller\\auth\\RegisterController' => __DIR__ . '/../..' . '/app/Http/Controllers/RestAPI/v3/seller/auth/RegisterController.php',
         'App\\Http\\Controllers\\RestAPI\\v3\\seller\\shippingController' => __DIR__ . '/../..' . '/app/Http/Controllers/RestAPI/v3/seller/shippingController.php',
+        'App\\Http\\Controllers\\SellerAvailabilityController' => __DIR__ . '/../..' . '/app/Http/Controllers/SellerAvailabilityController.php',
         'App\\Http\\Controllers\\SharedController' => __DIR__ . '/../..' . '/app/Http/Controllers/SharedController.php',
         'App\\Http\\Controllers\\TryotoController' => __DIR__ . '/../..' . '/app/Http/Controllers/TryotoController.php',
         'App\\Http\\Controllers\\UpdateController' => __DIR__ . '/../..' . '/app/Http/Controllers/UpdateController.php',
@@ -1876,6 +1885,7 @@ class ComposerStaticInit40a38a1437ad81a26fb793509859b2b1
         'App\\Models\\EmergencyContact' => __DIR__ . '/../..' . '/app/Models/EmergencyContact.php',
         'App\\Models\\ErrorLogs' => __DIR__ . '/../..' . '/app/Models/ErrorLogs.php',
         'App\\Models\\FeatureDeal' => __DIR__ . '/../..' . '/app/Models/FeatureDeal.php',
+        'App\\Models\\FeaturedProduct' => __DIR__ . '/../..' . '/app/Models/FeaturedProduct.php',
         'App\\Models\\FlashDeal' => __DIR__ . '/../..' . '/app/Models/FlashDeal.php',
         'App\\Models\\FlashDealProduct' => __DIR__ . '/../..' . '/app/Models/FlashDealProduct.php',
         'App\\Models\\GuestUser' => __DIR__ . '/../..' . '/app/Models/GuestUser.php',
@@ -1915,6 +1925,7 @@ class ComposerStaticInit40a38a1437ad81a26fb793509859b2b1
         'App\\Models\\Scopes\\RememberScope' => __DIR__ . '/../..' . '/app/Models/Scopes/RememberScope.php',
         'App\\Models\\SearchFunction' => __DIR__ . '/../..' . '/app/Models/SearchFunction.php',
         'App\\Models\\Seller' => __DIR__ . '/../..' . '/app/Models/Seller.php',
+        'App\\Models\\SellerAvailability' => __DIR__ . '/../..' . '/app/Models/SellerAvailability.php',
         'App\\Models\\SellerWallet' => __DIR__ . '/../..' . '/app/Models/SellerWallet.php',
         'App\\Models\\SellerWalletHistory' => __DIR__ . '/../..' . '/app/Models/SellerWalletHistory.php',
         'App\\Models\\Setting' => __DIR__ . '/../..' . '/app/Models/Setting.php',
@@ -2077,6 +2088,7 @@ class ComposerStaticInit40a38a1437ad81a26fb793509859b2b1
         'App\\Services\\OrderStatusHistoryService' => __DIR__ . '/../..' . '/app/Services/OrderStatusHistoryService.php',
         'App\\Services\\POSService' => __DIR__ . '/../..' . '/app/Services/POSService.php',
         'App\\Services\\PasswordResetService' => __DIR__ . '/../..' . '/app/Services/PasswordResetService.php',
+        'App\\Services\\PayTabsService' => __DIR__ . '/../..' . '/app/Services/PayTabsService.php',
         'App\\Services\\PrioritySetupService' => __DIR__ . '/../..' . '/app/Services/PrioritySetupService.php',
         'App\\Services\\ProductCompareService' => __DIR__ . '/../..' . '/app/Services/ProductCompareService.php',
         'App\\Services\\ProductService' => __DIR__ . '/../..' . '/app/Services/ProductService.php',
@@ -9663,6 +9675,13 @@ class ComposerStaticInit40a38a1437ad81a26fb793509859b2b1
         'OpenSpout\\Writer\\XLSX\\Properties' => __DIR__ . '/..' . '/openspout/openspout/src/Writer/XLSX/Properties.php',
         'OpenSpout\\Writer\\XLSX\\Writer' => __DIR__ . '/..' . '/openspout/openspout/src/Writer/XLSX/Writer.php',
         'Override' => __DIR__ . '/..' . '/symfony/polyfill-php83/Resources/stubs/Override.php',
+        'PHPMailer\\PHPMailer\\DSNConfigurator' => __DIR__ . '/..' . '/phpmailer/phpmailer/src/DSNConfigurator.php',
+        'PHPMailer\\PHPMailer\\Exception' => __DIR__ . '/..' . '/phpmailer/phpmailer/src/Exception.php',
+        'PHPMailer\\PHPMailer\\OAuth' => __DIR__ . '/..' . '/phpmailer/phpmailer/src/OAuth.php',
+        'PHPMailer\\PHPMailer\\OAuthTokenProvider' => __DIR__ . '/..' . '/phpmailer/phpmailer/src/OAuthTokenProvider.php',
+        'PHPMailer\\PHPMailer\\PHPMailer' => __DIR__ . '/..' . '/phpmailer/phpmailer/src/PHPMailer.php',
+        'PHPMailer\\PHPMailer\\POP3' => __DIR__ . '/..' . '/phpmailer/phpmailer/src/POP3.php',
+        'PHPMailer\\PHPMailer\\SMTP' => __DIR__ . '/..' . '/phpmailer/phpmailer/src/SMTP.php',
         'PHPUnit\\Event\\Application\\Finished' => __DIR__ . '/..' . '/phpunit/phpunit/src/Event/Events/Application/Finished.php',
         'PHPUnit\\Event\\Application\\FinishedSubscriber' => __DIR__ . '/..' . '/phpunit/phpunit/src/Event/Events/Application/FinishedSubscriber.php',
         'PHPUnit\\Event\\Application\\Started' => __DIR__ . '/..' . '/phpunit/phpunit/src/Event/Events/Application/Started.php',

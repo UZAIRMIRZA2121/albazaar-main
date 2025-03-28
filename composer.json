@@ -42,6 +42,7 @@
         "mpdf/mpdf": "^8.2",
         "nwidart/laravel-modules": "^10.0",
         "paypal/rest-api-sdk-php": "^1.6",
+        "phpmailer/phpmailer": "^6.9",
         "phpoffice/phpspreadsheet": "^1.29",
         "rap2hpoutre/fast-excel": "^5.3",
         "razorpay/razorpay": "^2.9",

@@ -12,6 +12,7 @@ use Illuminate\Contracts\View\View;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 
 class MailController extends BaseController
 {
@@ -70,6 +71,8 @@ class MailController extends BaseController
 
     public function send(Request $request): JsonResponse
     {
+   
+        Log::info($request->all());
         $response = $this->mailService->sendMail(request: $request);
         return response()->json([
             'status' => $response['status'],

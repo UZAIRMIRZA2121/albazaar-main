@@ -799,15 +799,22 @@ class Helpers
 
     public static function gen_mpdf($view, $file_prefix, $file_postfix)
     {
-        $mpdf = new \Mpdf\Mpdf(['default_font' => 'FreeSerif', 'mode' => 'utf-8', 'format' => [190, 250]]);
+        $mpdf = new \Mpdf\Mpdf([
+            'default_font' => 'FreeSerif',
+            'mode' => 'utf-8',
+            'format' => [190, 250]
+        ]);
         $mpdf->autoScriptToLang = true;
         $mpdf->autoLangToFont = true;
-
-        $mpdf_view = $view;
-        $mpdf_view = $mpdf_view->render();
+    
+        // Ensure correct view rendering
+        $mpdf_view = is_object($view) && method_exists($view, 'render') ? $view->render() : $view;
+        
+    
         $mpdf->WriteHTML($mpdf_view);
         $mpdf->Output($file_prefix . $file_postfix . '.pdf', 'D');
     }
+    
 
     public static function generate_referer_code()
     {

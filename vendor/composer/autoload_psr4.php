@@ -79,6 +79,7 @@ return array(
     'PhpOption\\' => array($vendorDir . '/phpoption/phpoption/src/PhpOption'),
     'PhpOffice\\PhpSpreadsheet\\' => array($vendorDir . '/phpoffice/phpspreadsheet/src/PhpSpreadsheet'),
     'ParagonIE\\ConstantTime\\' => array($vendorDir . '/paragonie/constant_time_encoding/src'),
+    'PHPMailer\\PHPMailer\\' => array($vendorDir . '/phpmailer/phpmailer/src'),
     'OpenSpout\\' => array($vendorDir . '/openspout/openspout/src'),
     'Nyholm\\Psr7\\' => array($vendorDir . '/nyholm/psr7/src'),
     'Nwidart\\Modules\\' => array($vendorDir . '/nwidart/laravel-modules/src'),

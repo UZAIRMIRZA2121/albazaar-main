@@ -9,6 +9,8 @@ use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\Validator;
 
+// OR using the Session facade
+use Illuminate\Support\Facades\Session;
 class Paytabs
 {
     use Processor;
@@ -45,6 +47,8 @@ class Paytabs
 
         $response = json_decode(curl_exec($curl), true);
         curl_close($curl);
+        Session::put('tran_ref', $response['tran_ref']);
+   
         return $response;
     }
 
@@ -136,12 +140,14 @@ class PaytabsController extends Controller
         if (!isset($page['redirect_url'])) {
             return response()->json($this->response_formatter(GATEWAYS_DEFAULT_204), 200);
         }
+     
         header('Location:' . $page['redirect_url']); /* Redirect browser */
         exit();
     }
 
     public function callback(Request $request)
     {
+       
         $plugin = new Paytabs();
         $response_data = $_POST;
         $transRef = filter_input(INPUT_POST, 'tranRef');
