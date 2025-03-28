@@ -47,7 +47,7 @@ class Paytabs
 
         $response = json_decode(curl_exec($curl), true);
         curl_close($curl);
-        dd($response);
+        // dd($response);
         Session::put('tran_ref', $response['tran_ref']);
    
         return $response;
@@ -152,7 +152,8 @@ class PaytabsController extends Controller
         $plugin = new Paytabs();
         $response_data = $_POST;
         $transRef = filter_input(INPUT_POST, 'tranRef');
-
+        $tranRef = Session::get('tran_ref');
+        dd($tranRef);
         if (!$transRef) {
             return response()->json($this->response_formatter(GATEWAYS_DEFAULT_204), 200);
         }
