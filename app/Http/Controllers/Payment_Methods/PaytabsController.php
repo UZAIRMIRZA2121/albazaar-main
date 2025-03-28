@@ -98,7 +98,7 @@ class PaytabsController extends Controller
             return response()->json($this->response_formatter(GATEWAYS_DEFAULT_204), 200);
         }
         $payer = json_decode($payment_data['payer_information']);
-
+dd($payment_data->currency_code);
         $plugin = new Paytabs();
         $request_url = 'payment/request';
         $data = [
