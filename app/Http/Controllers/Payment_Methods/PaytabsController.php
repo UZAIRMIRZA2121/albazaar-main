@@ -152,8 +152,7 @@ class PaytabsController extends Controller
         $plugin = new Paytabs();
         $response_data = $_POST;
         $transRef = filter_input(INPUT_POST, 'tranRef');
-        $tranRef = Session::get('tran_ref');
-        dd($transRef  .'333333333');
+   
         if (!$transRef) {
             return response()->json($this->response_formatter(GATEWAYS_DEFAULT_204), 200);
         }
