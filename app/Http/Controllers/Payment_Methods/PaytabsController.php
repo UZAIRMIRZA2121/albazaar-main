@@ -47,6 +47,7 @@ class Paytabs
 
         $response = json_decode(curl_exec($curl), true);
         curl_close($curl);
+        dd($response);
         Session::put('tran_ref', $response['tran_ref']);
    
         return $response;
