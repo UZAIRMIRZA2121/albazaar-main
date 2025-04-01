@@ -118,10 +118,13 @@
             @endif
             <hr class="my-2">
             <div class="d-flex justify-content-between">
-                <span class="cart_title text-primary font-weight-bold">{{translate('total')}}</span>
-                <span class="cart_value">
-                {{ webCurrencyConverter(amount: $subTotal+$totalTax+$totalShippingCost-$coupon_dis-$totalDiscountOnProduct-$orderWiseShippingDiscount) }}
-                </span>
+                <span class="cart_title text-primary font-weight-bold  ">{{translate('total')}}</span>
+                <span class="cart_value total_cart_value" id="cartTotalValue" 
+                data-total="{{ $subTotal + $totalTax + $totalShippingCost - $coupon_dis - $totalDiscountOnProduct - $orderWiseShippingDiscount }}">
+              {{ webCurrencyConverter(amount: $subTotal + $totalTax + $totalShippingCost - $coupon_dis - $totalDiscountOnProduct - $orderWiseShippingDiscount) }}
+          </span>
+          
+          
             </div>
         </div>
         @php($company_reliability = getWebConfig(name: 'company_reliability'))

@@ -1,6 +1,8 @@
 const ShippingManager = {
 
     init() {
+        let totalQuantity = document.getElementById("total_quantity").value;
+     
         document.querySelectorAll(".shipping-form").forEach(form => {
             const cityInput = form.querySelector(".city-input");
             const getShippingOptionsBtn = form.querySelector(".get-shipping-options");
@@ -12,13 +14,13 @@ const ShippingManager = {
      
             if (getShippingOptionsBtn) {
                 getShippingOptionsBtn.addEventListener("click", () => {
-                    this.fetchShippingOptions(cityInput, shippingOptionsContainer, proceedToPaymentBtn, cartGroupId);
+                    this.fetchShippingOptions(cityInput, shippingOptionsContainer, proceedToPaymentBtn, cartGroupId ,totalQuantity);
                 });
             }
         });
     },
     
-    async fetchShippingOptions(cityInput, shippingOptionsContainer, proceedToPaymentBtn, chosenShippingId) {
+    async fetchShippingOptions(cityInput, shippingOptionsContainer, proceedToPaymentBtn, chosenShippingId ,totalQuantity) {
     
         const city = cityInput.value.trim();
         if (!city) {
@@ -29,7 +31,7 @@ const ShippingManager = {
         try {
             const requestData = {
                 weight: "3",
-                originCity: "doha",
+                originCity: "jaddah",
                 destinationCity: city,
                 height: 30,
                 width: 30,
@@ -57,7 +59,7 @@ const ShippingManager = {
 
             if (data.success) {
             // alert(chosenShippingId);
-                this.renderShippingOptions(data.data.deliveryOptions, shippingOptionsContainer, proceedToPaymentBtn, chosenShippingId);
+                this.renderShippingOptions(data.data.deliveryOptions, shippingOptionsContainer, proceedToPaymentBtn, chosenShippingId , totalQuantity);
             } else {
                 throw new Error(data.message || "Failed to get shipping options");
             }
@@ -67,8 +69,7 @@ const ShippingManager = {
         }
     },
 
-    renderShippingOptions(options, shippingOptionsContainer, proceedToPaymentBtn, chosenShippingId) {
-
+    renderShippingOptions(options, shippingOptionsContainer, proceedToPaymentBtn, chosenShippingId ,totalQuantity) {
         if (!options || options.length === 0) {
             shippingOptionsContainer.innerHTML =
                 '<p class="alert alert-info">No shipping options available for this location.</p>';
@@ -85,7 +86,15 @@ const ShippingManager = {
                                 <h5 class="card-title mb-0 service-name" >${option.deliveryOptionName}</h5>
                             </div>
                             <p class="card-text">
-                                <strong>Price:</strong> <span class="price" data-id="${option.deliveryOptionId}">${option.price}</span> ${option.currency}<br>
+                    <strong>Total Price:</strong> 
+                    <span class="price" data-id="${option.deliveryOptionId}">
+                    ${option.currency}  ${(option.price * 1.1 * totalQuantity).toFixed(2)}  <br>
+                    
+                    </span>
+                    <strong>Price/Product :</strong> ${(option.price * 1.1).toFixed(2)} ${option.currency} <br>
+                        <strong>Number of Products:</strong> ${totalQuantity} <br>
+
+
                                 <strong>Delivery Time:</strong> ${option.avgDeliveryTime}<br>
                                 ${option.maxFreeWeight ? `<strong>Max Free Weight:</strong> ${option.maxFreeWeight}kg<br>` : ""}
                                 ${option.codCharge ? `<strong>COD Charge:</strong> ${option.codCharge} ${option.currency}<br>` : ""}
@@ -99,14 +108,34 @@ const ShippingManager = {
             </div>
         `;
 
+    
+
         shippingOptionsContainer.querySelectorAll(".select-shipping").forEach(button => {
             button.addEventListener("click", (event) => {
-                this.selectShippingOption(event.target, shippingOptionsContainer, proceedToPaymentBtn);
+                this.selectShippingOption(event.target, shippingOptionsContainer, proceedToPaymentBtn ,totalQuantity);
             });
         });
     },
 
-    selectShippingOption(button, shippingOptionsContainer, proceedToPaymentBtn) {
+    selectShippingOption(button, shippingOptionsContainer, proceedToPaymentBtn ,totalQuantity) {
+        let cartTotalValue = document.getElementById("cartTotalValue");
+
+        if (cartTotalValue) {
+            let totalAmount = parseFloat(cartTotalValue.dataset.total) || 0; // Get raw total value from data attribute or fallback to 0 if NaN
+
+          
+        } else {
+            console.log("cartTotalValue not found!");
+        }
+
+
+
+
+
+
+
+        alert("Total Quantity of Checked Items: " + totalQuantity);
+
         const chosenShippingId = button.getAttribute("data-chosenShipping-id");
         console.log("Chosen Shipping ID selected:", chosenShippingId);
     
@@ -124,7 +153,15 @@ const ShippingManager = {
         const newShippingCostElement = document.querySelector(".new-shipping-cost");
 
 
-        newShippingCostElement.textContent = `$${price}`;
+        totalAmount = totalAmount + price ;
+
+    
+        // Display the updated information
+        alert("Total Cart Value: " + totalAmount + "\n" +
+            " Price : " + price + "\n");
+      
+
+        newShippingCostElement.textContent = `${price}`;
         // Get the service name
         const serviceNameElement = selectedOption.querySelector(".service-name");
         const serviceName = serviceNameElement ? serviceNameElement.textContent.trim() : "";
