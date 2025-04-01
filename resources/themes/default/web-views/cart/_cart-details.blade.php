@@ -891,6 +891,6 @@
 </div>
 
 @push('script')
-<script src="{{ asset('js/shipping.js') }}"></script>
+<script src="{{ secure_asset('js/shipping.js') }}"></script>
 <script src="{{ theme_asset(path: 'public/assets/front-end/js/cart-details.js') }}"></script>
 @endpush
