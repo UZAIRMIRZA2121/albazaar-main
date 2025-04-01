@@ -122,6 +122,8 @@ cartQuantityInitialize();
 
 
 function setShippingId(id, cartGroupId) {
+  
+    // ProgressEvent.default()
     $.get({
         url: $('#route-customer-set-shipping-method').data('url'),
         dataType: 'json',

@@ -127,41 +127,8 @@
                                 @endif
 
                                 @php($chosenShipping=\App\Models\CartShipping::where(['cart_group_id'=>$cartItem['cart_group_id']])->first())
-{{$chosenShipping}}
-<div class="shipping-form">
-    <div class="container mt-4">
-        <div class="row">
-            <div class="col-md-6">
-                <div class="card">
-                    <div class="card-header">Delivery Address</div>
-                    <div class="card-body">
-                        <div class="form-group">
-                            <label>City</label>
-                            <input type="text" class="city-input form-control" required>
-                        </div>
-                        <button class="get-shipping-options btn btn-primary mt-2" data-chosenShipping-id="{{$chosenShipping->id ?? '' }}">Get Shipping Options</button>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="col-md-6">
-                <div class="card">
-                    <div class="card-header">Available Shipping Options</div>
-                    <div class="card-body">
-                        <div class="shipping-options" data-chosenShipping-id="{{$chosenShipping->id ?? '' }}"  data-cartgroup-id="{{$chosenShipping->cart_group_id ?? '' }}"  >
-                            <!-- Shipping options will be rendered here -->
-                        </div>
-                        {{-- <button class="proceed-to-payment btn btn-success mt-3 w-100" disabled>
-                            Proceed to Payment
-                        </button> --}}
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
 
-<br><br>
+                            
                                 <div class=" bg-white select-method-border rounded">
                                     @if($isPhysicalProductExist && $shippingMethod=='sellerwise_shipping' && $shipping_type == 'order_wise')
                                         @if(isset($chosenShipping)==false)
@@ -250,6 +217,7 @@
                         <tbody>
                             <?php
                             $isPhysicalProductExist = false;
+                           
                             foreach ($group as $row) {
                                 if ($row->product_type == 'physical' && $row->is_checked) {
                                     $isPhysicalProductExist = true;
@@ -257,6 +225,7 @@
                             }
                             ?>
                         @foreach($group as $cart_key=>$cartItem)
+
                             @php($product = $cartItem->allProducts)
 
                             <?php
@@ -621,6 +590,7 @@
                     @php($product = $cartItem->allProducts)
 
                     <?php
+                 
                         $checkProductStatus = $cartItem->allProducts?->status ?? 0;
                         if($cartItem->seller_is == 'admin') {
                             $inhouseTemporaryClose = getWebConfig(name: 'temporary_close') ? getWebConfig(name: 'temporary_close')['status'] : 0;
@@ -702,8 +672,10 @@
                                                 : {{ webCurrencyConverter(amount: $cartItem['tax']*$cartItem['quantity'])}}
                                                 )
                                             @else
-                                                ({{ translate('tax_included')}})
-                                            @endif
+                                                ({{ translate('tax_included')}})  
+                                            
+                                              
+                                                @endif
                                         </span>
                                     </div>
 
@@ -796,25 +768,65 @@
                 @endif
             </div>
         @endforeach
+        <div class="px-3 px-md-0 mb-3">
+            <div class="row">
+                <div class="col-12">
+                    {{-- {{$chosenShipping}} --}}
+                    <div class="shipping-form">
+                        <div class="container mt-4">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="card">
+                                        <div class="card-header">Delivery Address</div>
+                                        <div class="card-body">
+                                            <div class="form-group">
+                                                <label>City</label>
+                                                <input type="text" class="city-input form-control" required>
+                                            </div>
+                                            <button class="get-shipping-options btn btn-primary mt-2" data-chosenShipping-id="{{$chosenShipping->id ?? '' }}">Get Shipping Options</button>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="col-md-12">
+                                    <div class="card">
+                                        <div class="card-header">Available Shipping Options</div>
+                                        <div class="card-body">
+                                            <div class="shipping-options"   data-cartgroup-id="{{$cartItem['cart_group_id'] ??  '222'}}"  >
+                                                <!-- Shipping options will be rendered here -->
+                                            </div>
+                                            {{-- <button class="proceed-to-payment btn btn-success mt-3 w-100" disabled>
+                                                Proceed to Payment
+                                            </button> --}}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <br><br>
+                </div>
+            </div>
+        </div>
 
-
-        @if($shippingMethod=='inhouse_shipping')
+        {{-- @if($shippingMethod=='inhouse_shipping') --}}
                 <?php
-                $isPhysicalProductExist = false;
-                foreach ($cart as $group_key => $group) {
-                    foreach ($group as $row) {
-                        if ($row->product_type == 'physical' && $row->is_checked) {
-                            $isPhysicalProductExist = true;
-                        }
-                    }
-                }
+                // $isPhysicalProductExist = false;
+                // foreach ($cart as $group_key => $group) {
+                //     foreach ($group as $row) {
+                //         if ($row->product_type == 'physical' && $row->is_checked) {
+                //             $isPhysicalProductExist = true;
+                //         }
+                //     }
+                // }
                 ?>
 
                 <?php
-                $admin_shipping = \App\Models\ShippingType::where('seller_id', 0)->first();
-                $shipping_type = isset($admin_shipping) == true ? $admin_shipping->shipping_type : 'order_wise';
+                // $admin_shipping = \App\Models\ShippingType::where('seller_id', 0)->first();
+                // $shipping_type = isset($admin_shipping) == true ? $admin_shipping->shipping_type : 'order_wise';
                 ?>
-            @if ($shipping_type == 'order_wise' && $isPhysicalProductExist)
+            {{-- @if ($shipping_type == 'order_wise' && $isPhysicalProductExist)
                 @php($shippings=\App\Utils\Helpers::getShippingMethods(1,'admin'))
                 @php($chosenShipping=\App\Models\CartShipping::where(['cart_group_id'=>$cartItem['cart_group_id']])->first())
 
@@ -839,7 +851,7 @@
                     </div>
                 </div>
             @endif
-        @endif
+        @endif --}}
 
         @if( $cart->count() == 0)
             <div class="card mb-4">
@@ -854,8 +866,6 @@
                 </div>
             </div>
         @endif
-
-
         <div class="px-3 px-md-0 mt-3 mt-md-0">
             <form method="get">
                 <div class="mb-lg-3">
@@ -881,10 +891,6 @@
 </div>
 
 @push('script')
-
 <script src="{{ asset('js/shipping.js') }}"></script>
-
-    <script src="{{ theme_asset(path: 'public/assets/front-end/js/cart-details.js') }}"></script>
-
-
+<script src="{{ theme_asset(path: 'public/assets/front-end/js/cart-details.js') }}"></script>
 @endpush

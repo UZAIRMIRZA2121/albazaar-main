@@ -1,25 +1,25 @@
 const ShippingManager = {
+
     init() {
         document.querySelectorAll(".shipping-form").forEach(form => {
             const cityInput = form.querySelector(".city-input");
             const getShippingOptionsBtn = form.querySelector(".get-shipping-options");
             const shippingOptionsContainer = form.querySelector(".shipping-options");
             const proceedToPaymentBtn = form.querySelector(".proceed-to-payment");
-
-            // Get the chosenShipping ID directly from the button's data attribute
-            const chosenShippingId = getShippingOptionsBtn ? getShippingOptionsBtn.getAttribute("data-chosenShipping-id") : null;
-            console.log("Chosen Shipping ID:", chosenShippingId); // log the chosenShippingId to check
-
+    
+            // Get the cartGroupId from the shippingOptionsContainer div
+            const cartGroupId = shippingOptionsContainer ? shippingOptionsContainer.dataset.cartgroupId : "222";
+     
             if (getShippingOptionsBtn) {
                 getShippingOptionsBtn.addEventListener("click", () => {
-                    // Fetch shipping options and pass the chosenShippingId
-                    this.fetchShippingOptions(cityInput, shippingOptionsContainer, proceedToPaymentBtn, chosenShippingId);
+                    this.fetchShippingOptions(cityInput, shippingOptionsContainer, proceedToPaymentBtn, cartGroupId);
                 });
             }
         });
     },
-
+    
     async fetchShippingOptions(cityInput, shippingOptionsContainer, proceedToPaymentBtn, chosenShippingId) {
+    
         const city = cityInput.value.trim();
         if (!city) {
             alert("Please enter a city name.");
@@ -56,6 +56,7 @@ const ShippingManager = {
             console.log("Response data:", data.data.deliveryOptions);
 
             if (data.success) {
+            // alert(chosenShippingId);
                 this.renderShippingOptions(data.data.deliveryOptions, shippingOptionsContainer, proceedToPaymentBtn, chosenShippingId);
             } else {
                 throw new Error(data.message || "Failed to get shipping options");
@@ -67,6 +68,7 @@ const ShippingManager = {
     },
 
     renderShippingOptions(options, shippingOptionsContainer, proceedToPaymentBtn, chosenShippingId) {
+
         if (!options || options.length === 0) {
             shippingOptionsContainer.innerHTML =
                 '<p class="alert alert-info">No shipping options available for this location.</p>';
@@ -76,7 +78,7 @@ const ShippingManager = {
         shippingOptionsContainer.innerHTML = `
             <div class="row">
                 ${options.map(option => `
-                    <div class="shipping-option card mb-3 flex-shrink-0 col-12">
+                    <div class="shipping-option card mb-3 flex-shrink-0 col-6">
                         <div class="card-body">
                             <div class="d-flex align-items-center mb-2">
                                 ${option.logo ? `<img src="${option.logo}" alt="${option.deliveryCompanyName}" height="40" width="40" class="me-2">` : ""}

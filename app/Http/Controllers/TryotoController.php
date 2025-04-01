@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Cart;
 use App\Models\CartShipping;
 use App\Services\TryotoService;
 use App\Utils\CartManager;
@@ -19,7 +20,7 @@ class TryotoController extends Controller
 
     public function getShippingOptions(Request $request)
     {
-
+        Log::info('Shipping options error: ' );
         try {
             $validatedData = $request->validate([
                 'originCity' => 'nullable|string',
@@ -31,13 +32,13 @@ class TryotoController extends Controller
             ]);
 
             $response = $this->tryotoService->getDeliveryFees($validatedData);
-
+         
             return response()->json([
                 'success' => true,
                 'data' => $response
             ]);
         } catch (\Exception $e) {
-            \Log::error('Shipping options error: ' . $e->getMessage());
+            Log::error('Shipping options error: ' . $e->getMessage());
             return response()->json([
                 'success' => false,
                 'message' => $e->getMessage()
@@ -279,8 +280,7 @@ class TryotoController extends Controller
     public function updateShippingOption(Request $request)
     {
         log::info($request->all());
-        log::info('----------------------------------------------------');
-    
+     
      
         // Validate the request
         $request->validate([
@@ -292,13 +292,32 @@ class TryotoController extends Controller
         $optionId = $request->input('option_id');
         $price = $request->input('price');
         $service_name = $request->input('service_name');
-        $chosen_shipping_id = $request->input('chosen_shipping_id');
-        $originalPrice = $price; // Store the original price
+        $cart_group_id = $request->input('chosen_shipping_id');
+        $totalQuantity = Cart::where('cart_group_id', $request->chosen_shipping_id)->where('is_checked' , 1)->sum('quantity');
+
+
+        $price = $price * $totalQuantity ; // Store the original price
+     
+        $originalPrice = $price  ; // Store the original price
         $price *= 1.10; // Increase price by 10%
         $price = number_format($price, 2, '.', ''); // Format to 2 decimal places
         
         $shippingCommission = number_format($price - $originalPrice, 2, '.', ''); // Calculate the commission
+    
+        log::info($totalQuantity);
+     
+        $cart = CartShipping::updateOrCreate(
+            ['cart_group_id' => $cart_group_id], // Condition to check existence
+            [
+                'shipping_method_id' => null,
+                'option_id' => $optionId,
+                'service_name' => $service_name,
+                'shipping_cost' => $price,
+                'shipping_comission' => $shippingCommission,
+            ]
+        );
         
+
         
         $chosenShipping = CartShipping::where('id', $request->chosen_shipping_id)->first();
 
@@ -318,7 +337,7 @@ class TryotoController extends Controller
             }
         }
         
-        log::info($chosenShipping);
+      
 
         // Process the shipping option (store in session, DB, etc.)
         session(['selected_shipping_option' => $optionId, 'selected_shipping_price' => $price]);

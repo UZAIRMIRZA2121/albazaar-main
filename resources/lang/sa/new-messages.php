@@ -8595,4 +8595,8 @@ return [
             see_the_information_in_the_mail" => "If you do not want to see the information in the mail",
 	"Mam" => "Mam",
 	"if_you_received_this_message,_it_means_everything_is_set_up_properly." => "If you received this message  it means everything is set up properly.",
+	"Select City" => "Select City",
+	"Select Shupping" => "Select Shupping",
+	"tax_includdddddddddded" => "Tax includdddddddddded",
+	"ssss" => "Ssss",
 ];

@@ -183,6 +183,7 @@ class TryotoService
      */
     public function getDeliveryFees(array $data)
     {
+
         // Log Tryoto service configuration
         Log::info('Tryoto Service Configuration:', [
             'webhook_secret' => config('services.tryoto.webhook_secret'),
@@ -201,7 +202,6 @@ class TryotoService
                     $originCities[] = $item->product->seller->city; // Store each seller's city in the array
                 }
             }
-
             // Log all seller cities outside the loop
             // Ensure the city names are unique
             $originCities = array_unique($originCities);
@@ -218,14 +218,18 @@ class TryotoService
             }
 
             $destinationCity = $data['destinationCity'];
-
+            // Log the current origin city
+            Log::info('Cities for getDeliveryFees:', [
+                'destinationCity' => $destinationCity,
+            ]);
 
             foreach ($originCities as $cityname) {
                 // Log the current origin city
                 Log::info('Cities for getDeliveryFees:', [
                     'originCity' => $cityname,
+                    'destinationCity' => $destinationCity,
                 ]);
-                $cityname = 'jeddah' ;
+
                 try {
                     // Make API request for the current origin city
                     $endpoint = '/rest/v2/checkOTODeliveryFee';
@@ -277,7 +281,7 @@ class TryotoService
                 return false;
             });
 
-            Log::info('Filtered Delivery Options:', array_values($filteredCompanies));
+            // Log::info('Filtered Delivery Options:', array_values($filteredCompanies));
 
             return [
                 'success' => true,
