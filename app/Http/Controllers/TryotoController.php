@@ -279,13 +279,13 @@ class TryotoController extends Controller
     }
     public function updateShippingOption(Request $request)
     {
-        log::info($request->all());
+     
      
      
         // Validate the request
         $request->validate([
             'option_id' => 'required|integer',
-            'price' => 'required|string',
+            'price' => 'required',
             'chosen_shipping_id' => 'required',
 
         ]);
@@ -295,7 +295,7 @@ class TryotoController extends Controller
         $cart_group_id = $request->input('chosen_shipping_id');
         $totalQuantity = Cart::where('cart_group_id', $request->chosen_shipping_id)->where('is_checked' , 1)->sum('quantity');
 
-
+        log::info($request->all());
         $price = $price * $totalQuantity ; // Store the original price
      
         $originalPrice = $price  ; // Store the original price

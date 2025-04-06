@@ -119,23 +119,17 @@ const ShippingManager = {
 
     selectShippingOption(button, shippingOptionsContainer, proceedToPaymentBtn ,totalQuantity) {
         let cartTotalValue = document.getElementById("cartTotalValue");
-
+        let totalAmount = 0; // Initialize totalAmount to 0
         if (cartTotalValue) {
-            let totalAmount = parseFloat(cartTotalValue.dataset.total) || 0; // Get raw total value from data attribute or fallback to 0 if NaN
-
-          
+             totalAmount = parseFloat(cartTotalValue.dataset.total.replace(/[^\d.-]/g, '')) || 0;  // Get raw total value from data attribute or fallback to 0 if NaN
+        
+        
         } else {
             console.log("cartTotalValue not found!");
         }
-
-
-
-
-
-
-
-        alert("Total Quantity of Checked Items: " + totalQuantity);
-
+        
+        console.log("Total Amount:", totalAmount);
+   
         const chosenShippingId = button.getAttribute("data-chosenShipping-id");
         console.log("Chosen Shipping ID selected:", chosenShippingId);
     
@@ -149,17 +143,16 @@ const ShippingManager = {
     
         const deliveryOptionId = button.getAttribute("data-option-id");
         const priceElement = selectedOption.querySelector(".price[data-id='" + deliveryOptionId + "']");
-        const price = priceElement ? priceElement.textContent.trim() : "0";
-        const newShippingCostElement = document.querySelector(".new-shipping-cost");
 
+        // Get only the numeric value
+        let price = priceElement ? parseFloat(priceElement.textContent.replace(/[^\d.-]/g, '')) || 0 : 0;
+        const newShippingCostElement = document.querySelector(".new-shipping-cost");
 
         totalAmount = totalAmount + price ;
 
     
-        // Display the updated information
-        alert("Total Cart Value: " + totalAmount + "\n" +
-            " Price : " + price + "\n");
-      
+// Update total text inside the cartTotalValue span
+cartTotalValue.textContent = 'SAR' + totalAmount.toFixed(2); // Or use `Math.round(totalAmount)` if you want no decimals
 
         newShippingCostElement.textContent = `${price}`;
         // Get the service name

@@ -447,6 +447,8 @@ class WebController extends Controller
 
     public function checkout_payment(Request $request): View|RedirectResponse
     {
+
+      
         $response = self::checkValidationForCheckoutPages($request);
         if ($response['status'] == 0) {
             foreach ($response['message'] as $message) {
