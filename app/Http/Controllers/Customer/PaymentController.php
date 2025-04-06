@@ -344,7 +344,7 @@ class PaymentController extends Controller
             attribute: 'order',
             attribute_id: idate("U")
         );
-
+dd(432);
         $receiverInfo = new Receiver('receiver_name', 'example.png');
         return $this->generate_link($payer, $paymentInfo, $receiverInfo);
     }
