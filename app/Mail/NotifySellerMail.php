@@ -30,15 +30,8 @@ class NotifySellerMail extends Mailable
      */
     public function build()
     {
-        // Fetch seller email from product relation
-        $sellerEmail = $this->orderDetail->product->seller->email;
-
-        // Return email to the seller
-        return $this->to('mirzauzair2121@gmail.com')
-                    ->subject('New Order Notification') // Customize your subject here
-                    ->view('email-templates.notify-seller')
-                    ->with([
-                        'orderDetail' => $this->orderDetail,  // Pass the order detail to the email view
-                    ]);
+        return $this->subject('You have new orders!')
+                    ->view('emails.notify-seller')
+                    ->with(['orderDetails' => $this->orderDetails]); // Pass all the order details
     }
 }
