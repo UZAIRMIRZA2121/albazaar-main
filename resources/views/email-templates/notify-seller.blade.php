@@ -34,7 +34,7 @@
 </head>
 
 <body>
-    <p>Hello {{ $orderDetail->product->seller->name }},</p>
+    <p>Hello {{ $orderDetails[0]->product->seller->name }},</p>
 
     <p>You have a new order for your products:</p>
 
@@ -49,7 +49,7 @@
             </tr>
         </thead>
         <tbody>
-            @foreach ($orderDetail->order->orderDetails as $detail)
+            @foreach ($orderDetails as $detail)
                 <tr>
                     <td>{{ $detail->product->name }}</td>
                     <td>{{ $detail->order_id }}</td>
@@ -61,7 +61,7 @@
     </table>
     <!-- End Table -->
 
-    <p>Total Products in this Order: {{ count($orderDetail->order->orderDetails) }}</p>
+    <p>Total Products in this Order: {{ count($orderDetails) }}</p>
 
     <p>Thank you for selling with us!</p>
     <p>Best regards,</p>
