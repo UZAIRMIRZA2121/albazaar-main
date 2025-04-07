@@ -862,6 +862,7 @@ class WebController extends Controller
 
     public function order_placed(): View
     {
+        dd(132);
         $isNewCustomerInSession = session('newCustomerRegister');
         session()->forget('newCustomerRegister');
         return view(VIEW_FILE_NAMES['order_complete'], compact('isNewCustomerInSession'));
