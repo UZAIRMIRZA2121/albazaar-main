@@ -180,8 +180,34 @@ class PaytabsController extends Controller
             $payment_data = $this->payment::where(['id' => $request['payment_id']])->first();
         
             if (isset($payment_data) && function_exists($payment_data->success_hook)) {
+
+
+
+                dd(123);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
           
-                // call_user_func($payment_data->success_hook, $payment_data);
+                call_user_func($payment_data->success_hook, $payment_data);
             }
 
             dd($payment_data);
