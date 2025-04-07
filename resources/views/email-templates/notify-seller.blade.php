@@ -5,17 +5,34 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Document</title>
+    <title>New Order Notification</title>
 </head>
 
 <body>
-    <p>Hello {{ $orderDetail->product->seller->name }},</p>
+    <p>Hello {{ $orderDetails->first()->product->seller->name }},</p>
 
-    <p>You have a new order for your product: <strong>{{ $orderDetail->product->name }}</strong>.</p>
+    <p>You have new orders for your products:</p>
 
-    <p>Order ID: {{ $orderDetail->order_id }}</p>
-    <p>Quantity: {{ $orderDetail->quantity }}</p>
-    <p>Price: {{ $orderDetail->price }}</p>
+    <table border="1" cellpadding="10" cellspacing="0">
+        <thead>
+            <tr>
+                <th>Product</th>
+                <th>Order ID</th>
+                <th>Quantity</th>
+                <th>Price</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach($orderDetails as $detail)
+                <tr>
+                    <td>{{ $detail->product->name }}</td>
+                    <td>{{ $detail->order_id }}</td>
+                    <td>{{ $detail->quantity }}</td>
+                    <td>{{ $detail->price }}</td>
+                </tr>
+            @endforeach
+        </tbody>
+    </table>
 
     <p>Thank you for selling with us!</p>
 
