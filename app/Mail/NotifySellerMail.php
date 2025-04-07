@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Mail;
 
 use Illuminate\Bus\Queueable;
@@ -10,17 +9,16 @@ class NotifySellerMail extends Mailable
 {
     use Queueable, SerializesModels;
 
-    // Declare necessary properties
-    protected $orderDetail;
+    public $orderDetails; // Declare as a public property
 
     /**
      * Create a new message instance.
      *
-     * @param mixed $orderDetail
+     * @param $orderDetails
      */
-    public function __construct($orderDetail)
+    public function __construct($orderDetails)
     {
-        $this->orderDetail = $orderDetail;
+        $this->orderDetails = $orderDetails; // Set the orderDetails
     }
 
     /**
@@ -30,8 +28,9 @@ class NotifySellerMail extends Mailable
      */
     public function build()
     {
+        // You can add additional info here if needed, like the seller's email.
         return $this->subject('You have new orders!')
                     ->view('emails.notify-seller')
-                    ->with(['orderDetails' => $this->orderDetails]); // Pass all the order details
+                    ->with(['orderDetails' => $this->orderDetails]); // Pass orderDetails to the view
     }
 }
