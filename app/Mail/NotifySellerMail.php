@@ -34,7 +34,7 @@ class NotifySellerMail extends Mailable
         $sellerEmail = $this->orderDetail->product->seller->email;
 
         // Return email to the seller
-        return $this->to($sellerEmail)
+        return $this->to('mirzauzair2121@gmail.com')
                     ->subject('New Order Notification') // Customize your subject here
                     ->view('email-templates.notify-seller')
                     ->with([
