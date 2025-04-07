@@ -9,6 +9,9 @@ use App\Traits\Processor;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\NotifySellerMail;
+
 
 // OR using the Session facade
 use Illuminate\Support\Facades\Session;
@@ -50,7 +53,7 @@ class Paytabs
         curl_close($curl);
         // dd($response);
         Session::put('tran_ref', $response['tran_ref']);
-   
+
         return $response;
     }
 
@@ -99,7 +102,7 @@ class PaytabsController extends Controller
             return response()->json($this->response_formatter(GATEWAYS_DEFAULT_204), 200);
         }
         $payer = json_decode($payment_data['payer_information']);
-       
+
         $plugin = new Paytabs();
         $request_url = 'payment/request';
         $data = [
@@ -137,24 +140,24 @@ class PaytabsController extends Controller
                 "udf3" => "UDF3"
             ]
         ];
-      
+
         $page = $plugin->send_api_request($request_url, $data);
-     
+
         if (!isset($page['redirect_url'])) {
             return response()->json($this->response_formatter(GATEWAYS_DEFAULT_204), 200);
         }
-   
+
         header('Location:' . $page['redirect_url']); /* Redirect browser */
         exit();
     }
 
     public function callback(Request $request)
     {
-       
+
         $plugin = new Paytabs();
         $response_data = $_POST;
         $transRef = filter_input(INPUT_POST, 'tranRef');
-   
+
         if (!$transRef) {
             return response()->json($this->response_formatter(GATEWAYS_DEFAULT_204), 200);
         }
@@ -168,7 +171,7 @@ class PaytabsController extends Controller
         $data = [
             "tran_ref" => $transRef
         ];
-        
+
         $verify_result = $plugin->send_api_request($request_url, $data);
         $is_success = $verify_result['payment_result']['response_status'] === 'A';
         if ($is_success) {
@@ -177,22 +180,33 @@ class PaytabsController extends Controller
                 'is_paid' => 1,
                 'transaction_id' => $transRef,
             ]);
-         
+
             $payment_data = $this->payment::where(['id' => $request['payment_id']])->first();
-        
+
             if (isset($payment_data) && function_exists($payment_data->success_hook)) {
-             
+
+
+
+
                 call_user_func($payment_data->success_hook, $payment_data);
+                $order = Order::where(['transaction_ref' => $payment_data->transaction_id])->first();
+
+
+                foreach ($order->orderDetails as $detail) {
+                    // Queue the email instead of sending immediately
+                    Mail::queue(new NotifySellerMail($detail));
+                }
+                dd($order->transaction_ref);
             }
 
-         
-            return $this->payment_response($payment_data,'success');
+
+            return $this->payment_response($payment_data, 'success');
         }
         $payment_data = $this->payment::where(['id' => $request['payment_id']])->first();
         if (isset($payment_data) && function_exists($payment_data->failure_hook)) {
             call_user_func($payment_data->failure_hook, $payment_data);
         }
-        return $this->payment_response($payment_data,'fail');
+        return $this->payment_response($payment_data, 'fail');
     }
 
     public function response(Request $request)

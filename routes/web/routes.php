@@ -69,8 +69,6 @@ Route::get('/ccc', [HomeController::class, 'optimizeClear']);
 
 
 
-
-
 use Illuminate\Http\Request;
 
 Route::get('/test-captcha', function () {
