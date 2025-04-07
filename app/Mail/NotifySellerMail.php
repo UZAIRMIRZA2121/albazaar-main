@@ -30,7 +30,7 @@ class NotifySellerMail extends Mailable
     {
         // You can add additional info here if needed, like the seller's email.
         return $this->subject('You have new orders!')
-                    ->view('emails.notify-seller')
+                ->view('email-templates.notify-seller')
                     ->with(['orderDetails' => $this->orderDetails]); // Pass orderDetails to the view
     }
 }
