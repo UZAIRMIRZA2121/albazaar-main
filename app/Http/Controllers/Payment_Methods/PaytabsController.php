@@ -167,7 +167,7 @@ class PaytabsController extends Controller
         $data = [
             "tran_ref" => $transRef
         ];
-        dd($data);
+        
         $verify_result = $plugin->send_api_request($request_url, $data);
         $is_success = $verify_result['payment_result']['response_status'] === 'A';
         if ($is_success) {
@@ -176,6 +176,7 @@ class PaytabsController extends Controller
                 'is_paid' => 1,
                 'transaction_id' => $transRef,
             ]);
+            dd($this->payment);
             $payment_data = $this->payment::where(['id' => $request['payment_id']])->first();
             if (isset($payment_data) && function_exists($payment_data->success_hook)) {
                 call_user_func($payment_data->success_hook, $payment_data);
