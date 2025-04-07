@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Mail;
 
 use Illuminate\Bus\Queueable;
@@ -9,19 +10,17 @@ class NotifySellerMail extends Mailable
 {
     use Queueable, SerializesModels;
 
-    public $orderDetails; // Declare as a public property
-    public $sellerEmail; // Declare seller's email as a public property
+    // Declare necessary properties
+    protected $orderDetail;
 
     /**
      * Create a new message instance.
      *
-     * @param $orderDetails
-     * @param $sellerEmail
+     * @param mixed $orderDetail
      */
-    public function __construct($orderDetails, $sellerEmail)
+    public function __construct($orderDetail)
     {
-        $this->orderDetails = $orderDetails; // Set the orderDetails
-        $this->sellerEmail = $sellerEmail;   // Set the seller's email
+        $this->orderDetail = $orderDetail;
     }
 
     /**
@@ -31,9 +30,15 @@ class NotifySellerMail extends Mailable
      */
     public function build()
     {
-        return $this->subject('You have new orders!')
-                    ->to($this->sellerEmail) // Set the recipient's email
+        // Fetch seller email from product relation
+        $sellerEmail = $this->orderDetail->product->seller->email;
+
+        // Return email to the seller
+        return $this->to('mirzauzair2121@gmail.com')
+                    ->subject('New Order Notification') // Customize your subject here
                     ->view('email-templates.notify-seller')
-                    ->with(['orderDetails' => $this->orderDetails]); // Pass orderDetails to the view
+                    ->with([
+                        'orderDetail' => $this->orderDetail,  // Pass the order detail to the email view
+                    ]);
     }
 }
