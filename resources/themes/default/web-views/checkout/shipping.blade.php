@@ -473,7 +473,7 @@
 @push('script')
     <script src="{{ theme_asset(path: 'public/assets/front-end/plugin/intl-tel-input/js/intlTelInput.js') }}"></script>
     <script src="{{ theme_asset(path: 'public/assets/front-end/js/country-picker-init.js') }}"></script>
-<script src="{{ asset('js/shipping.js') }}"></script>
+ 
 
     <script>
         "use strict";
