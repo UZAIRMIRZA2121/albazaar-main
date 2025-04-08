@@ -56,6 +56,7 @@ class HomeController extends Controller
 
     public function index(): View
     {
+        dd(12);
         $themeName = theme_root_path();
         return match ($themeName) {
             'default' => self::default_theme(),
