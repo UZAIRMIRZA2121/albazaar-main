@@ -807,7 +807,9 @@ class OrderManager
                     'vendorName' => $seller?->f_name,
                     'adminName' => $seller?->name,
                 ];
-                event(new OrderPlacedEvent(email: $seller->email, data: $dataForVendor));
+                                event(new OrderPlacedEvent(email: $seller->email, data: $dataForVendor));
+            
+
             }
         } catch (\Exception $exception) {
 
