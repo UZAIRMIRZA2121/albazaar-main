@@ -105,7 +105,7 @@ public function generateAutoWithdrawRequests()
 
  $this->generateAutoWithdrawRequests();
 
-        dd(423);
+       
         $themeName = theme_root_path();
         return match ($themeName) {
             'default' => self::default_theme(),
