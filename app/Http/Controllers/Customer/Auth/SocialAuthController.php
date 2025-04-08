@@ -126,7 +126,7 @@ class SocialAuthController extends Controller
                 'temporary_token' => Str::random(40)
             ]);
           
-            $newUser = $this->customerRepo->create([
+            $newUser = User::create([
                 'name' => $fullName,
                 'f_name' => $fastName,
                 'l_name' => $lastName,
