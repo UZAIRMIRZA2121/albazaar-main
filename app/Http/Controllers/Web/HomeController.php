@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Web;
 
+use App\Models\OrderTransaction;
 use App\Models\Shop;
 use App\Traits\CacheManagerTrait;
 use App\Traits\EmailTemplateTrait;
@@ -17,6 +18,7 @@ use App\Models\DealOfTheDay;
 use App\Models\Order;
 use App\Models\OrderDetail;
 use App\Models\Product;
+use Carbon\Carbon;
 use App\Models\Seller;
 use App\Models\Review;
 use App\Utils\ProductManager;
@@ -25,6 +27,7 @@ use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
+use App\Models\WithdrawRequest;
 use Illuminate\Support\Facades\Artisan;
 class HomeController extends Controller
 {
@@ -53,10 +56,56 @@ class HomeController extends Controller
             return response()->json(['error' => 'Failed to clear cache: ' . $e->getMessage()], 500);
         }
     }
+    
+public function generateAutoWithdrawRequests()
+{
+    $all_order_transactions = OrderTransaction::where('status', 'disburse')
+        ->where('sub_status', 'pending')
+        ->where('updated_at', '<=', Carbon::now()->subDays(10)) // 10+ days old
+        ->with('seller.wallet')
+        ->get()
+        ->groupBy('seller_id');
+
+    foreach ($all_order_transactions as $seller_id => $transactions) {
+        $seller = $transactions->first()->seller;
+        $wallet = $seller->wallet;
+
+        // Sum total seller amount
+        $total_seller_amount = $transactions->sum('seller_amount');
+
+        // Update each transaction's sub_status
+        foreach ($transactions as $transaction) {
+            $transaction->sub_status = 'completed';
+            $transaction->save();
+        }
+
+        // Create Withdraw Request
+        WithdrawRequest::create([
+            'seller_id' => $seller_id,
+            'delivery_man_id' => null,
+            'admin_id' => null,
+            'amount' => $total_seller_amount,
+            'withdrawal_method_id' => 1,
+            'withdrawal_method_fields' => json_encode([]),
+            'transaction_note' => 'Auto-withdraw request created for transactions older than 10 days.',
+            'approved' => 0,
+        ]);
+
+        // Update Seller Wallet
+        $wallet->pending_withdraw += $total_seller_amount;
+        $wallet->total_earning -= $total_seller_amount;
+        $wallet->save();
+    }
+
+    return response()->json(['message' => 'Auto withdraw requests processed successfully.']);
+}
 
     public function index(): View
     {
-        dd(12);
+
+ $this->generateAutoWithdrawRequests();
+
+        dd(423);
         $themeName = theme_root_path();
         return match ($themeName) {
             'default' => self::default_theme(),
