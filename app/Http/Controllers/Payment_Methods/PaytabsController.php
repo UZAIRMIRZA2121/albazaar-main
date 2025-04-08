@@ -189,14 +189,14 @@ class PaytabsController extends Controller
 
 
                 call_user_func($payment_data->success_hook, $payment_data);
-                $order = Order::where(['transaction_ref' => $payment_data->transaction_id])->first();
+                // $order = Order::where(['transaction_ref' => $payment_data->transaction_id])->first();
 
 
-                foreach ($order->orderDetails as $detail) {
-                    // Queue the email instead of sending immediately
-                    Mail::queue(new NotifySellerMail($detail));
-                }
-                dd($order->transaction_ref);
+                // foreach ($order->orderDetails as $detail) {
+                //     // Queue the email instead of sending immediately
+                //     Mail::queue(new NotifySellerMail($detail));
+                // }
+              
             }
 
 

@@ -519,7 +519,7 @@ class OrderManager
 
         $cart_group_id = $data['cart_group_id'];
         $admin_commission = (float) str_replace(",", "", Helpers::sales_commission_before_order($cart_group_id, $discount));
-
+dd($admin_commission);
         $is_shipping_free = 0;
         $free_shipping_discount = 0;
         $free_shipping_type = NULL;

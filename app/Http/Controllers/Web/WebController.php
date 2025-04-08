@@ -864,7 +864,7 @@ class WebController extends Controller
     {
      
         $isNewCustomerInSession = session('newCustomerRegister');
-        dd($isNewCustomerInSession);
+       
         session()->forget('newCustomerRegister');
         return view(VIEW_FILE_NAMES['order_complete'], compact('isNewCustomerInSession'));
     }
