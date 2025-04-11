@@ -42,7 +42,7 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
  */
 class Cart extends Model
 {
-
+    protected $table = 'carts'; // Make sure this matches your table name
     protected $casts = [
         'id' => 'integer',
         'customer_id' => 'integer',

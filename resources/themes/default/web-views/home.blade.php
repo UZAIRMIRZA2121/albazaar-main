@@ -76,7 +76,7 @@
       
 
         @if ($web_config['featured_deals'] && count($web_config['featured_deals']) > 0)
-            <section class="featured_deal">
+            <section class="featured_deal"  id="featured_deal">
                 <div class="container">
                     <div class="__featured-deal-wrap bg--light">
                         <div class="d-flex flex-wrap justify-content-between gap-8 mb-3">
@@ -144,7 +144,7 @@
             'decimal_point_settings' => $decimalPointSettings,
         ])
 
-        <section class="new-arrival-section">
+        <section class="new-arrival-section" id="new-arrival-section">
 
             @if ($newArrivalProducts->count() > 0)
                 <div class="container rtl mt-4">
@@ -292,5 +292,7 @@
         });
     });
 </script>
+
+
 
 @endpush

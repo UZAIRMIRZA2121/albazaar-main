@@ -23,7 +23,7 @@
             </tr>
         </thead>
         <tbody>
-            @foreach($orderDetails as $detail)
+            @foreach ($orderDetails as $detail)
                 <tr>
                     <td>{{ $detail->product->name }}</td>
                     <td>{{ $detail->order_id }}</td>
@@ -33,9 +33,7 @@
             @endforeach
         </tbody>
     </table>
-
     <p>Thank you for selling with us!</p>
-
 </body>
 
 </html>

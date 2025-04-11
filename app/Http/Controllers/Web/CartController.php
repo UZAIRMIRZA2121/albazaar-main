@@ -28,18 +28,18 @@ use Carbon\Carbon;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 
 class CartController extends Controller
 {
     public function __construct(
-        private OrderDetail                                        $order_details,
-        private Product                                            $product,
-        private readonly RestockProductService                     $restockProductService,
-        private readonly RestockProductRepositoryInterface         $restockProductRepo,
-        private readonly ProductRepositoryInterface                $productRepo,
+        private OrderDetail $order_details,
+        private Product $product,
+        private readonly RestockProductService $restockProductService,
+        private readonly RestockProductRepositoryInterface $restockProductRepo,
+        private readonly ProductRepositoryInterface $productRepo,
         private readonly RestockProductCustomerRepositoryInterface $restockProductCustomerRepo,
-    )
-    {
+    ) {
     }
 
     public function getVariantPrice(Request $request): array
@@ -139,7 +139,7 @@ class CartController extends Controller
 
         $restockRequestStatus = 0;
         if (auth('customer')->check()) {
-            $restockRequestStatus = (int)($this->restockProductRepo->getListWhere(filters: [
+            $restockRequestStatus = (int) ($this->restockProductRepo->getListWhere(filters: [
                 'customer_id' => auth('customer')->id(),
                 'product_id' => $product['id'],
                 'variant' => $string,
@@ -171,6 +171,61 @@ class CartController extends Controller
 
     public function addToCart(Request $request): JsonResponse|RedirectResponse
     {
+
+        // 1. Find the product
+        $product = Product::find($request->id);
+
+        if (!$product) {
+            Log::warning('Product not found', ['id' => $request->id]);
+            return response()->json(['error' => 'Product not found'], 404);
+        }
+
+        // 2. Log the product data
+        Log::info('Add to cart request', $product->toArray());
+
+        // 3. Log the seller's city
+        if ($product->seller) {
+            $seller_city = $product->seller->city;
+            Log::info('Product belongs to seller', ['city' => $seller_city]);
+        } else {
+            Log::warning('Seller not found for product', ['product_id' => $product->id]);
+        }
+
+        $customerId = auth('customer')->id();
+
+        // Log customerId properly as an array
+        Log::info('customerId:', ['customerId' => $customerId]);
+
+        // 4. Get customer's cart
+        $myCart = Cart::where('customer_id', $customerId)->first();
+
+        if ($myCart) {
+            $cartSellerCity = $myCart->seller->city;
+            Log::info('Customer cart seller city', ['cartSellerCity' => $cartSellerCity]);
+
+            // Check if the cities match
+            if ($seller_city !== $cartSellerCity) {
+                // Check if the cities match
+                if ($seller_city !== $cartSellerCity) {
+                    // Add the SweetAlert data to the session
+                    session()->flash('sweet_alert', [
+                        'type' => 'warning', // Type of SweetAlert (warning, success, error, info)
+                        'message' => 'Please select the same city product or first place an order of cart product.',
+                        'title' => 'City Mismatch'
+                    ]);
+                
+                    // Return response with status and the warning message
+                    return response()->json([
+                        'status' => 0,
+                        'message' => 'Please select the same city product or first place an order of cart product.',
+                        'shipping_method_list' => [],  // Empty or actual shipping methods list here if needed
+                    ]);
+                }
+                
+
+            }
+        }
+
         $cart = CartManager::add_to_cart($request);
         if ($cart['status'] == 2) {
             $cart['shippingMethodHtmlView'] = view(VIEW_FILE_NAMES['product_shipping_method_modal_view_partials'], [
@@ -275,8 +330,8 @@ class CartController extends Controller
             ]);
         }
 
-        $quantity_price = webCurrencyConverter($product['price'] * (int)$product['quantity']);
-        $discount_price = webCurrencyConverter(($product['price'] - $product['discount']) * (int)$product['quantity']);
+        $quantity_price = webCurrencyConverter($product['price'] * (int) $product['quantity']);
+        $discount_price = webCurrencyConverter(($product['price'] - $product['discount']) * (int) $product['quantity']);
         $total_discount = 0;
         foreach ($cart as $cartItem) {
             $sub_total += ($cartItem['price'] - $cartItem['discount']) * $cartItem['quantity'];
@@ -358,7 +413,8 @@ class CartController extends Controller
         }
     }
 
-    function addToCartPhysicalProduct($request, $product) {
+    function addToCartPhysicalProduct($request, $product)
+    {
         $user = Helpers::getCustomerInformation($request);
         $str = '';
         $variations = [];

@@ -313,8 +313,15 @@
                         <li class="nav-item dropdown d-none d-md-block {{ request()->is('/') ? 'active' : '' }}">
                             <a class="nav-link" href="{{ route('home') }}">{{ translate('home') }}</a>
                         </li>
-
-                        @if (getWebConfig(name: 'product_brand'))
+                        <li class="nav-item dropdown d-none d-md-block {{ request()->is('/') ? 'active' : '' }}">
+                            <a class="nav-link" href="#new-arrival-section">{{ translate('New Arrivals') }}</a>
+                        </li>
+                        @if ($web_config['featured_deals'] && count($web_config['featured_deals']) > 0)
+                        <li class="nav-item dropdown d-none d-md-block {{ request()->is('/') ? 'active' : '' }}">
+                            <a class="nav-link" href="#featured_deal">{{ translate('Featured Deal') }}</a>
+                        </li>
+                        @endif
+                        {{-- @if (getWebConfig(name: 'product_brand'))
                             <li class="nav-item dropdown">
                                 <a class="nav-link dropdown-toggle" href="#"
                                     data-toggle="dropdown">{{ translate('brand') }}</a>
@@ -349,7 +356,7 @@
                                     </li>
                                 </ul>
                             </li>
-                        @endif
+                        @endif --}}
 
                         @if ($web_config['discount_product'] > 0)
                             <li class="nav-item dropdown {{ request()->is('/') ? 'active' : '' }}">
@@ -444,7 +451,7 @@
 
 
 
-                        @if ($businessMode == 'multi')
+                        {{-- @if ($businessMode == 'multi')
                             @if (getWebConfig(name: 'seller_registration'))
                                 <li class="nav-item dropdown">
                                     <a class="nav-link dropdown-toggle" href="#"
@@ -468,7 +475,7 @@
                                     </ul>
                                 </li>
                             @endif
-                        @endif
+                        @endif --}}
 
 
                     </ul>
@@ -483,19 +490,44 @@
                     @endif
 
                 </div>
+                <!-- Latest Font Awesome CDN -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" integrity="sha512-..." crossorigin="anonymous" referrerpolicy="no-referrer" />
+
                 <div>
                     <ul class="navbar-nav d-flex justify-content-end w-100">
                         <li class="nav-item dropdown d-none d-md-block {{ request()->is('/') ? 'active' : '' }}">
                             <a class="nav-link" href="{{ route('home') }}">
-                                <i class="fas fa-sun"></i> Light
+                                <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 15 15" fill="none" class="svg replaced-svg">
+                                    <path d="M7.53828 10.1086C5.95991 10.1086 4.67891 8.82759 4.67891 7.24922C4.67891 5.67084 5.95991 4.38984 7.53828 4.38984C9.11666 4.38984 10.3977 5.67084 10.3977 7.24922C10.3977 8.82759 9.11666 10.1086 7.53828 10.1086ZM7.53828 5.53359C6.59469 5.53359 5.82266 6.30563 5.82266 7.24922C5.82266 8.19281 6.59469 8.96484 7.53828 8.96484C8.48188 8.96484 9.25391 8.19281 9.25391 7.24922C9.25391 6.30563 8.48188 5.53359 7.53828 5.53359ZM8.11016 2.67422V0.958594C8.11016 0.644063 7.85281 0.386719 7.53828 0.386719C7.22375 0.386719 6.96641 0.644063 6.96641 0.958594V2.67422C6.96641 2.98875 7.22375 3.24609 7.53828 3.24609C7.85281 3.24609 8.11016 2.98875 8.11016 2.67422ZM8.11016 13.5398V11.8242C8.11016 11.5097 7.85281 11.2523 7.53828 11.2523C7.22375 11.2523 6.96641 11.5097 6.96641 11.8242V13.5398C6.96641 13.8544 7.22375 14.1117 7.53828 14.1117C7.85281 14.1117 8.11016 13.8544 8.11016 13.5398ZM3.53516 7.24922C3.53516 6.93469 3.27781 6.67734 2.96328 6.67734H1.24766C0.933125 6.67734 0.675781 6.93469 0.675781 7.24922C0.675781 7.56375 0.933125 7.82109 1.24766 7.82109H2.96328C3.27781 7.82109 3.53516 7.56375 3.53516 7.24922ZM14.4008 7.24922C14.4008 6.93469 14.1434 6.67734 13.8289 6.67734H12.1133C11.7988 6.67734 11.5414 6.93469 11.5414 7.24922C11.5414 7.56375 11.7988 7.82109 12.1133 7.82109H13.8289C14.1434 7.82109 14.4008 7.56375 14.4008 7.24922ZM4.51306 4.224C4.73609 4.00097 4.73609 3.64069 4.51306 3.41766L3.36931 2.27391C3.14628 2.05088 2.786 2.05088 2.56297 2.27391C2.33994 2.49694 2.33994 2.85722 2.56297 3.08025L3.70672 4.224C3.82109 4.33838 3.96406 4.38984 4.11275 4.38984C4.26144 4.38984 4.40441 4.33266 4.51878 4.224H4.51306ZM12.5193 12.2303C12.7423 12.0072 12.7423 11.6469 12.5193 11.4239L11.3756 10.2802C11.1525 10.0571 10.7923 10.0571 10.5692 10.2802C10.3462 10.5032 10.3462 10.8635 10.5692 11.0865L11.713 12.2303C11.8273 12.3446 11.9703 12.3961 12.119 12.3961C12.2677 12.3961 12.4107 12.3389 12.525 12.2303H12.5193ZM3.36931 12.2303L4.51306 11.0865C4.73609 10.8635 4.73609 10.5032 4.51306 10.2802C4.29003 10.0571 3.92975 10.0571 3.70672 10.2802L2.56297 11.4239C2.33994 11.6469 2.33994 12.0072 2.56297 12.2303C2.67734 12.3446 2.82031 12.3961 2.969 12.3961C3.11769 12.3961 3.26066 12.3389 3.37503 12.2303H3.36931ZM11.3756 4.224L12.5193 3.08025C12.7423 2.85722 12.7423 2.49694 12.5193 2.27391C12.2963 2.05088 11.936 2.05088 11.713 2.27391L10.5692 3.41766C10.3462 3.64069 10.3462 4.00097 10.5692 4.224C10.6836 4.33838 10.8266 4.38984 10.9753 4.38984C11.1239 4.38984 11.2669 4.33266 11.3813 4.224H11.3756Z" fill="currentColor"></path>
+                                    </svg> Light
                             </a>
                         </li>
+                        @if(auth()->guard('seller')->check())
+                        {{-- 
+                        <div class="wa-widget-send-button">
+                            <a style="background-color: #fff;" class="js-hs-unfold-invoker btn btn-icon btn-ghost-secondary rounded-circle media align-items-center gap-3 navbar-dropdown-account-wrapper dropdown-toggle-left-arrow dropdown-toggle-empty" href="{{ route('vendor.messages.index', ['type' => 'admin']) }}">
+                                <svg width="20" height="21" viewBox="0 0 20 21" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <g clip-path="url(#clip0_5926_1152)">
+                                        <path d="M16.6666 2.16699H3.33329C2.41663 2.16699 1.67496 2.91699 1.67496 3.83366L1.66663 18.8337L4.99996 15.5003H16.6666C17.5833 15.5003 18.3333 14.7503 18.3333 13.8337V3.83366C18.3333 2.91699 17.5833 2.16699 16.6666 2.16699ZM4.99996 8.00033H15V9.66699H4.99996V8.00033ZM11.6666 12.167H4.99996V10.5003H11.6666V12.167ZM15 7.16699H4.99996V5.50033H15V7.16699Z" fill="#073B74"></path>
+                                    </g>
+                                    <defs>
+                                        <clipPath id="clip0_5926_1152">
+                                            <rect width="20" height="20" fill="white" transform="translate(0 0.5)"></rect>
+                                        </clipPath>
+                                    </defs>
+                                </svg>
+                            </a>
+                        </div>
+                         --}}
                         <li class="nav-item dropdown d-none d-md-block {{ request()->is('/') ? 'active' : '' }}">
-                            <a class="nav-link" href="{{ route('home') }}">
-                                <i class="fas fa-phone-alt"></i> Support
+                            <a class="nav-link" href="{{ route('vendor.messages.index', ['type' => 'admin']) }}">
+                                <i class="fas fa-phone-alt me-1"></i> Support
                             </a>
                         </li>
+                    @endif
+                     
                     </ul>
+                    
                 </div>
 
 

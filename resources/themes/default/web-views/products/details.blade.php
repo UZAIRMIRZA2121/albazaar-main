@@ -160,7 +160,9 @@
                                     <span class="__inline-25">    </span>
                                     <span
                                         class="font-regular font-for-tab d-inline-block font-size-sm text-body align-middle mt-1 {{Session::get('direction') === "rtl" ? 'mr-1 ml-md-2 ml-0 pr-md-2 pr-sm-1 pl-md-2 pl-sm-1' : 'ml-1 mr-md-2 mr-0 pl-md-2 pl-sm-1 pr-md-2 pr-sm-1'}} text-capitalize"> <span class="web-text-primary countWishlist-{{ $product->id }}"> {{$countWishlist}}</span> {{translate('wish_listed')}} </span>
-                                </div>
+                              
+                              
+                                    </div>
 
                                 @if($product['product_type'] == 'digital')
                                     <div class="digital-product-authors mb-2">
@@ -337,6 +339,30 @@
                                                     class="d-none d-sm-flex justify-content-start align-items-center me-2">
                                                     <div
                                                         class="product-description-label text-dark font-bold text-capitalize">
+                                                        <strong>Returnable</strong> :
+                                                    </div>
+                                                    &nbsp; <strong  class="text-base">{{ $product['returnable'] ==  1 ? "YES" : "NO" }}</strong>
+                                                   
+                                                </div>
+                                            </div>
+                                            @if($product['menufacture_days'])
+                                            <div id="chosen_price_div">
+                                                <div
+                                                    class="d-none d-sm-flex justify-content-start align-items-center me-2">
+                                                    <div
+                                                        class="product-description-label text-dark font-bold text-capitalize">
+                                                        <strong>Menufacture Days</strong> :
+                                                    </div>
+                                                    &nbsp; <strong  class="text-base">{{ $product['menufacture_days'] }}</strong>
+                                                   
+                                                </div>
+                                            </div>
+                                            @endif
+                                            <div id="chosen_price_div">
+                                                <div
+                                                    class="d-none d-sm-flex justify-content-start align-items-center me-2">
+                                                    <div
+                                                        class="product-description-label text-dark font-bold text-capitalize">
                                                         <strong>{{translate('total_price')}}</strong> :
                                                     </div>
                                                     &nbsp; <strong id="chosen_price" class="text-base"></strong>
@@ -354,19 +380,19 @@
                                         <div class="product-add-and-buy-section gap-2 d--sm-flex" {!! $firstVariationQuantity <= 0 ? 'style="display: none;"' : '' !!}>
                                             @if(($product->added_by == 'seller' && ($sellerTemporaryClose || (isset($product->seller->shop) && $product->seller->shop->vacation_status && $currentDate >= $sellerVacationStartDate && $currentDate <= $sellerVacationEndDate))) ||
                                              ($product->added_by == 'admin' && ($inHouseTemporaryClose || ($inHouseVacationStatus && $currentDate >= $inHouseVacationStartDate && $currentDate <= $inHouseVacationEndDate))))
-                                                    <button class="btn btn-secondary" type="button" disabled>
+                                                    {{-- <button class="btn btn-secondary" type="button" disabled>
                                                         {{ translate('buy_now') }}
-                                                    </button>
+                                                    </button> --}}
                                                     <button class="btn btn--primary string-limit" type="button" disabled>
                                                         {{ translate('add_to_cart') }}
                                                     </button>
                                                 @else
-                                                    <button type="button"
+                                                    {{-- <button type="button"
                                                             data-auth-status="{{($guestCheckout == 1 || Auth::guard('customer')->check() ? 'true':'false')}}"
                                                             data-route="{{ route('shop-cart') }}"
                                                             class="btn btn-secondary element-center btn-gap-{{Session::get('direction') === "rtl" ? 'left' : 'right'}} action-buy-now-this-product">
                                                         <span class="string-limit">{{ translate('buy_now') }}</span>
-                                                    </button>
+                                                    </button> --}}
                                                     <button class="btn btn--primary element-center btn-gap-{{Session::get('direction') === "rtl" ? 'left' : 'right'}} action-add-to-cart-form"
                                                             type="button" data-update-text="{{ translate('update_cart') }}" data-add-text="{{ translate('add_to_cart') }}">
                                                         <span class="string-limit">{{ translate('add_to_cart') }}</span>
@@ -636,7 +662,6 @@
                                                         <div class="col-12" id="product-review-list">
                                                             @include('web-views.partials._product-reviews')
                                                         </div>
-
                                                         @if(count($product->reviews) > 2)
                                                             <div class="col-12">
                                                                 <div
@@ -664,7 +689,7 @@
                         <div class="product-details-shipping-details">
                             @foreach ($companyReliability as $key=>$value)
                                 @if ($value['status'] == 1 && !empty($value['title']))
-                                    <div class="shipping-details-bottom-border">
+                                    <div class="shipping-details-bottom-border ">
                                         <div class="px-3 py-3">
                                             <img class="{{Session::get('direction') === "rtl" ? 'float-right ml-2' : 'mr-2'}} __img-20"
                                                  src="{{ getStorageImages(path: imagePathProcessing(imageData: $value['image'],path: 'company-reliability'), type: 'source', source: 'public/assets/front-end/img'.'/'.$value['item'].'.png') }}"
