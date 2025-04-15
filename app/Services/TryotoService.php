@@ -237,12 +237,14 @@ class TryotoService
                         ->withToken($this->accessToken)
                         ->post($this->baseUrl . $endpoint, [
                             'weight' => $data['weight'],
-                            'originCity' => $cityname, // Use $cityname instead of $originCity
+                            'originCity' => $cityname,
                             'destinationCity' => $destinationCity,
                             'height' => $data['height'] ?? 30,
                             'width' => $data['width'] ?? 30,
                             'length' => $data['length'] ?? 30,
+                            'totalDue' => $data['totalDue'] ?? 0, // Provide totalDue from $data or default
                         ]);
+                        
 
                     // Log the API response
                     Log::info('API Response for ' . $cityname . ':', $response->json());
@@ -293,6 +295,91 @@ class TryotoService
             throw $e;
         }
     }
+
+    // public function getDeliveryFees(array $data)
+    // {
+    //     Log::info('Tryoto Service Configuration:', [
+    //         'webhook_secret' => config('services.tryoto.webhook_secret'),
+    //         'refresh_token' => config('services.tryoto.refresh_token'),
+    //         'base_url' => config('services.tryoto.base_url'),
+    //     ]);
+    
+    //     try {
+    //         $cart = CartManager::get_cart(type: 'checked');
+    
+    //         // Extract unique seller cities
+    //         $originCities = [];
+    //         foreach ($cart as $item) {
+    //             if ($item->product && $item->product->seller) {
+    //                 $originCities[] = $item->product->seller->city;
+    //             }
+    //         }
+    //         $originCities = array_unique($originCities);
+    //         $destinationCity = $data['destinationCity'];
+    
+    //         Log::info('Cities for getDeliveryFees:', [
+    //             'destinationCity' => $destinationCity,
+    //         ]);
+    
+    //         // Define allowed delivery company keywords
+    //         $allowedKeywords = ['SPL online', 'Aramex', 'SMSA'];
+    //         $allFilteredCompanies = [];
+    
+    //         foreach ($originCities as $cityname) {
+    //             Log::info('Origin City:', ['originCity' => $cityname]);
+    
+    //             try {
+    //                 $endpoint = '/rest/v2/checkOTODeliveryFee';
+    //                 $response = Http::withoutVerifying()
+    //                     ->withToken($this->accessToken)
+    //                     ->post($this->baseUrl . $endpoint, [
+    //                         'weight' => $data['weight'],
+    //                         'originCity' => $cityname,
+    //                         'destinationCity' => $destinationCity,
+    //                         'height' => $data['height'] ?? 30,
+    //                         'width' => $data['width'] ?? 30,
+    //                         'length' => $data['length'] ?? 30,
+    //                         'totalDue' => $data['totalDue'] ?? 0,
+    //                     ]);
+    
+    //                 Log::info('API Response for ' . $cityname . ':', $response->json());
+    
+    //                 if ($response->successful()) {
+    //                     $responseData = $response->json();
+    //                     $deliveryCompanies = $responseData['deliveryCompany'] ?? [];
+    
+    //                     // Filter only allowed companies
+    //                     $filteredCompanies = array_filter($deliveryCompanies, function ($company) use ($allowedKeywords) {
+    //                         foreach ($allowedKeywords as $keyword) {
+    //                             if (stripos($company['deliveryCompanyName'], $keyword) !== false) {
+    //                                 return true;
+    //                             }
+    //                         }
+    //                         return false;
+    //                     });
+    
+    //                     // Merge into allFilteredCompanies
+    //                     $allFilteredCompanies = array_merge($allFilteredCompanies, array_values($filteredCompanies));
+    
+    //                 } else {
+    //                     Log::error('Failed API Response for ' . $cityname . ':', ['body' => $response->body()]);
+    //                 }
+    //             } catch (\Exception $e) {
+    //                 Log::error('Error making API request for ' . $cityname . ': ' . $e->getMessage());
+    //             }
+    //         }
+    
+    //         return [
+    //             'success' => true,
+    //             'deliveryOptions' => $allFilteredCompanies,
+    //         ];
+    
+    //     } catch (\Exception $e) {
+    //         Log::error('Error getting delivery fees: ' . $e->getMessage());
+    //         throw $e;
+    //     }
+    // }
+    
 
 
     /**

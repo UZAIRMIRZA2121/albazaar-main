@@ -574,6 +574,7 @@ Route::get('login/facebook/callback', [App\Http\Controllers\Auth\SocialLoginCont
 
 
 
+Route::get('/paytabs/iframe/{payment_id}', [PaytabsController::class, 'showIframe'])->name('paytabs.iframe');
 
 
 

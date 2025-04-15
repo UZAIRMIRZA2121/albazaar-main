@@ -51,9 +51,9 @@ class Paytabs
 
         $response = json_decode(curl_exec($curl), true);
         curl_close($curl);
-        // dd($response);
-        Session::put('tran_ref', $response['tran_ref']);
 
+        Session::put('tran_ref', $response['tran_ref']);
+       
         return $response;
     }
 
@@ -147,7 +147,10 @@ class PaytabsController extends Controller
             return response()->json($this->response_formatter(GATEWAYS_DEFAULT_204), 200);
         }
 
-        header('Location:' . $page['redirect_url']); /* Redirect browser */
+        // header('Location:' . $page['redirect_url']); /* Redirect browser */
+        // return iframe URL
+        return redirect()->route('paytabs.iframe', ['payment_id' => $payment_data->id]);
+
         exit();
     }
 
@@ -196,7 +199,7 @@ class PaytabsController extends Controller
                 //     // Queue the email instead of sending immediately
                 //     Mail::queue(new NotifySellerMail($detail));
                 // }
-              
+
             }
 
 
@@ -213,4 +216,17 @@ class PaytabsController extends Controller
     {
         return response()->json($this->response_formatter(GATEWAYS_DEFAULT_200), 200);
     }
+
+
+
+
+
+
+
+
+    public function showIframe($payment_id)
+{
+    return view('paytabs.iframe', compact('payment_id'));
+}
+
 }
