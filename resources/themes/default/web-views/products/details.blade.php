@@ -473,6 +473,7 @@
                                                         @endif
                                                         @if ($product['details'])
                                                             <div class="text-body col-lg-12 col-md-12 overflow-scroll fs-13 text-justify details-text-justify rich-editor-html-content">
+                                                                <h5>Current Stock : {{$product->current_stock}}</h5>  
                                                                 {!! $product['details'] !!}
                                                             </div>
                                                         @endif
