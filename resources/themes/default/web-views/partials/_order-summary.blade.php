@@ -4,6 +4,7 @@
             @php($shippingMethod=getWebConfig(name: 'shipping_method'))
             @php($subTotal=0)
             @php($totalTax=0)
+            @php($showtotalTax=0)
             @php($totalShippingCost=0)
             @php($orderWiseShippingDiscount=\App\Utils\CartManager::order_wise_shipping_discount())
             @php($totalDiscountOnProduct=0)
@@ -20,6 +21,7 @@
                 @foreach($cart as $key => $cartItem)
                     @php($subTotal+=$cartItem['price']*$cartItem['quantity'])
                     @php($totalTax+=$cartItem['tax_model']=='exclude' ? ($cartItem['tax']*$cartItem['quantity']):0)
+                     @php($showtotalTax+=$cartItem['tax']*$cartItem['quantity']) 
                     @php($totalDiscountOnProduct+=$cartItem['discount']*$cartItem['quantity'])
                 @endforeach
 
@@ -54,10 +56,19 @@
                     {{ webCurrencyConverter(amount: $subTotal) }}
                 </span>
             </div>
+            @if($totalTax > 0)
+             
             <div class="d-flex justify-content-between">
-                <span class="cart_title">{{translate('tax')}}</span>
+                <span class="cart_title">{{translate('tax')}} (exc)</span>
                 <span class="cart_value">
                     {{ webCurrencyConverter(amount: $totalTax) }}
+                </span>
+            </div>
+            @endif
+            <div class="d-flex justify-content-between">
+                <span class="cart_title">{{translate('tax')}} (Inc)</span>
+                <span >
+                    {{ webCurrencyConverter(amount: $showtotalTax) }}
                 </span>
             </div>
             <div class="d-flex justify-content-between">

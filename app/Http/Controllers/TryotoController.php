@@ -20,6 +20,7 @@ class TryotoController extends Controller
 
     public function getShippingOptions(Request $request)
     {
+    
         Log::info('Shipping options error: ' );
         try {
             $validatedData = $request->validate([
@@ -296,7 +297,6 @@ class TryotoController extends Controller
         $totalQuantity = Cart::where('cart_group_id', $request->chosen_shipping_id)->where('is_checked' , 1)->sum('quantity');
 
         log::info($request->all());
-        $price = $price * $totalQuantity ; // Store the original price
      
         $originalPrice = $price  ; // Store the original price
         $price *= 1.10; // Increase price by 10%
@@ -312,7 +312,7 @@ class TryotoController extends Controller
                 'shipping_method_id' => null,
                 'option_id' => $optionId,
                 'service_name' => $service_name,
-                'shipping_cost' => $price,
+                'shipping_cost' => $originalPrice,
                 'shipping_comission' => $shippingCommission,
             ]
         );

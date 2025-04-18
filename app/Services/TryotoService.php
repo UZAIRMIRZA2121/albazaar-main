@@ -184,17 +184,13 @@ class TryotoService
     public function getDeliveryFees(array $data)
     {
 
-        // Log Tryoto service configuration
-        Log::info('Tryoto Service Configuration:', [
-            'webhook_secret' => config('services.tryoto.webhook_secret'),
-            'refresh_token' => config('services.tryoto.refresh_token'),
-            'base_url' => config('services.tryoto.base_url'),
-        ]);
-
+    
         try {
             // Get the checked cart items
             $cart = CartManager::get_cart(type: 'checked');
-
+            log::info('Cart items:', [
+                'cart' => $cart,
+            ]); 
             // Validate cart and extract seller's cities
             $originCities = [];
             foreach ($cart as $item) {

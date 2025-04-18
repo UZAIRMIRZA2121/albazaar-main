@@ -8,8 +8,6 @@
 
 <div class="row g-3 mx-max-md-0 mb-3">
     <section class="col-lg-8 px-max-md-0">
-   
-        <script src="{{ asset('js/shipping.js') }}"></script>
         @if(count($cart)==0)
             @php($isPhysicalProductExist = false)
         @endif
@@ -340,10 +338,11 @@
                                             {{ webCurrencyConverter(amount: $cartItem['price']-$cartItem['discount']) }}
                                         </div>
                                         <span class="text-nowrap fs-10">
+                                            ({{ translate('tax')}}
+                                            : {{ webCurrencyConverter(amount: $cartItem['tax']*$cartItem['quantity'])}}
+                                            )
                                                 @if ($cartItem->tax_model === "exclude")
-                                                ({{ translate('tax')}}
-                                                : {{ webCurrencyConverter(amount: $cartItem['tax']*$cartItem['quantity'])}}
-                                                )
+                                                ({{ translate('Tax exclude')}})
                                             @else
                                                 ({{ translate('tax_included')}})
                                             @endif
@@ -673,10 +672,11 @@
 
                                         </div>
                                         <span class="text-nowrap fs-10 mt-1px">
-                                            @if ($cartItem->tax_model === "exclude")
-                                                ({{ translate('tax')}}
-                                                : {{ webCurrencyConverter(amount: $cartItem['tax']*$cartItem['quantity'])}}
-                                                )
+                                            ({{ translate('tax')}}
+                                            : {{ webCurrencyConverter(amount: $cartItem['tax']*$cartItem['quantity'])}}
+                                            )
+                                            @if (!$cartItem->tax_model === "exclude")
+                                             
                                             @else
                                                 ({{ translate('tax_included')}})  
                                             
