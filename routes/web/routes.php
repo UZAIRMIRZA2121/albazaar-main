@@ -68,6 +68,9 @@ Route::get('/ccc', [HomeController::class, 'optimizeClear']);
 
 
 
+Route::get('/select-method', [PaymentController::class, 'method'])->name('payment.select');
+Route::post('/payment/iframe', [PaymentController::class, 'showIframe'])->name('payment.showIframe');
+
 
 use Illuminate\Http\Request;
 
@@ -361,6 +364,8 @@ Route::group(['prefix' => 'coupon', 'as' => 'coupon.', 'namespace' => 'Web'], fu
     });
 });
 
+
+
 /*Auth::routes();*/
 Route::get('authentication-failed', function () {
     $errors = [];
@@ -549,8 +554,17 @@ if (!$isGatewayPublished) {
             Route::any('pay', [PaytabsController::class, 'payment'])->name('pay');
             Route::any('callback', [PaytabsController::class, 'callback'])->name('callback');
             Route::any('response', [PaytabsController::class, 'response'])->name('response');
+
+
+
         });
     });
+
+Route::get('/payment/select-method', function () {
+    return view('payment.select-method');
+})->name('payment.select');
+
+Route::post('/payment/iframe', [PaymentController::class, 'showIframe'])->name('payment.showIframe');
 
 
 }
@@ -589,3 +603,4 @@ Route::post('/tryoto-webhook', [WebhookController::class, 'handleTryotoWebhook']
 Route::get('/order-tracking/{orderId}', [TryotoController::class, 'getOrderTracking']);
 Route::post('/test-order-creation', [TryotoController::class, 'testOrderCreation']);
 Route::get('/order/awb/{orderId}', [OrderController::class, 'getAWB'])->name('order.awb');
+

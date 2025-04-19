@@ -27,6 +27,11 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Redirector;
 use Illuminate\Support\Facades\Validator;
+use Paytabscom\Laravel_paytabs\Facades\Paypage;
+
+
+    
+use Illuminate\View\View;
 
 class PaymentController extends Controller
 {
@@ -450,4 +455,36 @@ class PaymentController extends Controller
             return redirect($redirect_link);
         }
     }
+
+
+
+    public function method(): View
+    {
+        return view('paytabs.select-method');
+    }
+    
+   
+    public function showIframe(Request $request)
+    {
+        $method = $request->payment_method ?? 'all';
+    
+        $pay = Paypage::sendPaymentCode($method)
+            ->setProfileID('161500') // Your Profile ID
+            ->setServerKey('S2J9BNBHHL-JKRK9HMDTT-G299DKJ62T') // Your Server Key
+            ->setCurrency('SAR')
+            ->setAmount(150.00)
+            ->setCustomerEmail('customer@example.com')
+            ->setCustomerPhone('0500000000')
+            ->setBillingAddress("John", "Doe", "Street 123", "Riyadh", "Riyadh", "12345", "SA")
+            ->setSiteURL(url('/'))
+            ->setReturnURL(route('payment.iframe.callback'))
+            ->setFramed(true)
+            ->create_pay_page();
+    
+        return view('paytabs.iframe', [
+            'iframe_url' => $pay->getTargetUrl()
+        ]);
+    }
+    
+
 }
