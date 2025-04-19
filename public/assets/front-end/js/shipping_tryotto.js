@@ -1,6 +1,7 @@
 const ShippingManager = {
 
     init() {
+        let originCity = document.querySelector('.origincity').value;
         let totalQuantity = document.getElementById("total_quantity").value;
      
         document.querySelectorAll(".shipping-form").forEach(form => {
@@ -14,24 +15,26 @@ const ShippingManager = {
      
             if (getShippingOptionsBtn) {
                 getShippingOptionsBtn.addEventListener("click", () => {
-                    this.fetchShippingOptions(cityInput, shippingOptionsContainer, proceedToPaymentBtn, cartGroupId ,totalQuantity);
+                    this.fetchShippingOptions(cityInput, originCity , shippingOptionsContainer, proceedToPaymentBtn, cartGroupId ,totalQuantity);
                 });
             }
         });
     },
     
-    async fetchShippingOptions(cityInput, shippingOptionsContainer, proceedToPaymentBtn, chosenShippingId ,totalQuantity) {
+    async fetchShippingOptions(cityInput,originCity , shippingOptionsContainer, proceedToPaymentBtn, chosenShippingId ,totalQuantity) {
+     
     
         const city = cityInput.value.trim();
         if (!city) {
             alert("Please enter a city name.");
             return;
         }
-
+// alert("City: " + city);
+// alert("originCity: " + originCity);
         try {
             const requestData = {
                 weight: "3",
-                originCity: "jaddah",
+                originCity: originCity,
                 destinationCity: city,
                 height: 30,
                 width: 30,

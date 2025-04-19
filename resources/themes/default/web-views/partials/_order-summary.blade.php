@@ -11,9 +11,14 @@
             @php($cart=\App\Utils\CartManager::get_cart(type: 'checked'))
             
             @foreach($cart as $item)
-            <p>From  <b>{{ $item->product->seller->city }}</b></p>
-            @endforeach
-
+            @if($loop->first)
+                <input type="hidden" name="origincity" class="origincity" value="{{ $item->product->seller->city ?? '' }}">
+            @endif
+        
+            <p>From <b>{{ $item->product->seller->city ?? 'N/A' }}</b></p>
+        @endforeach
+        
+        
             @php($cartGroupIds=\App\Utils\CartManager::get_cart_group_ids())
             @php($getShippingCost=\App\Utils\CartManager::get_shipping_cost(type: 'checked'))
             @php($getShippingCostSavedForFreeDelivery=\App\Utils\CartManager::get_shipping_cost_saved_for_free_delivery(type: 'checked'))

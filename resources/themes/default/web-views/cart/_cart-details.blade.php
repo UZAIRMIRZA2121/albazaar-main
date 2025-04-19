@@ -39,7 +39,7 @@
     $totalQuantity = collect($group)->where('is_checked', 1)->sum('quantity');
 ?>
 
-<input type="hidden" id="total_quantity" value="{{ $totalQuantity }}">
+
 
                 <div class="card __card cart_information __cart-table mb-3">
                         <?php
@@ -435,6 +435,7 @@
 
                 </div>
             @endforeach
+            <input type="hidden" id="total_quantity" value="{{ $totalQuantity }}">
         </div>
 
         @foreach($cart as $group_key => $group)
