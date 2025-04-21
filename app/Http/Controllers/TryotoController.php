@@ -20,20 +20,22 @@ class TryotoController extends Controller
 
     public function getShippingOptions(Request $request)
     {
-    
-        Log::info('Shipping options error: ' );
+
+        Log::info('Shipping options error: ');
         try {
             $validatedData = $request->validate([
-                'originCity' => 'nullable|string',
+                'originCity' => 'nullable|array', // change this line to accept array
+                'originCity.*' => 'string|nullable', // validate each item in the array
                 'destinationCity' => 'required|string',
                 'weight' => 'required',
                 'height' => 'nullable|numeric',
                 'width' => 'nullable|numeric',
-                'length' => 'nullable|numeric'
+                'length' => 'nullable|numeric',
             ]);
+        
 
             $response = $this->tryotoService->getDeliveryFees($validatedData);
-         
+
             return response()->json([
                 'success' => true,
                 'data' => $response
@@ -179,11 +181,11 @@ class TryotoController extends Controller
             Log::info('API Request:', ['data' => $orderData]);
             $response = $this->tryotoService->createOrder($orderData);
             Log::info('API Response:', ['response' => $response]);
-         
+
             // 4. Make the API call to Tryoto service
             $response = $this->tryotoService->createOrder($orderData);
 
-           
+
             // 5. Return a success response
             return response()->json([
                 'success' => true,
@@ -214,10 +216,10 @@ class TryotoController extends Controller
 
     public function testOrderCreation()
     {
-       
+
         try {
             $orderData = [
-             "orderId" => "test" . time() . rand(1000, 9999),
+                "orderId" => "test" . time() . rand(1000, 9999),
                 "pickupLocationCode" => "test",
                 "createShipment" => true,
                 "deliveryOptionId" => 2242,
@@ -257,7 +259,7 @@ class TryotoController extends Controller
                 ]
             ];
 
-          
+
 
             $response = $this->tryotoService->createOrder($orderData);
 
@@ -280,9 +282,9 @@ class TryotoController extends Controller
     }
     public function updateShippingOption(Request $request)
     {
-     
-     
-     
+
+
+
         // Validate the request
         $request->validate([
             'option_id' => 'required|integer',
@@ -294,18 +296,18 @@ class TryotoController extends Controller
         $price = $request->input('price');
         $service_name = $request->input('service_name');
         $cart_group_id = $request->input('chosen_shipping_id');
-        $totalQuantity = Cart::where('cart_group_id', $request->chosen_shipping_id)->where('is_checked' , 1)->sum('quantity');
+        $totalQuantity = Cart::where('cart_group_id', $request->chosen_shipping_id)->where('is_checked', 1)->sum('quantity');
 
         log::info($request->all());
-     
-        $originalPrice = $price  ; // Store the original price
+
+        $originalPrice = $price; // Store the original price
         $price *= 1.10; // Increase price by 10%
         $price = number_format($price, 2, '.', ''); // Format to 2 decimal places
-        
+
         $shippingCommission = number_format($price - $originalPrice, 2, '.', ''); // Calculate the commission
-    
+
         log::info($totalQuantity);
-     
+
         $cart = CartShipping::updateOrCreate(
             ['cart_group_id' => $cart_group_id], // Condition to check existence
             [
@@ -316,9 +318,9 @@ class TryotoController extends Controller
                 'shipping_comission' => $shippingCommission,
             ]
         );
-        
 
-        
+
+
         $chosenShipping = CartShipping::where('id', $request->chosen_shipping_id)->first();
 
         if ($chosenShipping) {
@@ -328,16 +330,16 @@ class TryotoController extends Controller
             $chosenShipping->service_name = $service_name;
             $chosenShipping->shipping_cost = $price;
             $chosenShipping->save();
-        
+
             // Explicitly call the relationship and fetch the first cart
             $cart = $chosenShipping->cart()->first();
-        
+
             if ($cart) {
                 $cart->update(['shipping_cost' => $price]);
             }
         }
-        
-      
+
+
 
         // Process the shipping option (store in session, DB, etc.)
         session(['selected_shipping_option' => $optionId, 'selected_shipping_price' => $price]);

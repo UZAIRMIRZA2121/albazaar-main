@@ -245,6 +245,7 @@ return [
         'Helper' => \App\Utils\Helpers::class,
         'Madzipper' => Madnest\Madzipper\Madzipper::class,
         'Excel' => Maatwebsite\Excel\Facades\Excel::class,
+        'Paypage' => Paytabscom\Laravel_paytabs\Facades\Paypage::class,
     ],
 
 ];

@@ -30,7 +30,6 @@ use Illuminate\Support\Facades\Validator;
 use Paytabscom\Laravel_paytabs\Facades\Paypage;
 
 
-    
 use Illuminate\View\View;
 
 class PaymentController extends Controller
@@ -126,7 +125,7 @@ class PaymentController extends Controller
         }
 
         $redirectLink = $this->getCustomerPaymentRequest($request, $orderAdditionalData);
-      
+
         if (in_array($request['payment_request_from'], ['app'])) {
             return response()->json([
                 'redirect_link' => $redirectLink,
@@ -206,7 +205,7 @@ class PaymentController extends Controller
 
     public function web_payment_success(Request $request)
     {
-        if($request->flag == 'success') {
+        if ($request->flag == 'success') {
             if (session()->has('payment_mode') && session('payment_mode') == 'app') {
                 return response()->json(['message' => 'Payment succeeded'], 200);
             } else {
@@ -215,11 +214,11 @@ class PaymentController extends Controller
                 session()->forget('newCustomerRegister');
                 return view(VIEW_FILE_NAMES['order_complete'], compact('isNewCustomerInSession'));
             }
-        }else{
-            if(session()->has('payment_mode') && session('payment_mode') == 'app'){
+        } else {
+            if (session()->has('payment_mode') && session('payment_mode') == 'app') {
                 return response()->json(['message' => 'Payment failed'], 403);
-            }else{
-                Toastr::error(translate('Payment_failed').'!');
+            } else {
+                Toastr::error(translate('Payment_failed') . '!');
                 return redirect(url('/'));
             }
         }
@@ -230,7 +229,7 @@ class PaymentController extends Controller
     {
         $additionalData = [
             'business_name' => getWebConfig(name: 'company_name'),
-            'business_logo' => getStorageImages(path: getWebConfig('company_web_logo'), type:'shop'),
+            'business_logo' => getStorageImages(path: getWebConfig('company_web_logo'), type: 'shop'),
             'payment_mode' => $request->has('payment_platform') ? $request['payment_platform'] : 'web',
         ];
 
@@ -462,15 +461,16 @@ class PaymentController extends Controller
     {
         return view('paytabs.select-method');
     }
-    
-   
+
+
+
     public function showIframe(Request $request)
     {
         $method = $request->payment_method ?? 'all';
-    
-        $pay = Paypage::sendPaymentCode($method)
-            ->setProfileID('161500') // Your Profile ID
-            ->setServerKey('S2J9BNBHHL-JKRK9HMDTT-G299DKJ62T') // Your Server Key
+
+        $pay = Paypage::sendPaymentCode('mada')
+            ->setProfileID('161500')
+            ->setServerKey('S2J9BNBHHL-JKRK9HMDTT-G299DKJ62T')
             ->setCurrency('SAR')
             ->setAmount(150.00)
             ->setCustomerEmail('customer@example.com')
@@ -480,11 +480,10 @@ class PaymentController extends Controller
             ->setReturnURL(route('payment.iframe.callback'))
             ->setFramed(true)
             ->create_pay_page();
-    
+
         return view('paytabs.iframe', [
             'iframe_url' => $pay->getTargetUrl()
         ]);
     }
-    
 
 }

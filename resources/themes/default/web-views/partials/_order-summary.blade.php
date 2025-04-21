@@ -10,13 +10,13 @@
             @php($totalDiscountOnProduct=0)
             @php($cart=\App\Utils\CartManager::get_cart(type: 'checked'))
             
-            @foreach($cart as $item)
-            @if($loop->first)
-                <input type="hidden" name="origincity" class="origincity" value="{{ $item->product->seller->city ?? '' }}">
-            @endif
-        
-            <p>From <b>{{ $item->product->seller->city ?? 'N/A' }}</b></p>
-        @endforeach
+            <?php foreach ($cart as $item): ?>
+            <?php
+                $city = $item->product->seller->city ?? '';
+            ?>
+            <input type="hidden" name="origincity[]" class="origincity" value="<?= htmlspecialchars($city) ?>">
+            <p>From <b><?= htmlspecialchars($city ?: 'N/A') ?></b></p>
+        <?php endforeach; ?>
         
         
             @php($cartGroupIds=\App\Utils\CartManager::get_cart_group_ids())

@@ -182,6 +182,7 @@ class ComposerStaticInit40a38a1437ad81a26fb793509859b2b1
             'PhpParser\\' => 10,
             'PhpOption\\' => 10,
             'PhpOffice\\PhpSpreadsheet\\' => 25,
+            'Paytabscom\\Laravel_paytabs\\' => 27,
             'ParagonIE\\ConstantTime\\' => 23,
             'PHPMailer\\PHPMailer\\' => 20,
         ),
@@ -629,6 +630,10 @@ class ComposerStaticInit40a38a1437ad81a26fb793509859b2b1
         'PhpOffice\\PhpSpreadsheet\\' => 
         array (
             0 => __DIR__ . '/..' . '/phpoffice/phpspreadsheet/src/PhpSpreadsheet',
+        ),
+        'Paytabscom\\Laravel_paytabs\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/paytabscom/laravel_paytabs/src',
         ),
         'ParagonIE\\ConstantTime\\' => 
         array (
@@ -1839,6 +1844,7 @@ class ComposerStaticInit40a38a1437ad81a26fb793509859b2b1
         'App\\Mail\\DigitalProductOtpVerificationMail' => __DIR__ . '/../..' . '/app/Mail/DigitalProductOtpVerificationMail.php',
         'App\\Mail\\EmailVerification' => __DIR__ . '/../..' . '/app/Mail/EmailVerification.php',
         'App\\Mail\\MaintenanceModeStartEmail' => __DIR__ . '/../..' . '/app/Mail/MaintenanceModeStartEmail.php',
+        'App\\Mail\\NotifySellerMail' => __DIR__ . '/../..' . '/app/Mail/NotifySellerMail.php',
         'App\\Mail\\OrderPlaced' => __DIR__ . '/../..' . '/app/Mail/OrderPlaced.php',
         'App\\Mail\\OrderReceivedNotifySeller' => __DIR__ . '/../..' . '/app/Mail/OrderReceivedNotifySeller.php',
         'App\\Mail\\PasswordResetMail' => __DIR__ . '/../..' . '/app/Mail/PasswordResetMail.php',
@@ -10723,6 +10729,12 @@ class ComposerStaticInit40a38a1437ad81a26fb793509859b2b1
         'PayPal\\Validation\\JsonValidator' => __DIR__ . '/..' . '/paypal/rest-api-sdk-php/lib/PayPal/Validation/JsonValidator.php',
         'PayPal\\Validation\\NumericValidator' => __DIR__ . '/..' . '/paypal/rest-api-sdk-php/lib/PayPal/Validation/NumericValidator.php',
         'PayPal\\Validation\\UrlValidator' => __DIR__ . '/..' . '/paypal/rest-api-sdk-php/lib/PayPal/Validation/UrlValidator.php',
+        'Paytabscom\\Laravel_paytabs\\Controllers\\PaytabsLaravelListenerApi' => __DIR__ . '/..' . '/paytabscom/laravel_paytabs/src/Controllers/PaytabsLaravelListenerApi.php',
+        'Paytabscom\\Laravel_paytabs\\Facades\\paypage' => __DIR__ . '/..' . '/paytabscom/laravel_paytabs/src/Facades/paypage.php',
+        'Paytabscom\\Laravel_paytabs\\PaypageServiceProvider' => __DIR__ . '/..' . '/paytabscom/laravel_paytabs/src/PaypageServiceProvider.php',
+        'Paytabscom\\Laravel_paytabs\\Services\\IpnRequest' => __DIR__ . '/..' . '/paytabscom/laravel_paytabs/src/Services/IpnRequest.php',
+        'Paytabscom\\Laravel_paytabs\\paypage' => __DIR__ . '/..' . '/paytabscom/laravel_paytabs/src/paypage.php',
+        'Paytabscom\\Laravel_paytabs\\paytabs_core' => __DIR__ . '/..' . '/paytabscom/laravel_paytabs/src/paytabs_core.php',
         'PharIo\\Manifest\\Application' => __DIR__ . '/..' . '/phar-io/manifest/src/values/Application.php',
         'PharIo\\Manifest\\ApplicationName' => __DIR__ . '/..' . '/phar-io/manifest/src/values/ApplicationName.php',
         'PharIo\\Manifest\\Author' => __DIR__ . '/..' . '/phar-io/manifest/src/values/Author.php',

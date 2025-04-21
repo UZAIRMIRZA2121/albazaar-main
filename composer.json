@@ -42,6 +42,7 @@
         "mpdf/mpdf": "^8.2",
         "nwidart/laravel-modules": "^10.0",
         "paypal/rest-api-sdk-php": "^1.6",
+        "paytabscom/laravel_paytabs": "^1.9",
         "phpmailer/phpmailer": "^6.9",
         "phpoffice/phpspreadsheet": "^1.29",
         "rap2hpoutre/fast-excel": "^5.3",
@@ -68,6 +69,8 @@
         "spatie/laravel-ignition": "^2.0"
     },
     "autoload": {
+
+
         "files": [
             "app/Utils/helpers.php",
             "app/Utils/theme-helpers.php",
@@ -97,7 +100,8 @@
             "App\\": "app/",
             "Modules\\": "Modules/",
             "Database\\Factories\\": "database/factories/",
-            "Database\\Seeders\\": "database/seeders/"
+            "Database\\Seeders\\": "database/seeders/",
+             "Paytabscom\\Laravel_paytabs\\": "vendor/paytabscom/laravel_paytabs/src/"
         }
     },
     "autoload-dev": {

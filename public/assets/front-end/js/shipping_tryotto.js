@@ -1,9 +1,16 @@
 const ShippingManager = {
 
     init() {
-        let originCity = document.querySelector('.origincity').value;
+        let sellerCity = document.querySelector('.origincity').value;
         let totalQuantity = document.getElementById("total_quantity").value;
-     
+        let originCity = [];
+
+        $('.origincity').each(function () {
+            originCity.push($(this).val());
+        });
+        
+        console.log("originCity:", originCity); // This will log the full array of city values
+        
         document.querySelectorAll(".shipping-form").forEach(form => {
             const cityInput = form.querySelector(".city-input");
             const getShippingOptionsBtn = form.querySelector(".get-shipping-options");
@@ -30,7 +37,7 @@ const ShippingManager = {
             return;
         }
 // alert("City: " + city);
-// alert("originCity: " + originCity);
+
         try {
             const requestData = {
                 weight: "3",
@@ -61,7 +68,7 @@ const ShippingManager = {
             console.log("Response data:", data.data.deliveryOptions);
 
             if (data.success) {
-            // alert(chosenShippingId);
+        
                 this.renderShippingOptions(data.data.deliveryOptions, shippingOptionsContainer, proceedToPaymentBtn, chosenShippingId , totalQuantity);
             } else {
                 throw new Error(data.message || "Failed to get shipping options");
@@ -71,7 +78,6 @@ const ShippingManager = {
             alert("Failed to fetch shipping options: " + error.message);
         }
     },
-
     renderShippingOptions(options, shippingOptionsContainer, proceedToPaymentBtn, chosenShippingId ,totalQuantity) {
         if (!options || options.length === 0) {
             shippingOptionsContainer.innerHTML =
@@ -91,16 +97,10 @@ const ShippingManager = {
                             <p class="card-text">
                     <strong>Total Price:</strong> 
                     <span class="price" data-id="${option.deliveryOptionId}">
-                    ${option.currency}  ${(option.price * 1.1 * totalQuantity).toFixed(2)}  <br>
+                    ${option.currency}  ${(option.totalPrice ).toFixed(2)}  <br>
                     
                     </span>
-                    <strong>Price/Product :</strong> ${(option.price * 1.1).toFixed(2)} ${option.currency} <br>
-                        <strong>Number of Products:</strong> ${totalQuantity} <br>
-
-
-                                <strong>Delivery Time:</strong> ${option.avgDeliveryTime}<br>
-                                ${option.maxFreeWeight ? `<strong>Max Free Weight:</strong> ${option.maxFreeWeight}kg<br>` : ""}
-                                ${option.codCharge ? `<strong>COD Charge:</strong> ${option.codCharge} ${option.currency}<br>` : ""}
+                                <strong>Actual price:</strong> ${option.price}<br>
                             </p>
                             <button class="btn btn-primary select-shipping" data-option-id="${option.deliveryOptionId}" data-chosenShipping-id="${chosenShippingId}">
                                 Select

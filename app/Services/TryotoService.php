@@ -183,49 +183,48 @@ class TryotoService
      */
     public function getDeliveryFees(array $data)
     {
-
-    
         try {
             // Get the checked cart items
             $cart = CartManager::get_cart(type: 'checked');
-            log::info('Cart items:', [
+            Log::info('Cart items:', [
                 'cart' => $cart,
-            ]); 
+            ]);
+
             // Validate cart and extract seller's cities
             $originCities = [];
+            $productsQtyByCity = [];
+
             foreach ($cart as $item) {
                 if ($item->product && $item->product->seller) {
-                    $originCities[] = $item->product->seller->city; // Store each seller's city in the array
+                    $city = $item->product->seller->city;
+                    $qty = $item->quantity ?? 1; // Default to 1 if qty is missing
+
+                    // Store city
+                    $originCities[] = $city;
+
+                    // Count total quantity by city
+                    if (!isset($productsQtyByCity[$city])) {
+                        $productsQtyByCity[$city] = 0;
+                    }
+
+                    $productsQtyByCity[$city] += $qty;
                 }
             }
-            // Log all seller cities outside the loop
-            // Ensure the city names are unique
-            $originCities = array_unique($originCities);
 
-            // Use the first seller's city as the origin city (or handle as needed)
+            $originCities = array_unique($originCities);
             $originCity = $originCities[0] ?? null;
 
             if (!$originCity) {
                 throw new \Exception('Seller city not found in cart items.');
             }
 
-            if (!$originCity) {
-                throw new \Exception('Seller city not found in cart items.');
-            }
-
             $destinationCity = $data['destinationCity'];
-            // Log the current origin city
-            Log::info('Cities for getDeliveryFees:', [
-                'destinationCity' => $destinationCity,
-            ]);
 
+            // Initialize array to hold all delivery companies
+            $allDeliveryCompanies = [];
+
+            // Loop through the origin cities to make the API requests
             foreach ($originCities as $cityname) {
-                // Log the current origin city
-                Log::info('Cities for getDeliveryFees:', [
-                    'originCity' => $cityname,
-                    'destinationCity' => $destinationCity,
-                ]);
-
                 try {
                     // Make API request for the current origin city
                     $endpoint = '/rest/v2/checkOTODeliveryFee';
@@ -238,52 +237,136 @@ class TryotoService
                             'height' => $data['height'] ?? 30,
                             'width' => $data['width'] ?? 30,
                             'length' => $data['length'] ?? 30,
-                            'totalDue' => $data['totalDue'] ?? 0, // Provide totalDue from $data or default
+                            'totalDue' => $data['totalDue'] ?? 0,
                         ]);
-                        
 
-                    // Log the API response
-                    Log::info('API Response for ' . $cityname . ':', $response->json());
-
-                    // Handle the response (e.g., store or process it)
                     if ($response->successful()) {
-                        // Process the successful response
                         $responseData = $response->json();
-                        // Add your logic here to handle the response data
+                        Log::info('API Response for ' . $cityname . ':', $responseData);
+
+                        // Store the delivery companies from the response
+                        $deliveryCompanies = $responseData['deliveryCompany'] ?? [];
+                        $allDeliveryCompanies[] = $deliveryCompanies; // Store entire company data, not just names
                     } else {
-                        // Log the error if the request fails
-                        Log::error('Failed API Response for ' . $cityname . ':', $response->body());
+                        Log::error('Failed API Response for ' . $cityname . ': ' . $response->body());
                     }
                 } catch (\Exception $e) {
-                    // Log any exceptions that occur during the API request
                     Log::error('Error making API request for ' . $cityname . ': ' . $e->getMessage());
                 }
             }
 
+            // Check if we have multiple origin cities
+            // If multiple cities, intersect by deliveryOptionId
+            if (count($allDeliveryCompanies) > 1) {
+                // Step 1: Index companies by deliveryOptionId for each city
+                $indexedCompanies = array_map(function ($companies) {
+                    $indexed = [];
+                    foreach ($companies as $company) {
+                        $indexed[$company['deliveryOptionId']] = $company;
+                    }
+                    return $indexed;
+                }, $allDeliveryCompanies);
 
-            // Handle API response
-            if (!$response->successful()) {
-                Log::error('Failed Response: ' . $response->body());
-                throw new \Exception('Failed to get delivery fees: ' . $response->body());
+                // Step 2: Find common deliveryOptionIds
+                $commonIds = array_keys(array_intersect_key(...$indexedCompanies));
+
+                // Step 3: Collect and sum common delivery company details
+                $commonDeliveryCompanies = [];
+                $summedDeliveryOptions = [];
+
+                foreach ($commonIds as $id) {
+                    $sumPrice = 0;
+                    // Loop through each city and apply the city-specific price
+                    foreach ($indexedCompanies as $index => $companies) {
+                        $cityName = $originCities[$index] ?? null;
+                        $qty = $productsQtyByCity[$cityName] ?? 1; // Default to 1 if qty is missing
+                        $price = $companies[$id]['price'] ?? 0;
+                        log::info('Price for ' . $cityName . ':', [
+                            'price' => $price,
+                            'qty' => $qty,
+                        ]);
+
+                        // Multiply price by quantity for the respective city
+                        $sumPrice += $price * $qty;
+                    }
+
+                    // Take base company info (e.g., name, logo) from the first city's response
+                    $baseCompany = $indexedCompanies[0][$id];
+                    // Take base company info (e.g., name, logo) from the first city's response
+                    $baseCompany = $indexedCompanies[0][$id];
+                    $baseCompany['totalPrice'] = round($sumPrice * 1.1); // Apply 10% increase
+
+
+                    // Store summed delivery option
+                    $summedDeliveryOptions[] = $baseCompany;
+                }
+
+                $commonDeliveryCompanies = $summedDeliveryOptions;
+            } else {
+                // If multiple cities, intersect by deliveryOptionId
+                if (count($allDeliveryCompanies) > 1) {
+                    // Step 1: Index companies by deliveryOptionId for each city
+                    $indexedCompanies = array_map(function ($companies) {
+                        $indexed = [];
+                        foreach ($companies as $company) {
+                            $indexed[$company['deliveryOptionId']] = $company;
+                        }
+                        return $indexed;
+                    }, $allDeliveryCompanies);
+
+                    // Step 2: Find common deliveryOptionIds
+                    $commonIds = array_keys(array_intersect_key(...$indexedCompanies));
+
+                    // Step 3: Collect and sum common delivery company details
+                    $commonDeliveryCompanies = [];
+                    $summedDeliveryOptions = [];
+
+                    foreach ($commonIds as $id) {
+                        $sumPrice = 0;
+                        // Loop through each city and apply the city-specific price
+                        foreach ($indexedCompanies as $index => $companies) {
+                            $cityName = $originCities[$index] ?? null;
+                            $qty = $productsQtyByCity[$cityName] ?? 1; // Default to 1 if qty is missing
+                            $price = $companies[$id]['price'] ?? 0;
+                            log::info('Price for ' . $cityName . ':', [
+                                'price' => $price,
+                                'qty' => $qty,
+                            ]);
+
+                            // Multiply price by quantity for the respective city
+                            $sumPrice += $price * $qty;
+                        }
+
+                        // Take base company info (e.g., name, logo) from the first city's response
+                        $baseCompany = $indexedCompanies[0][$id];
+                        // Take base company info (e.g., name, logo) from the first city's response
+                        $baseCompany = $indexedCompanies[0][$id];
+                        $baseCompany['totalPrice'] = round($sumPrice * 1.1); // Apply 10% increase
+
+
+                        // Store summed delivery option
+                        $summedDeliveryOptions[] = $baseCompany;
+                    }
+
+                    $commonDeliveryCompanies = $summedDeliveryOptions;
+                } else {
+                    // If only one origin city, simply sum the price by the quantity of products in that city
+                    $commonDeliveryCompanies = $allDeliveryCompanies[0] ?? [];
+                    foreach ($commonDeliveryCompanies as &$company) {
+                        $cityQty = $productsQtyByCity[$originCity] ?? 1;
+                        $company['totalPrice'] = round((($company['price'] ?? 0) * $cityQty) * 1.1); // Apply 10% increase
+                    }
+
+                }
             }
 
-            // Filter delivery companies
-            $allowedKeywords = ['Sobol', 'Aramex', 'SMSA', 'J&T'];
-            $deliveryCompanies = $response->json()['deliveryCompany'] ?? [];
-            $filteredCompanies = array_filter($deliveryCompanies, function ($company) use ($allowedKeywords) {
-                foreach ($allowedKeywords as $keyword) {
-                    if (stripos($company['deliveryCompanyName'], $keyword) !== false) {
-                        return true;
-                    }
-                }
-                return false;
-            });
+            // Log the complete data of common delivery companies
+            Log::info('Common Delivery Companies Data:', $commonDeliveryCompanies);
 
-            // Log::info('Filtered Delivery Options:', array_values($filteredCompanies));
-
+            // Return the complete delivery options without filtering
             return [
                 'success' => true,
-                'deliveryOptions' => array_values($deliveryCompanies), // Re-index array
+                'deliveryOptions' => $commonDeliveryCompanies, // Return complete data
             ];
 
         } catch (\Exception $e) {
@@ -292,6 +375,7 @@ class TryotoService
         }
     }
 
+
     // public function getDeliveryFees(array $data)
     // {
     //     Log::info('Tryoto Service Configuration:', [
@@ -299,10 +383,10 @@ class TryotoService
     //         'refresh_token' => config('services.tryoto.refresh_token'),
     //         'base_url' => config('services.tryoto.base_url'),
     //     ]);
-    
+
     //     try {
     //         $cart = CartManager::get_cart(type: 'checked');
-    
+
     //         // Extract unique seller cities
     //         $originCities = [];
     //         foreach ($cart as $item) {
@@ -312,18 +396,18 @@ class TryotoService
     //         }
     //         $originCities = array_unique($originCities);
     //         $destinationCity = $data['destinationCity'];
-    
+
     //         Log::info('Cities for getDeliveryFees:', [
     //             'destinationCity' => $destinationCity,
     //         ]);
-    
+
     //         // Define allowed delivery company keywords
     //         $allowedKeywords = ['SPL online', 'Aramex', 'SMSA'];
     //         $allFilteredCompanies = [];
-    
+
     //         foreach ($originCities as $cityname) {
     //             Log::info('Origin City:', ['originCity' => $cityname]);
-    
+
     //             try {
     //                 $endpoint = '/rest/v2/checkOTODeliveryFee';
     //                 $response = Http::withoutVerifying()
@@ -337,13 +421,13 @@ class TryotoService
     //                         'length' => $data['length'] ?? 30,
     //                         'totalDue' => $data['totalDue'] ?? 0,
     //                     ]);
-    
+
     //                 Log::info('API Response for ' . $cityname . ':', $response->json());
-    
+
     //                 if ($response->successful()) {
     //                     $responseData = $response->json();
     //                     $deliveryCompanies = $responseData['deliveryCompany'] ?? [];
-    
+
     //                     // Filter only allowed companies
     //                     $filteredCompanies = array_filter($deliveryCompanies, function ($company) use ($allowedKeywords) {
     //                         foreach ($allowedKeywords as $keyword) {
@@ -353,10 +437,10 @@ class TryotoService
     //                         }
     //                         return false;
     //                     });
-    
+
     //                     // Merge into allFilteredCompanies
     //                     $allFilteredCompanies = array_merge($allFilteredCompanies, array_values($filteredCompanies));
-    
+
     //                 } else {
     //                     Log::error('Failed API Response for ' . $cityname . ':', ['body' => $response->body()]);
     //                 }
@@ -364,18 +448,18 @@ class TryotoService
     //                 Log::error('Error making API request for ' . $cityname . ': ' . $e->getMessage());
     //             }
     //         }
-    
+
     //         return [
     //             'success' => true,
     //             'deliveryOptions' => $allFilteredCompanies,
     //         ];
-    
+
     //     } catch (\Exception $e) {
     //         Log::error('Error getting delivery fees: ' . $e->getMessage());
     //         throw $e;
     //     }
     // }
-    
+
 
 
     /**
