@@ -56,11 +56,13 @@
                                     {{ translate('phone_number') }}
                                     <span class="input-required-icon">*</span>
                                 </label>
-                                <input class="form-control text-align-direction phone-input-with-country-picker"
-                                       type="tel"  value="{{ old('phone') }}"
-                                       placeholder="{{ translate('enter_phone_number') }}" required>
-
-                                <input type="hidden" class="country-picker-phone-number w-50" name="phone" readonly>
+                                <input id="phone" class="form-control "
+                                type="tel"
+                                name="phone"
+                                value="{{ old('phone', '+966') }}"
+                                placeholder="{{ translate('enter_phone_number') }}"
+                                required>
+                         
 
                             </div>
                         </div>
@@ -192,6 +194,49 @@
         </div>
     </div>
 @endsection
+<script>
+    const phoneInput = document.getElementById("phone");
+    const prefix = "+966";
+
+    // Set prefix if input is empty or doesn't already start with it
+    if (!phoneInput.value.startsWith(prefix)) {
+        phoneInput.value = prefix;
+    }
+
+    phoneInput.addEventListener("focus", () => {
+        if (!phoneInput.value.startsWith(prefix)) {
+            phoneInput.value = prefix;
+        }
+        // Move cursor to end
+        setTimeout(() => {
+            phoneInput.setSelectionRange(phoneInput.value.length, phoneInput.value.length);
+        }, 0);
+    });
+
+    phoneInput.addEventListener("keydown", function(e) {
+        // Prevent deleting the prefix
+        if ((phoneInput.selectionStart <= prefix.length) &&
+            (e.key === "Backspace" || e.key === "ArrowLeft")) {
+            e.preventDefault();
+        }
+
+        // Allow only numbers after the prefix
+        const allowedKeys = ["Backspace", "ArrowLeft", "ArrowRight", "Tab"];
+        if (!allowedKeys.includes(e.key) && !/^[0-9]$/.test(e.key)) {
+            if (phoneInput.selectionStart >= prefix.length) {
+                e.preventDefault();
+            }
+        }
+    });
+
+    phoneInput.addEventListener("input", function () {
+        if (!phoneInput.value.startsWith(prefix)) {
+            const numbersOnly = phoneInput.value.replace(/\D/g, '');
+            phoneInput.value = prefix + numbersOnly;
+        }
+    });
+</script>
+
 
 @push('script')
     @if(isset($recaptcha) && $recaptcha['status'] == 1)
