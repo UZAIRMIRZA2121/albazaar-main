@@ -597,7 +597,8 @@ use App\Http\Controllers\WebhookController;
 use App\Http\Controllers\Shop\OrderController;
 
 Route::post('/update-shipping-option', [TryotoController::class, 'updateShippingOption'])->name('shipping.update');
-Route::post('/shipping-options', [TryotoController::class, 'getShippingOptions']);
+Route::post('/shipping-options', [TryotoController::class, 'getShippingOptions'])->name('shipping.options');
+
 Route::post('/create-order', [TryotoController::class, 'createOrderWithShipping']);
 Route::post('/tryoto-webhook', [WebhookController::class, 'handleTryotoWebhook']);
 Route::get('/order-tracking/{orderId}', [TryotoController::class, 'getOrderTracking']);
