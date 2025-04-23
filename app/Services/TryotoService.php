@@ -186,9 +186,7 @@ class TryotoService
         try {
             // Get the checked cart items
             $cart = CartManager::get_cart(type: 'checked');
-            Log::info('Cart items:', [
-                'cart' => $cart,
-            ]);
+        
 
             // Validate cart and extract seller's cities
             $originCities = [];
@@ -223,6 +221,11 @@ class TryotoService
             // Initialize array to hold all delivery companies
             $allDeliveryCompanies = [];
 
+            log::info(' refresh_token:', [
+               
+
+                'refresh_token' => $this->refreshToken,
+            ]);
             // Loop through the origin cities to make the API requests
             foreach ($originCities as $cityname) {
                 try {
