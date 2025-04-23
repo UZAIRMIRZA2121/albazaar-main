@@ -21,7 +21,7 @@ class TryotoController extends Controller
     public function getShippingOptions(Request $request)
     {
 
-        Log::info('Shipping options error: ');
+      
         try {
             $validatedData = $request->validate([
                 'originCity' => 'nullable|array', // change this line to accept array

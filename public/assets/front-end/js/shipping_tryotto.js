@@ -50,9 +50,7 @@ const ShippingManager = {
 
             console.log("Sending request with data:", requestData);
 
-            const shippingOptionsUrl = "{{ route('shipping.options') }}";
-
-            const response = await fetch(shippingOptionsUrl, {
+            const response = await fetch("shipping-options", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
