@@ -221,11 +221,12 @@ class TryotoService
             // Initialize array to hold all delivery companies
             $allDeliveryCompanies = [];
 
-            log::info(' refresh_token:', [
-               
-
-                'refresh_token' => $this->refreshToken,
+            log::info('accessToken accessToken accessToken:', [
+                'accessToken' => $this->accessToken,
+                'baseUrl' => $this->baseUrl,
+                
             ]);
+
             // Loop through the origin cities to make the API requests
             foreach ($originCities as $cityname) {
                 try {
