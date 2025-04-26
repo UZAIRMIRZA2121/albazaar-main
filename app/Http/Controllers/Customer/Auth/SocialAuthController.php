@@ -51,8 +51,8 @@ class SocialAuthController extends Controller
                             "services.{$service}.client_id" => $socialLogin['client_id'],
                             "services.{$service}.client_secret" => $socialLogin['client_secret'],
                             "services.{$service}.redirect" => $service === 'google'
-                                ? 'https://msonsmedicareservices.store/customer/auth/login/google/callback'
-                                : 'https://msonsmedicareservices.store/customer/auth/login/facebook/callback',
+                                ? 'https://albazar.sa/customer/auth/login/google/callback'
+                                : 'https://albazar.sa/customer/auth/login/facebook/callback',
                         ]);
 
                     }
@@ -81,8 +81,8 @@ class SocialAuthController extends Controller
                             "services.{$service}.client_id" => $socialLogin['client_id'],
                             "services.{$service}.client_secret" => $socialLogin['client_secret'],
                             "services.{$service}.redirect" => $service === 'google'
-                                ? 'https://msonsmedicareservices.store/customer/auth/login/google/callback'
-                                : 'https://msonsmedicareservices.store/customer/auth/login/facebook/callback',
+                                ? 'https://albazar.sa/customer/auth/login/google/callback'
+                                : 'https://albazar.sa/customer/auth/login/facebook/callback',
                         ]);
 
                     }
