@@ -77,6 +77,7 @@ class UserProfileController extends Controller
     {
         $country_restrict_status = getWebConfig(name: 'delivery_country_restriction');
         $customerDetail = User::where('id', auth('customer')->id())->first();
+        // dd(VIEW_FILE_NAMES['user_account']);
         return view(VIEW_FILE_NAMES['user_account'], compact('customerDetail'));
 
     }

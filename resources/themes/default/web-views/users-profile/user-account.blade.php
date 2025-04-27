@@ -86,14 +86,24 @@
                                         </label>
                                         <div class="position-relative d-flex align-items-center">
 
-                                        @php($userCountryAndPhone = ($customerDetail['country_code'] ? '+'.$customerDetail['country_code'] : '').$customerDetail['phone'])
-                                        <input class="form-control phone-input-with-country-picker" id="phone" type="text"
-                                               value="{{ $userCountryAndPhone }}" placeholder="{{ translate('enter_phone_number') }}" required
-                                            {{ $customerDetail['is_phone_verified'] ? 'disabled' : '' }}>
-
-                                        <div class="">
-                                            <input type="hidden" class="country-picker-phone-number w-50" name="phone" value="{{ $customerDetail['phone'] }}" readonly>
+                                            @php
+                                            $userPhone = $customerDetail['phone'] ?? '';
+                                        @endphp
+                                        
+                                        <div class="form-group">
+                                            <input class="form-control" 
+                                                   id="phone" 
+                                                   type="text"
+                                                   value="{{ $userPhone }}" 
+                                                   placeholder="{{ translate('enter_phone_number') }}" 
+                                                   required
+                                                   {{ $customerDetail['is_phone_verified'] ? 'disabled' : '' }}
+                                                   pattern="[5][0-9]{8}" 
+                                                   maxlength="9">
+                                        
+                                            <input type="hidden" class="country-picker-phone-number w-50" name="phone" value="{{ $userPhone }}" readonly>
                                         </div>
+                                        
 
                                         @if($customerDetail['phone'] && getLoginConfig(key: 'phone_verification'))
                                             @if($customerDetail['is_phone_verified'])
