@@ -17,7 +17,9 @@
 
 @section('content')
     <div class="container mt-3 rtl px-0 px-md-3 text-align-direction" id="cart-summary">
+        
         @include(VIEW_FILE_NAMES['products_cart_details_partials'])
+
     </div>
 
     <span id="get-cart-select-cart-items" data-route="{{ route('cart.select-cart-items') }}"></span>

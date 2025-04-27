@@ -88,7 +88,7 @@ const ShippingManager = {
         shippingOptionsContainer.innerHTML = `
             <div class="row">
                 ${options.map(option => `
-                    <div class="shipping-option card mb-3 flex-shrink-0 col-6">
+                    <div class="shipping-option card mb-3 flex-shrink-0 col-md-6 col-sm-12" data-option-id="${option.deliveryOptionId}">
                         <div class="card-body">
                             <div class="d-flex align-items-center mb-2">
                                 ${option.logo ? `<img src="${option.logo}" alt="${option.deliveryCompanyName}" height="40" width="40" class="me-2">` : ""}
@@ -100,7 +100,7 @@ const ShippingManager = {
                     ${option.currency}  ${(option.totalPrice ).toFixed(2)}  <br>
                     
                     </span>
-                                <strong>Actual price:</strong> ${option.price}<br>
+                       
                             </p>
                             <button class="btn btn-primary select-shipping" data-option-id="${option.deliveryOptionId}" data-chosenShipping-id="${chosenShippingId}">
                                 Select

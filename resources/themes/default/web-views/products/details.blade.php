@@ -917,14 +917,14 @@
                             {{translate('add_to_cart')}}
                         </button>
                     @else
-                        <button
+                        {{-- <button
                             class="btn btn-secondary btn-sm btn-gap-{{Session::get('direction') === "rtl" ? 'left' : 'right'}} action-buy-now-this-product"
                             type="button"
                             data-auth-status="{{($guestCheckout == 1 || Auth::guard('customer')->check() ? 'true':'false')}}"
                             data-route="{{ route('shop-cart') }}"
                         >
                             <span class="string-limit">{{translate('buy_now')}}</span>
-                        </button>
+                        </button> --}}
                         <button
                             class="btn btn--primary btn-sm string-limit btn-gap-{{Session::get('direction') === "rtl" ? 'left' : 'right'}} action-add-to-cart-form"
                             type="button">
