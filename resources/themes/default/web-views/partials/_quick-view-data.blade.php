@@ -342,13 +342,13 @@
                                 {{translate('add_to_cart')}}
                             </button>
                         @else
-                            <button class="btn btn-secondary action-buy-now-this-product"
+                            {{-- <button class="btn btn-secondary action-buy-now-this-product"
                                 type="button"
                                 data-auth-status="{{($guestCheckout == 1 || Auth::guard('customer')->check() ? 'true':'false')}}"
                                 data-route="{{ route('shop-cart') }}"
                             >
                                 {{translate('buy_now')}}
-                            </button>
+                            </button> --}}
                             <button class="btn btn--primary string-limit action-add-to-cart-form" type="button" data-update-text="{{ translate('update_cart') }}" data-add-text="{{ translate('add_to_cart') }}">
                                 {{translate('add_to_cart')}}
                             </button>
