@@ -77,21 +77,11 @@
                                                         </div>
                                                         <div class="col-sm-6">
                                                             <div class="form-group">
-                                                                <label>{{ translate('phone') }}
+                                                                <label>{{ translate('phone')}}
                                                                     <span class="text-danger">*</span>
                                                                 </label>
-                                                                <div class="input-group">
-                                                                    <div class="input-group-prepend">
-                                                                        <span class="input-group-text">+966</span>
-                                                                    </div>
-                                                                    <input type="text" 
-                                                                        class="form-control" 
-                                                                        id="billing_phone" 
-                                                                        name="billing_phone" 
-                                                                        placeholder="5XXXXXXXX" 
-                                                                        pattern="[5][0-9]{8}" 
-                                                                       >
-                                                                </div>
+                                                                <input type="tel" class="form-control " name="phone" id="phone" {{$shippingAddresses->count()==0?'required':''}}>
+                                                          
                                                             </div>
                                                         </div>
                                                         @if(!auth('customer')->check())
@@ -115,7 +105,7 @@
                                                                 </select>
                                                             </div>
                                                         </div>
-                                                        {{-- <div class="col-12">
+                                                        <div class="col-12">
                                                             <div class="form-group">
                                                                 <label>{{ translate('country')}}
                                                                     <span class="text-danger">*</span></label>
@@ -127,9 +117,7 @@
                                                                     @endforelse
                                                                 </select>
                                                             </div>
-                                                        </div> --}}
-                                                        <input type="hidden" name="country" id="country" value="Saudi Arabia" class="form-control">
-
+                                                        </div>
                                                         <div class="col-6">
                                                             <div class="form-group">
                                                                 <label>{{ translate('city')}}<span  class="text-danger">*</span></label>
@@ -314,24 +302,14 @@
                                                         </div>
                                                         <div class="col-sm-6">
                                                             <div class="form-group">
-                                                                <label>{{ translate('phone') }}
+                                                                <label>{{ translate('phone')}}
                                                                     <span class="text-danger">*</span>
                                                                 </label>
-                                                                <div class="input-group">
-                                                                    <div class="input-group-prepend">
-                                                                        <span class="input-group-text">+966</span>
-                                                                    </div>
-                                                                    <input type="text" 
-                                                                        class="form-control" 
-                                                                        id="billing_phone" 
-                                                                        name="billing_phone" 
-                                                                        placeholder="5XXXXXXXX" 
-                                                                        pattern="[5][0-9]{8}" 
-                                                                        {{ $billingAddresses->count() == 0 ? 'required' : '' }}>
-                                                                </div>
+                                                                <input type="text" class="form-control " name="billing_phone"
+                                                                    id="billing_phone" {{ $billingAddresses->count()==0 ? 'required' : '' }}>
+                                                            
                                                             </div>
                                                         </div>
-                                                        
                                                         @if(!auth('customer')->check())
                                                             <div class="col-sm-12">
                                                                 <div class="form-group">
@@ -353,7 +331,7 @@
                                                                 </select>
                                                             </div>
                                                         </div>
-                                                        {{-- <div class="col-12">
+                                                        <div class="col-12">
                                                             <div class="form-group">
                                                                 <label>{{ translate('country')}}<span class="text-danger">*</span></label>
                                                                 <select name="billing_country" id="" class="form-control selectpicker" data-live-search="true" id="billing_country">
@@ -362,9 +340,7 @@
                                                                     @endforeach
                                                                 </select>
                                                             </div>
-                                                        </div> --}}
-                                                        <input type="hidden" name="billing_country" id="billing_country" value="Saudi Arabia" class="form-control">
-
+                                                        </div>
                                                         <div class="col-6">
                                                             <div class="form-group">
                                                                 <label for="exampleInputEmail1">{{ translate('city')}}<span

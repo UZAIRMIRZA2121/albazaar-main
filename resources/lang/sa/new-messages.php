@@ -8599,4 +8599,5 @@ return [
 	"Select Shupping" => "Select Shupping",
 	"tax_includdddddddddded" => "Tax includdddddddddded",
 	"ssss" => "Ssss",
+	"The_phone_number_must_be_at_least_4_characters" => "The phone number must be at least 4 characters",
 ];
