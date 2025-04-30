@@ -136,11 +136,11 @@
                     </form>
                     <div class="d-flex justify-content-center my-3 gap-2">
                         <a class="d-block" href="{{ route('vendor.auth.login.google')}}">
-                            <img src="https://msonsmedicareservices.store/public/assets/front-end/img/icons/google.png"
+                            <img src="https://albazar.sa/public/assets/front-end/img/icons/google.png"
                                 alt="Google">
                         </a>
                         <a class="d-block" href="{{ route('vendor.auth.login.facebook')}}">
-                            <img src="https://msonsmedicareservices.store/public/assets/front-end/img/icons/facebook.png"
+                            <img src="https://albazar.sa/public/assets/front-end/img/icons/facebook.png"
                                 alt="Facebook">
                         </a>
                     </div>

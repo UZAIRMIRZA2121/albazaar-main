@@ -49,8 +49,8 @@ use App\Http\Controllers\Payment_Methods\PaypalPaymentController;
 use App\Http\Controllers\Payment_Methods\StripePaymentController;
 use App\Http\Controllers\Payment_Methods\SslCommerzPaymentController;
 use Laravel\Socialite\Facades\Socialite;
-
-
+// https://albazar.sa/storage/banner/2025-04-30-6811f8d917a70.webp
+// https://albazar.sa/storage/banner/2025-03-07-67cb4b908e4c1.webp
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -61,26 +61,26 @@ use Laravel\Socialite\Facades\Socialite;
 | be assigned to the "web" middleware group. Make something great!
 |
 */
-use Carbon\Carbon;
-use Illuminate\Support\Facades\Config;
-Route::get('/check-time', function () {
-    return [
-        'app_config_timezone' => config('app.timezone'),
-        'php_timezone' => date_default_timezone_get(),
-        'carbon_now' => Carbon::now()->format('Y-m-d H:i:s'),
-        'php_now' => date('Y-m-d H:i:s'),
-    ];
+// use Carbon\Carbon;
+// use Illuminate\Support\Facades\Config;
+// Route::get('/check-time', function () {
+//     return [
+//         'app_config_timezone' => config('app.timezone'),
+//         'php_timezone' => date_default_timezone_get(),
+//         'carbon_now' => Carbon::now()->format('Y-m-d H:i:s'),
+//         'php_now' => date('Y-m-d H:i:s'),
+//     ];
     
-});
-Route::get('/phpinfo', function () {
-    phpinfo();
-});
-use Illuminate\Support\Facades\Artisan;
+// });
+// Route::get('/phpinfo', function () {
+//     phpinfo();
+// });
+// use Illuminate\Support\Facades\Artisan;
 
-Route::get('/create-storage-link', function () {
-    Artisan::call('storage:link');
-    return 'Storage link created successfully!';
-});
+// Route::get('/create-storage-link', function () {
+//     Artisan::call('storage:link');
+//     return 'Storage link created successfully!';
+// });
 
 
 
