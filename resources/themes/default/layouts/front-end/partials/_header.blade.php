@@ -313,9 +313,10 @@
                         <li class="nav-item dropdown d-none d-md-block {{ request()->is('/') ? 'active' : '' }}">
                             <a class="nav-link" href="{{ route('home') }}">{{ translate('home') }}</a>
                         </li>
-                        <li class="nav-item dropdown d-none d-md-block {{ request()->is('/') ? 'active' : '' }}">
-                            <a class="nav-link" href="#new-arrival-section">{{ translate('New Arrivals') }}</a>
+                        <li class="nav-item dropdown d-none d-md-block {{ request()->is('/') || request()->routeIs('home') ? 'active' : '' }}">
+                            <a class="nav-link" href="{{ route('home') }}#new-arrival-section">{{ translate('New Arrivals') }}</a>
                         </li>
+                        
                         @if ($web_config['featured_deals'] && count($web_config['featured_deals']) > 0)
                         <li class="nav-item dropdown d-none d-md-block {{ request()->is('/') ? 'active' : '' }}">
                             <a class="nav-link" href="#featured_deal">{{ translate('Featured Deal') }}</a>

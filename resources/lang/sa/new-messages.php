@@ -8600,4 +8600,6 @@ return [
 	"tax_includdddddddddded" => "Tax includdddddddddded",
 	"ssss" => "Ssss",
 	"The_phone_number_must_be_at_least_4_characters" => "The phone number must be at least 4 characters",
+	"add_fdfsdfto_cart" => "Add fdfsdfto cart",
+	"shop_unavailable" => "Shop unavailable",
 ];

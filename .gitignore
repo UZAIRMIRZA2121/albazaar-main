@@ -5,7 +5,6 @@
 /storage/*.key
 /storage/app/*
 /storage/log/*
-/resources/lang/*
 .vscode
 .idea
 .env

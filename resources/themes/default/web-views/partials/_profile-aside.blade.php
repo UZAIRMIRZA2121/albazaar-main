@@ -140,7 +140,7 @@
                 </div>
             </div>
             <div>
-                <div class="widget-title">
+                {{-- <div class="widget-title">
                     <a class="{{(Request::is('account-ticket*') || Request::is('support-ticket*'))?'active-menu':''}}"
                        href="{{ route('account-tickets') }}">
                     <span>
@@ -153,7 +153,7 @@
                         {{translate('support_ticket')}}
                     </span>
                     </a>
-                </div>
+                </div> --}}
             </div>
 
             @if ($web_config['ref_earning_status'])

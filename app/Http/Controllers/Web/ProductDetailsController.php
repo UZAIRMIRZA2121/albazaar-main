@@ -23,6 +23,7 @@ use App\Traits\ProductTrait;
 use App\Utils\Helpers;
 use App\Utils\ProductManager;
 use Brian2694\Toastr\Facades\Toastr;
+use Carbon\Carbon;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Arr;
@@ -33,18 +34,17 @@ class ProductDetailsController extends Controller
     use ProductTrait;
 
     public function __construct(
-        private readonly ProductRepositoryInterface        $productRepo,
-        private readonly WishlistRepository                $wishlistRepo,
-        private readonly ReviewRepositoryInterface         $reviewRepo,
-        private readonly OrderDetailRepositoryInterface    $orderDetailRepo,
-        private readonly DealOfTheDayRepository            $dealOfTheDayRepo,
+        private readonly ProductRepositoryInterface $productRepo,
+        private readonly WishlistRepository $wishlistRepo,
+        private readonly ReviewRepositoryInterface $reviewRepo,
+        private readonly OrderDetailRepositoryInterface $orderDetailRepo,
+        private readonly DealOfTheDayRepository $dealOfTheDayRepo,
         private readonly ProductCompareRepositoryInterface $compareRepo,
-        private readonly ProductTagRepositoryInterface     $productTagRepo,
-        private readonly TagRepositoryInterface            $tagRepo,
-        private readonly SellerRepositoryInterface         $sellerRepo,
-        private readonly ProductService                    $productService,
-    )
-    {
+        private readonly ProductTagRepositoryInterface $productTagRepo,
+        private readonly TagRepositoryInterface $tagRepo,
+        private readonly SellerRepositoryInterface $sellerRepo,
+        private readonly ProductService $productService,
+    ) {
     }
 
     /**
@@ -64,7 +64,7 @@ class ProductDetailsController extends Controller
 
     public function getDefaultTheme(string $slug): View|RedirectResponse
     {
-   
+
         $product = $this->productRepo->getWebFirstWhereActive(
             params: ['slug' => $slug, 'customer_id' => Auth::guard('customer')->user()->id ?? 0],
             relations: ['seoInfo', 'digitalVariation', 'reviews', 'seller.shop', 'digitalProductAuthors.author', 'digitalProductPublishingHouse.publishingHouse']
@@ -80,7 +80,8 @@ class ProductDetailsController extends Controller
                 orderBy: ['id' => 'desc'],
                 filters: ['product_id' => $product['id']],
                 relations: ['reply'],
-                dataLimit: 2, offset: 1
+                dataLimit: 2,
+                offset: 1
             );
 
             $firstVariationQuantity = $product['current_stock'];
@@ -142,11 +143,51 @@ class ProductDetailsController extends Controller
             $inHouseTemporaryClose = $product['added_by'] == 'admin' ? $temporaryClose['status'] : false;
 
             $previewFileInfo = getFileInfoFromURL(url: $product?->preview_file_full_url['path']);
-// dd(VIEW_FILE_NAMES['products_details']);
-            return view(VIEW_FILE_NAMES['products_details'], compact('product', 'countWishlist', 'countOrder', 'relatedProducts',
-                'dealOfTheDay', 'currentDate', 'sellerVacationStartDate', 'sellerVacationEndDate', 'sellerTemporaryClose',
-                'inHouseVacationStartDate', 'inHouseVacationEndDate', 'inHouseVacationStatus', 'inHouseTemporaryClose', 'overallRating',
-                'wishlistStatus', 'productReviews', 'rating', 'totalReviews', 'productsForReview', 'moreProductFromSeller', 'decimalPointSettings', 'previewFileInfo', 'productAuthorsInfo', 'productPublishingHouseInfo', 'firstVariationQuantity', 'productDetailsMeta'));
+            $now = now();
+            $today = $now->format('l');
+            $currentTime = $now->format('H:i:s');
+            
+            $is_open = $product->seller->availabilities()
+                ->where('day_of_week', $today)
+                ->where('start_time', '<=', $currentTime)
+                ->where('end_time', '>=', $currentTime)
+                ->exists(); // Check if the query returns any results
+            
+          
+            // dd($is_available); // This will be empty if it's before 08:00:00
+         
+
+
+            //  dd(VIEW_FILE_NAMES['products_details']);
+            return view(VIEW_FILE_NAMES['products_details'], compact(
+                'product',
+                'countWishlist',
+                'countOrder',
+                'relatedProducts',
+                'dealOfTheDay',
+                'currentDate',
+                'sellerVacationStartDate',
+                'sellerVacationEndDate',
+                'sellerTemporaryClose',
+                'inHouseVacationStartDate',
+                'inHouseVacationEndDate',
+                'inHouseVacationStatus',
+                'inHouseTemporaryClose',
+                'overallRating',
+                'wishlistStatus',
+                'productReviews',
+                'rating',
+                'totalReviews',
+                'productsForReview',
+                'moreProductFromSeller',
+                'decimalPointSettings',
+                'previewFileInfo',
+                'productAuthorsInfo',
+                'productPublishingHouseInfo',
+                'firstVariationQuantity',
+                'productDetailsMeta',
+                'is_open'
+            ));
         }
 
         Toastr::error(translate('not_found'));
@@ -161,7 +202,7 @@ class ProductDetailsController extends Controller
             withCount: ['orderDetails' => 'orderDetails', 'wishList' => 'wishList']
         );
 
-        if ($product ) {
+        if ($product) {
             $productDetailsMeta = $product?->seoInfo;
             $productAuthorsInfo = $this->productService->getProductAuthorsInfo(product: $product);
             $productPublishingHouseInfo = $this->productService->getProductPublishingHouseInfo(product: $product);
@@ -218,7 +259,8 @@ class ProductDetailsController extends Controller
                 orderBy: ['id' => 'desc'],
                 filters: ['product_id' => $product['id']],
                 relations: ['reply'],
-                dataLimit: 2, offset: 1
+                dataLimit: 2,
+                offset: 1
             );
 
             $firstVariationQuantity = $product['current_stock'];
@@ -270,11 +312,37 @@ class ProductDetailsController extends Controller
             $positiveReview = $ratingCount != 0 ? ($vendorRattingStatusPositive * 100) / $ratingCount : 0;
             $previewFileInfo = getFileInfoFromURL(url: $product?->preview_file_full_url['path']);
 
-            return view(VIEW_FILE_NAMES['products_details'], compact('product', 'wishlistStatus', 'countWishlist',
-                'countOrder', 'relatedProducts', 'dealOfTheDay', 'currentDate', 'sellerVacationStartDate', 'sellerVacationEndDate',
-                'sellerTemporaryClose', 'inHouseVacationStartDate', 'inHouseVacationEndDate', 'inHouseVacationStatus', 'inHouseTemporaryClose',
-                'overallRating', 'decimalPointSettings', 'moreProductFromSeller', 'productsForReview', 'totalReviews', 'rating', 'productReviews',
-                'avgRating', 'compareList', 'positiveReview', 'previewFileInfo', 'productAuthorsInfo', 'productPublishingHouseInfo', 'firstVariationQuantity', 'productDetailsMeta'));
+            return view(VIEW_FILE_NAMES['products_details'], compact(
+                'product',
+                'wishlistStatus',
+                'countWishlist',
+                'countOrder',
+                'relatedProducts',
+                'dealOfTheDay',
+                'currentDate',
+                'sellerVacationStartDate',
+                'sellerVacationEndDate',
+                'sellerTemporaryClose',
+                'inHouseVacationStartDate',
+                'inHouseVacationEndDate',
+                'inHouseVacationStatus',
+                'inHouseTemporaryClose',
+                'overallRating',
+                'decimalPointSettings',
+                'moreProductFromSeller',
+                'productsForReview',
+                'totalReviews',
+                'rating',
+                'productReviews',
+                'avgRating',
+                'compareList',
+                'positiveReview',
+                'previewFileInfo',
+                'productAuthorsInfo',
+                'productPublishingHouseInfo',
+                'firstVariationQuantity',
+                'productDetailsMeta'
+            ));
         }
 
         Toastr::error(translate('not_found'));
@@ -338,7 +406,8 @@ class ProductDetailsController extends Controller
                 orderBy: ['id' => 'desc'],
                 filters: ['product_id' => $product['id']],
                 relations: ['reply'],
-                dataLimit: 2, offset: 1
+                dataLimit: 2,
+                offset: 1
             );
 
             $firstVariationQuantity = $product['current_stock'];
@@ -462,9 +531,42 @@ class ProductDetailsController extends Controller
 
             $previewFileInfo = getFileInfoFromURL(url: $product?->preview_file_full_url['path']);
 
-            return view(VIEW_FILE_NAMES['products_details'], compact('product', 'wishlistStatus', 'countWishlist',
-                'relatedProducts', 'currentDate', 'sellerVacationStartDate', 'sellerVacationEndDate', 'rattingStatus', 'productsLatest',
-                'sellerTemporaryClose', 'inHouseVacationStartDate', 'inHouseVacationEndDate', 'inHouseVacationStatus', 'inHouseTemporaryClose', 'positiveReview', 'overallRating', 'decimalPointSettings', 'moreProductFromSeller', 'productsForReview', 'productsCount', 'totalReviews', 'rating', 'productReviews', 'avgRating', 'topRatedShops', 'newSellers', 'deliveryInfo', 'productsTopRated', 'productsThisStoreTopRated', 'previewFileInfo', 'productAuthorsInfo', 'productPublishingHouseInfo', 'firstVariationQuantity', 'productDetailsMeta'));
+            return view(VIEW_FILE_NAMES['products_details'], compact(
+                'product',
+                'wishlistStatus',
+                'countWishlist',
+                'relatedProducts',
+                'currentDate',
+                'sellerVacationStartDate',
+                'sellerVacationEndDate',
+                'rattingStatus',
+                'productsLatest',
+                'sellerTemporaryClose',
+                'inHouseVacationStartDate',
+                'inHouseVacationEndDate',
+                'inHouseVacationStatus',
+                'inHouseTemporaryClose',
+                'positiveReview',
+                'overallRating',
+                'decimalPointSettings',
+                'moreProductFromSeller',
+                'productsForReview',
+                'productsCount',
+                'totalReviews',
+                'rating',
+                'productReviews',
+                'avgRating',
+                'topRatedShops',
+                'newSellers',
+                'deliveryInfo',
+                'productsTopRated',
+                'productsThisStoreTopRated',
+                'previewFileInfo',
+                'productAuthorsInfo',
+                'productPublishingHouseInfo',
+                'firstVariationQuantity',
+                'productDetailsMeta'
+            ));
         }
 
         Toastr::error(translate('not_found'));

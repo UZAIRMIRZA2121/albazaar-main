@@ -42,7 +42,7 @@ return [
     |
     */
 
-    'debug' => (bool)env('APP_DEBUG', false),
+    'debug' => (bool) env('APP_DEBUG', false),
 
     /*
     |--------------------------------------------------------------------------
@@ -69,9 +69,7 @@ return [
     | ahead and set this to a sensible default for you out of the box.
     |
     */
-
-    'timezone' => 'Asia/Dhaka',
-
+    'timezone' => 'Asia/Karachi',
     /*
     |--------------------------------------------------------------------------
     | Application Locale Configuration
@@ -188,7 +186,7 @@ return [
         App\Providers\ThemeServiceProvider::class,
         /* for export excel */
         Maatwebsite\Excel\ExcelServiceProvider::class,
-        //Intervention\Image\ImageServiceProvider::class,
+            //Intervention\Image\ImageServiceProvider::class,
         InterfaceServiceProvider::class,
         ObserverServiceProvider::class
     ],

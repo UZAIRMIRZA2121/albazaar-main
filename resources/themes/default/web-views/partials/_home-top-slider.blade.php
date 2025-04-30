@@ -46,6 +46,38 @@
                         background-color: #000000;
                     }
                 </style>
+                <style>
+                    .carousel-btn {
+                        position: absolute;
+                        top: 50%;
+                        transform: translateY(-50%);
+                        background-color: transparent;
+                        border: none;
+                        color: white;
+                        font-size: 2rem;
+                        z-index: 10;
+                        padding: 0.5rem 1rem;
+                        cursor: pointer;
+
+                        border-radius: 50%;
+                        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.5);
+                        transition: color 0.3s ease, background-color 0.3s ease;
+                        background-color: #000000
+                    }
+                
+                    .carousel-btn:hover {
+                        color: #ddd; /* slight hover effect */
+                    }
+                
+                    .prev-btn {
+                        left: 10px;
+                    }
+                
+                    .next-btn {
+                        right: 10px;
+                    }
+                </style>
+                
 
                 <!-- Bootstrap Carousel Wrapper -->
                 <div id="imageCarousel" class="carousel slide desktop-view" data-bs-ride="carousel">
@@ -69,6 +101,16 @@
                             </div>
                         @endforeach
                     </div>
+                    <!-- Carousel Controls -->
+               <!-- Left Arrow Button -->
+<button type="button" class="carousel-btn prev-btn" data-bs-target="#imageCarousel" data-bs-slide="prev">
+    &#8592;
+</button>
+
+<!-- Right Arrow Button -->
+<button type="button" class="carousel-btn next-btn" data-bs-target="#imageCarousel" data-bs-slide="next">
+    &#8594;
+</button>
 
 
                 </div>
@@ -93,7 +135,16 @@
                             </div>
                         @endforeach
                     </div>
-
+               <!-- Left Arrow Button -->
+               <button type="button" class="carousel-btn prev-btn" data-bs-target="#imageCarousel" data-bs-slide="prev">
+                &#8592;
+            </button>
+            
+            <!-- Right Arrow Button -->
+            <button type="button" class="carousel-btn next-btn" data-bs-target="#imageCarousel" data-bs-slide="next">
+                &#8594;
+            </button>
+            
 
                 </div>
             </div>
@@ -105,11 +156,22 @@
 
     <!-- Manual Carousel Initialization (Optional but helpful) -->
     <script>
-        document.addEventListener("DOMContentLoaded", function() {
-            var myCarousel = new bootstrap.Carousel(document.getElementById('imageCarousel'), {
-                interval: 5000, // Auto-slide every 5 seconds
+        $(document).ready(function () {
+            // Auto-start carousel every 5 seconds
+            $('#imageCarousel').carousel({
+                interval: 5000,
                 ride: 'carousel'
+            });
+    
+            // Optional manual control (already handled by buttons via data attributes)
+            $('.prev-btn').click(function () {
+                $('#imageCarousel').carousel('prev');
+            });
+    
+            $('.next-btn').click(function () {
+                $('#imageCarousel').carousel('next');
             });
         });
     </script>
+    
 @endif

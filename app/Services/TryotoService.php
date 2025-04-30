@@ -186,7 +186,7 @@ class TryotoService
         try {
             // Get the checked cart items
             $cart = CartManager::get_cart(type: 'checked');
-        
+
 
             // Validate cart and extract seller's cities
             $originCities = [];
@@ -224,7 +224,7 @@ class TryotoService
             log::info('accessToken accessToken accessToken:', [
                 'accessToken' => $this->accessToken,
                 'baseUrl' => $this->baseUrl,
-                
+
             ]);
 
             // Loop through the origin cities to make the API requests
@@ -367,11 +367,20 @@ class TryotoService
             // Log the complete data of common delivery companies
             Log::info('Common Delivery Companies Data:', $commonDeliveryCompanies);
 
-            // Return the complete delivery options without filtering
+            // Filter only required deliveryOptionIds
+            $allowedDeliveryOptionIds = [7229, 7324, 6926];
+
+            $filteredDeliveryCompanies = array_values(array_filter($commonDeliveryCompanies, function ($company) use ($allowedDeliveryOptionIds) {
+                return in_array($company['deliveryOptionId'], $allowedDeliveryOptionIds);
+            }));
+
             return [
                 'success' => true,
-                'deliveryOptions' => $commonDeliveryCompanies, // Return complete data
+                'deliveryOptions' => $filteredDeliveryCompanies,
             ];
+
+
+         
 
         } catch (\Exception $e) {
             Log::error('Error getting delivery fees: ' . $e->getMessage());

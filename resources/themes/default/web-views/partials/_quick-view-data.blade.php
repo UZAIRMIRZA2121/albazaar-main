@@ -312,6 +312,44 @@
                             </div>
                             <div id="chosen_price_div">
                                 <div
+                                    class="d-none d-sm-flex justify-content-start align-items-center me-2">
+                                    <div
+                                        class="product-description-label text-dark font-bold text-capitalize">
+                                        <strong>Returnable</strong> :
+                                    </div>
+                                    &nbsp; <strong
+                                        class="text-base">{{ $product['returnable'] == 1 ? 'YES' : 'NO' }}</strong>
+
+                                </div>
+                            </div>
+                             <div id="chosen_price_div">
+                                <div
+                                    class="d-none d-sm-flex justify-content-start align-items-center me-2">
+                                    <div
+                                        class="product-description-label text-dark font-bold text-capitalize">
+                                        <strong>Readymade</strong> :
+                                    </div>
+                                    &nbsp; <strong
+                                        class="text-base">{{ $product['menufacture_days'] == null ? 'NO' : 'YES' }}</strong>
+
+                                </div>
+                            </div>
+                            @if ($product['menufacture_days'])
+                                <div id="chosen_price_div">
+                                    <div
+                                        class="d-none d-sm-flex justify-content-start align-items-center me-2">
+                                        <div
+                                            class="product-description-label text-dark font-bold text-capitalize">
+                                            <strong>Menufacture Days</strong> :
+                                        </div>
+                                        &nbsp; <strong
+                                            class="text-base">{{ $product['menufacture_days'] }}</strong>
+
+                                    </div>
+                                </div>
+                            @endif
+                            <div id="chosen_price_div">
+                                <div
                                         class="d-flex justify-content-start align-items-center me-2">
                                     <div class="product-description-label text-dark font-bold text-capitalize">
                                         <strong>{{translate('total_price')}}</strong> :
