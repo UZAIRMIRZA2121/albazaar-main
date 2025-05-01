@@ -73,6 +73,9 @@
                                         <input type="text" class="form-control" id="f_name" name="f_name"
                                                value="{{$customerDetail['f_name']}}" required>
                                     </div>
+                            
+
+                                    
                                     <div class="form-group col-md-6 mb-0">
                                         <label for="lastName"
                                                class="mb-2 text-capitalize"> {{translate('last_name')}} </label>
