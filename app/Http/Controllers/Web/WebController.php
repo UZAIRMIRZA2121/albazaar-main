@@ -413,7 +413,7 @@ class WebController extends Controller
         $countryRestrictStatus = getWebConfig(name: 'delivery_country_restriction');
         $zipRestrictStatus = getWebConfig(name: 'delivery_zip_code_area_restriction');
         $countries = $countryRestrictStatus ? $this->get_delivery_country_array() : COUNTRIES;
-        $zipCodes = $zipRestrictStatus ? DeliveryZipCode::all() : 0;
+        $zipCodes = 000000;
         $billingInputByCustomer = getWebConfig(name: 'billing_input_by_customer');
         $defaultLocation = getWebConfig(name: 'default_location');
 

@@ -105,7 +105,7 @@
                                                                 </select>
                                                             </div>
                                                         </div>
-                                                        <div class="col-12">
+                                                        {{-- <div class="col-12">
                                                             <div class="form-group">
                                                                 <label>{{ translate('country')}}
                                                                     <span class="text-danger">*</span></label>
@@ -117,7 +117,7 @@
                                                                     @endforelse
                                                                 </select>
                                                             </div>
-                                                        </div>
+                                                        </div> --}}
                                                         <div class="col-6">
                                                             <div class="form-group">
                                                                 <label>{{ translate('city')}}<span  class="text-danger">*</span></label>
@@ -127,7 +127,7 @@
                                                         <div class="col-6">
                                                             <div class="form-group">
                                                                 <label>{{ translate('zip_code')}}
-                                                                    <span class="text-danger">*</span></label>
+                                                                    <sub >(optional)</sub></label>
                                                                 @if($zip_restrict_status == 1)
                                                                     <select name="zip" class="form-control selectpicker" data-live-search="true" id="select2-zip-container" required>
                                                                         @forelse($zip_codes as $code)
@@ -230,7 +230,7 @@
                         @endif
                     @endif
 
-                    @if($billingInputByCustomer)
+                    {{-- @if($billingInputByCustomer)
                     <div>
                         <div class="billing-methods_label d-flex flex-wrap justify-content-between gap-2 mt-4 pb-3 px-3 px-md-0">
                             <h4 class="mb-0 fs-18 text-capitalize">{{ translate('billing_address')}}</h4>
@@ -238,7 +238,7 @@
                             @php($billingAddresses=\App\Models\ShippingAddress::where(['customer_id'=>auth('customer')->id(), 'is_guest'=>'0'])->get())
                             @if($physical_product_view)
                                 <div class="form-check d-flex gap-3 align-items-center">
-                                    <input type="checkbox" id="same_as_shipping_address" name="same_as_shipping_address"
+                                    <input type="checkbox" id="same_as_shipping_address" name="same_as_shipping_address" 
                                         class="form-check-input action-hide-billing-address mt-0" {{$billingInputByCustomer==1?'':'checked'}}>
                                     <label class="form-check-label user-select-none" for="same_as_shipping_address">
                                         {{ translate('same_as_shipping_address')}}
@@ -455,7 +455,7 @@
                                 </div>
                             </div>
                         @endif
-                    @endif
+                    @endif --}}
                 </div>
             </section>
             @include('web-views.partials._order-summary')

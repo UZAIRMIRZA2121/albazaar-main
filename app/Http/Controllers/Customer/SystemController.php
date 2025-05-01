@@ -70,22 +70,13 @@ class SystemController extends Controller
         $is_guest = !auth('customer')->check();
 
         if (isset($shipping['save_address']) && $shipping['save_address'] == 'on') {
-
-            if ($shipping['contact_person_name'] == null || $shipping['address'] == null || $shipping['city'] == null || $shipping['zip'] == null || $shipping['country'] == null || ($is_guest && $shipping['email'] == null)) {
+            $shipping['country'] = 'Saudi Arabia';
+            if ($shipping['contact_person_name'] == null || $shipping['address'] == null || $shipping['city'] == null  || ($is_guest && $shipping['email'] == null)) {
                 return response()->json([
                     'errors' => translate('Fill_all_required_fields_of_shipping_address')
                 ], 403);
             }
-            elseif ($country_restrict_status && !self::delivery_country_exist_check($shipping['country'])) {
-                return response()->json([
-                    'errors' => translate('Delivery_unavailable_in_this_country.')
-                ], 403);
-            }
-            elseif ($zip_restrict_status && !self::delivery_zipcode_exist_check($shipping['zip'])) {
-                return response()->json([
-                    'errors' => translate('Delivery_unavailable_in_this_zip_code_area')
-                ], 403);
-            }
+       
 
             $address_id = DB::table('shipping_addresses')->insertGetId([
                 'customer_id' => auth('customer')->id() ?? ((session()->has('guest_id') ? session('guest_id'):0)),
@@ -323,21 +314,15 @@ class SystemController extends Controller
 
         // Shipping start
         $addressId = $shipping['shipping_method_id'] ?? 0;
-
+        $shipping['country'] = 'Saudi Arabia';
         if (isset($shipping['shipping_method_id'])) {
-            if ($shipping['contact_person_name'] == null || !isset($shipping['address_type']) || $shipping['address'] == null || $shipping['city'] == null || !isset($shipping['zip']) || $shipping['zip'] == null || !isset($shipping['country']) || $shipping['country'] == null || $shipping['phone'] == null || ($isGuestCustomer && $shipping['email'] == null)) {
+            if ($shipping['contact_person_name'] == null || !isset($shipping['address_type']) || $shipping['address'] == null || $shipping['city'] == null ||  !isset($shipping['country']) || $shipping['country'] == null || $shipping['phone'] == null || ($isGuestCustomer && $shipping['email'] == null)) {
                 return response()->json([
                     'errors' => translate('Fill_all_required_fields_of_shipping_address')
                 ], 403);
-            } elseif ($countryRestrictStatus && !self::delivery_country_exist_check($shipping['country'])) {
-                return response()->json([
-                    'errors' => translate('Delivery_unavailable_in_this_country.')
-                ], 403);
-            } elseif ($zipRestrictStatus && !self::delivery_zipcode_exist_check($shipping['zip'])) {
-                return response()->json([
-                    'errors' => translate('Delivery_unavailable_in_this_zip_code_area')
-                ], 403);
             }
+          
+        
         }
 
         if (isset($shipping['save_address']) && $shipping['save_address'] == 'on') {
@@ -348,13 +333,13 @@ class SystemController extends Controller
                 'address_type' => $shipping['address_type'],
                 'address' => $shipping['address'],
                 'city' => $shipping['city'],
-                'zip' => $shipping['zip'],
+                'zip' => $shipping['zip'] ?? null,
                 'country' => $shipping['country'],
                 'phone' => $shipping['phone'],
                 'latitude' => $shipping['latitude'],
                 'longitude' => $shipping['longitude'],
                 'email' => auth('customer')->check() ? null : $shipping['email'],
-                'is_billing' => 0,
+                'is_billing' => 1,
             ]);
 
         } elseif (isset($shipping['update_address']) && $shipping['update_address'] == 'on') {
@@ -363,7 +348,7 @@ class SystemController extends Controller
             $getShipping->address_type = $shipping['address_type'];
             $getShipping->address = $shipping['address'];
             $getShipping->city = $shipping['city'];
-            $getShipping->zip = $shipping['zip'];
+            $getShipping->zip = $shipping['zip'] ?? null;
             $getShipping->country = $shipping['country'];
             $getShipping->phone = $shipping['phone'];
             $getShipping->latitude = $shipping['latitude'];
