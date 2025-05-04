@@ -179,10 +179,10 @@ class CustomVendorController extends Controller
 
         $responseBody = $response->json();
 
-        // if (!$responseBody['success']) {
+        if (!$responseBody['success']) {
 
-        //     return back()->withErrors(['captcha' => 'reCAPTCHA verification failed.']);
-        // }
+            return back()->withErrors(['captcha' => 'reCAPTCHA verification failed.']);
+        }
 
 
 

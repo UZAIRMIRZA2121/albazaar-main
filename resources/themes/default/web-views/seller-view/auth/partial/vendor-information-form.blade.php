@@ -350,10 +350,31 @@
                                 <div class="col-md-6 mb-3">
                                     <div class="mb-3">
                                         <label for="city" class="form-label step_label">City</label>
-                                        <select id="city" class="custom-select" name="city">
-                                            <option value="Faislabad">Faislabad</option>
-                                            <option value="Lahore">Lahore</option>
+                                        <select id="city" class="custom-select" name="city"
+                                            style="width: 100%;">
+                                            <option value="">Select a city</option>
+                                            <option value="Riyadh">Riyadh</option>
+                                            <option value="Jeddah">Jeddah</option>
+                                            <option value="Mecca">Mecca</option>
+                                            <option value="Medina">Medina</option>
+                                            <option value="Dammam">Dammam</option>
+                                            <option value="Khobar">Khobar</option>
+                                            <option value="Tabuk">Tabuk</option>
+                                            <option value="Buraydah">Buraydah</option>
+                                            <option value="Hail">Hail</option>
+                                            <option value="Abha">Abha</option>
+                                            <option value="Khamis Mushait">Khamis Mushait</option>
+                                            <option value="Najran">Najran</option>
+                                            <option value="Al Qassim">Al Qassim</option>
+                                            <option value="Jazan">Jazan</option>
+                                            <option value="Yanbu">Yanbu</option>
+                                            <option value="Al Jubail">Al Jubail</option>
+                                            <option value="Al Ahsa">Al Ahsa</option>
+                                            <option value="Al Baha">Al Baha</option>
+                                            <option value="Sakakah">Sakakah</option>
+                                            <option value="Arar">Arar</option>
                                         </select>
+
                                     </div> <br>
                                     <p id="cityError" class="text-danger error-message"></p>
                                     <div class="mb-3">
@@ -420,10 +441,19 @@
                                 <div class="col-12 col-md-6 mb-3">
                                     <div class="mb-3">
                                         <label for="category" class="form-label step_label">choose category</label>
+                                        @php
+                                            use App\Models\Category;
+                                            $categories = Category::where('parent_id', 0)->get();
+                                        @endphp
+
                                         <select id="category" name="category" class="custom-select">
-                                            <option value="Toys">Toys</option>
-                                            <option value="Bed">Bed</option>
-                                        </select> <br>
+                                            <option value="">Select Category</option>
+                                            @foreach ($categories as $category)
+                                                <option value="{{ $category->id }}">{{ $category->name }}</option>
+                                            @endforeach
+                                        </select>
+
+                                        <br>
                                         <p id="category-error-message" class="text-danger validation-message"
                                             style="display: none;"></p>
                                     </div>
@@ -648,7 +678,7 @@
                 alert('Please correct the errors before submitting the form.');
                 event.preventDefault();
             }
-            if (isValid ) {
+            if (isValid) {
                 form.submit(); // Submit the form on the last step
             }
         }
@@ -658,7 +688,7 @@
     // Handle Previous button click
     prevBtn.addEventListener('click', (e) => {
         e.preventDefault(); // Prevent default button behavior
- 
+
         if (currentStep > 1) {
             currentStep--; // Move to the previous step
             updateFormSteps();

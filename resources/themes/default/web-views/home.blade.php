@@ -136,9 +136,9 @@
     
 
         @php($businessMode = getWebConfig(name: 'business_mode'))
-        @if ($businessMode == 'multi' && count($topVendorsList) > 0)
+        {{-- @if ($businessMode == 'multi' && count($topVendorsList) > 0)
             @include('web-views.partials._top-sellers')
-        @endif
+        @endif --}}
 
         @include('web-views.partials._deal-of-the-day', [
             'decimal_point_settings' => $decimalPointSettings,
