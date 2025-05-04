@@ -8602,4 +8602,7 @@ return [
 	"The_phone_number_must_be_at_least_4_characters" => "The phone number must be at least 4 characters",
 	"add_fdfsdfto_cart" => "Add fdfsdfto cart",
 	"shop_unavailable" => "Shop unavailable",
+	"Follow_steps_to_reset_vendor_password" => "Follow steps to reset vendor password",
+	"password_reset_otp_sent" => "Password reset otp sent",
+	"invalid_URL" => "Invalid URL",
 ];

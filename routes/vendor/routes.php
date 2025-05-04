@@ -81,7 +81,7 @@ Route::group(['middleware' => ['maintenance_mode']], function () {
             Route::group(['prefix' => 'forgot-password', 'as' => 'forgot-password.'], function () {
                 Route::controller(ForgotPasswordController::class)->group(function () {
                     Route::get(ForgotPassword::INDEX[URI], 'index')->name('index');
-                    Route::post(ForgotPassword::INDEX[URI], 'getPasswordResetRequest');
+                    Route::post(ForgotPassword::INDEX[URI], 'getPasswordResetRequest')->name('getPasswordResetRequest');
                     Route::get(ForgotPassword::OTP_VERIFICATION[URI], 'getOTPVerificationView')->name('otp-verification');
                     Route::post(ForgotPassword::OTP_VERIFICATION[URI], 'submitOTPVerificationCode');
                     Route::get(ForgotPassword::RESET_PASSWORD[URI], 'getPasswordResetView')->name('reset-password');

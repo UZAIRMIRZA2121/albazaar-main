@@ -111,7 +111,7 @@
                             </li>
                         </ol>
 
-                        <form id="form-id" action="{{route('vendor.auth.forgot-password.index')}}" method="post"
+                        <form id="form-id" action="{{route('vendor.auth.forgot-password.getPasswordResetRequest')}}" method="post"
                               id="admin-login-form">
                             @csrf
                             <div class="js-form-message form-group mt-5">
@@ -125,14 +125,8 @@
                                 </label>
 
                                 <div class="form-group mb-3">
-                                    <input
-                                        type="tel"
-                                        id="forgotVendorPassword"
-                                        value="{{old('identity')}}"
-                                        class="form-control phone-input-with-country-picker-forgot-password"
-                                        placeholder="{{ translate('enter_phone_number') }}"
-                                    />
-                                    <input type="hidden" class="country-picker-phone-number-forgot-password w-100" name="identity" readonly>
+                                
+                                    <input type="tel" class=" form-control country-picker-phone-number-forgot-password w-100" name="identity" >
                                 </div>
                             </div>
                             <button type="submit" class="btn btn-lg btn-block btn--primary">

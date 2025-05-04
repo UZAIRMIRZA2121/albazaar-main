@@ -21,8 +21,10 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 use Modules\Gateways\Traits\SmsGateway as AddonSmsGateway;
+use App\Services\SmsService;
 
 class ForgotPasswordController extends BaseController
 {
@@ -34,13 +36,14 @@ class ForgotPasswordController extends BaseController
      * @param PasswordResetService $passwordResetService
      */
     public function __construct(
-        private readonly VendorRepositoryInterface        $vendorRepo,
+        private readonly VendorRepositoryInterface $vendorRepo,
         private readonly PasswordResetRepositoryInterface $passwordResetRepo,
-        private readonly PasswordResetService             $passwordResetService,
-    )
-    {
+        private readonly PasswordResetService $passwordResetService,
+        private readonly SmsService $smsService
+    ) {
         $this->middleware('guest:seller', ['except' => ['logout']]);
     }
+    
 
     /**
      * @param Request|null $request
@@ -57,6 +60,7 @@ class ForgotPasswordController extends BaseController
      */
     public function getForgotPasswordView(): View
     {
+
         return view(ForgotPassword::INDEX[VIEW]);
     }
 
@@ -68,6 +72,7 @@ class ForgotPasswordController extends BaseController
     {
         session()->put(SessionKey::FORGOT_PASSWORD_IDENTIFY, $request['identity']);
         $verificationBy = getWebConfig('vendor_forgot_password_method') ?? 'phone';
+
         if ($verificationBy == 'email') {
             $vendor = $this->vendorRepo->getFirstWhere(['identity' => $request['identity']]);
             if (isset($vendor)) {
@@ -103,16 +108,24 @@ class ForgotPasswordController extends BaseController
         } elseif ($verificationBy == 'phone') {
             $vendor = $this->vendorRepo->getFirstWhere(['identity' => $request['identity']]);
             if (isset($vendor)) {
+
                 $token = (env('APP_MODE') == 'live') ? rand(1000, 9999) : 1234;
                 $this->passwordResetRepo->add($this->passwordResetService->getAddData(identity: $request['identity'], token: $token, userType: 'seller'));
 
-                $paymentPublishedStatus = config('get_payment_publish_status') ?? 0;
-                if ($paymentPublishedStatus == 1) {
-                    $response = AddonSmsGateway::send($vendor['phone'], $token);
-                } else {
-                    $response = $this->send($vendor['phone'], $token);
-                }
+                $paymentPublishedStatus = config('get_payment_publish_status') ?? 1;
 
+                if ($paymentPublishedStatus == 1) {
+                    // Send OTP using the SMS service
+                  
+                    // $response = AddonSmsGateway::send($vendor['phone'], $token);
+                   
+                } else {
+                    log::info('SMS Gateway not published');
+                    Log::info('token: ' . $token);
+                    $response = $this->smsService->sendOTP($request['identity'], $token);
+               
+                }
+             
                 if (env('APP_MODE') == 'dev') {
                     if ($request->ajax()) {
                         return response()->json([
