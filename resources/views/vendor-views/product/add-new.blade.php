@@ -174,7 +174,7 @@
 
 
 
-                        <div class="col-md-6 col-lg-4 col-xl-3" id="digital_product_type_show">
+                        {{-- <div class="col-md-6 col-lg-4 col-xl-3" id="digital_product_type_show">
                             <div class="form-group">
                                 <label for="digital_product_type"
                                     class="title-color">{{ translate('delivery_type') }}</label>
@@ -192,7 +192,7 @@
                                     <option value="ready_product">{{ translate('ready_Product') }}</option>
                                 </select>
                             </div>
-                        </div>
+                        </div> --}}
 
                         <div class="col-md-6 col-lg-4 col-xl-3">
                             <div class="form-group">
@@ -487,7 +487,7 @@
                                  --}}
                             </div>
                         </div>
-                        <div class="col-md-6 col-lg-4 col-xl-3 physical_product_show" id="shipping_cost">
+                        {{-- <div class="col-md-6 col-lg-4 col-xl-3 physical_product_show" id="shipping_cost">
                             <div class="form-group">
                                 <div class="d-flex gap-2">
                                     <label class="title-color">
@@ -507,8 +507,11 @@
                                     placeholder="{{ translate('shipping_cost') }}" name="shipping_cost"
                                     class="form-control" required>
                             </div>
-                        </div>
-
+                        </div> --}}
+                        <input type="hidden" min="0" value="0" step="1"
+                        placeholder="{{ translate('shipping_cost') }}" name="shipping_cost"
+                        class="form-control" required>
+{{-- 
                         <div class="col-md-6 physical_product_show" id="shipping_cost_multy">
                             <div class="form-group">
                                 <div
@@ -532,7 +535,7 @@
                                     </div>
                                 </div>
                             </div>
-                        </div>
+                        </div> --}}
                     </div>
                 </div>
             </div>

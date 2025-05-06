@@ -8605,4 +8605,8 @@ return [
 	"Follow_steps_to_reset_vendor_password" => "Follow steps to reset vendor password",
 	"password_reset_otp_sent" => "Password reset otp sent",
 	"invalid_URL" => "Invalid URL",
+	"Tax exclude" => "Tax exclude",
+	"exc" => "Exc",
+	"tax Inc" => "Tax Inc",
+	"Shipping cost is required!" => "Shipping cost is required!",
 ];

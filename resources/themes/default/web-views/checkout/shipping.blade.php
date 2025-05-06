@@ -152,12 +152,126 @@
                                                             </div>
                                                         </div>
                                                     </div>
-                                                    @if(getWebConfig('map_api_status') ==1 )
-                                                        <div class="form-group location-map-canvas-area map-area-alert-border">
-                                                            <input id="pac-input" class="controls rounded __inline-46 location-search-input-field" title="{{translate('search_your_location_here')}}" type="text" placeholder="{{translate('search_here')}}"/>
-                                                            <div class="__h-200px" id="location_map_canvas"></div>
+                                                    {{-- @if(getWebConfig('map_api_status') ==1 )
+                                                    <div class="form-group location-map-canvas-area map-area-alert-border">
+                                                        <input id="pac-input" class="controls rounded __inline-46 location-search-input-field" title="{{translate('search_your_location_here')}}" type="text" placeholder="{{translate('search_here')}}"/>
+                                                        <div class="__h-200px" id="location_map_canvas"></div>
+                                                    </div>
+                                                @endif --}}
+                                               
+                                                <div class="form-group location-map-canvas-area map-area-alert-border">
+                                                        <!-- Add a container to prevent issues with dropdown visibility -->
+                                                        <div class="map-container mb-3">
+                                                            <input id="autocomplete" class="form-control"
+                                                                placeholder="Search for a place" type="text">
                                                         </div>
-                                                    @endif
+                    
+                                                        <!-- Google Map Container -->
+                                                        <div id="map" style="height: 400px;"></div>
+                    
+                                                        <div class="mb-3">
+                                                            <label for="latitude" class="form-label step_label">Latitude <i
+                                                                    class="bi bi-info-circle " title="Enter Latitude"></i></label>
+                                                            <input type="text" id="latitude" name="latitude"
+                                                                class="form-control E9ECEFcolor" placeholder="Ex: -94.22213" readonly>
+                                                            <br>
+                                                            <p id="latitudeError" class="text-danger error-message"></p>
+                                                        </div>
+                    
+                                                        <div class="mb-3">
+                                                            <label for="longitude" class="form-label step_label">Longitude <i
+                                                                    class="bi bi-info-circle " title="Enter Longitude"></i></label>
+                                                            <input type="text" id="longitude" name="longitude"
+                                                                class="form-control E9ECEFcolor" placeholder="Ex: 103.344322" readonly>
+                                                            <br>
+                                                            <p id="longitudeError" class="text-danger error-message"></p>
+                                                        </div>
+                                                    </div>
+                                                    <!-- Google Maps API Script -->
+<!-- Google Maps API Script -->
+<script
+    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyB3VTAihhs6gEYNld1LMwNkEiszH3TRcMQ&libraries=places&callback=initMap"
+    async></script>
+
+<script>
+    let autocomplete;
+    let map;
+    let marker;
+
+    function initMap() {
+        // Initialize the map centered at a default location (Riyadh, for example)
+        map = new google.maps.Map(document.getElementById("map"), {
+            center: {
+                lat: 24.7136,
+                lng: 46.6753
+            }, // Default coordinates
+            zoom: 13,
+        });
+
+        // Create a draggable marker
+        marker = new google.maps.Marker({
+            map: map,
+            draggable: true,
+            position: map.getCenter(), // Initially place it at the center of the map
+        });
+
+        // Add an event listener to update latitude and longitude when the marker is dragged
+        google.maps.event.addListener(marker, 'dragend', function() {
+            const latLng = marker.getPosition();
+            document.getElementById("latitude").value = latLng.lat();
+            document.getElementById("longitude").value = latLng.lng();
+        });
+
+        // Initialize the Places Autocomplete feature
+        autocomplete = new google.maps.places.Autocomplete(
+            document.getElementById("autocomplete"), {
+                types: ["geocode"], // Only return geocoded results
+            }
+        );
+
+        // Listen for place change and update the map and marker position
+        autocomplete.addListener("place_changed", onPlaceChanged);
+    }
+    function onPlaceChanged() {
+    const place = autocomplete.getPlace();
+    if (!place.geometry) {
+        return;
+    }
+
+    // Update the map
+    map.setCenter(place.geometry.location);
+    map.setZoom(15);
+    marker.setPosition(place.geometry.location);
+
+    const lat = place.geometry.location.lat();
+    const lng = place.geometry.location.lng();
+    document.getElementById("latitude").value = lat;
+    document.getElementById("longitude").value = lng;
+
+    // Extract city from address_components
+    let city = "";
+    if (place.address_components) {
+        for (const component of place.address_components) {
+            if (component.types.includes("locality")) {
+                city = component.long_name;
+                break;
+            }
+        }
+    }
+
+    // Auto-fill city input field
+    if (city) {
+        document.getElementById("city").value = city;
+    } else {
+        document.getElementById("city").value = ""; // Clear if not found
+    }
+}
+
+
+</script>
+
+
+
 
                                                     <div class="d-flex gap-3 align-items-center">
                                                         <label class="form-check-label d-flex gap-2 align-items-center" id="save_address_label">

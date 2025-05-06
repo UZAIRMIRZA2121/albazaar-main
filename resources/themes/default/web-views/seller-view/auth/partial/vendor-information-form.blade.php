@@ -438,7 +438,7 @@
                     <div class="form-step" data-step="4">
                         <div class="container ">
                             <div class="row steps_borders p-2 p-lg-5 p-md-4">
-                                <div class="col-12 col-md-6 mb-3">
+                                <div class="col-12 col-md-12 mb-3">
                                     <div class="mb-3">
                                         <label for="category" class="form-label step_label">choose category</label>
                                         @php
@@ -465,7 +465,7 @@
                                             style="display: none;"></p>
                                     </div>
                                 </div>
-                                <div class="col-12 col-md-6 mb-3">
+                                {{-- <div class="col-12 col-md-6 mb-3">
                                     <!-- Shop Logo -->
                                     <div class="mb-2 form-group">
                                         <div class="title-color mb-2 d-flex gap-1 align-items-center">
@@ -520,7 +520,7 @@
                                         </div>
                                     </div>
 
-                                </div>
+                                </div> --}}
                             </div>
                         </div>
 
