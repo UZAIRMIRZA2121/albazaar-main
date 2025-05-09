@@ -263,9 +263,6 @@ class CustomVendorController extends Controller
             });
           
 
-
-            dd('Email sent successfully!');
-
             // Clear all session data
             session()->flush();
             return redirect()->back()->with('success', 'Your form has been submitted successfully!');

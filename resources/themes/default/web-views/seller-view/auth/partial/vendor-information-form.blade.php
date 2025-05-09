@@ -307,13 +307,23 @@
                                         <div class="mb-2">
                                             <label for="establishment" class="form-label step_label">Year of
                                                 establishment</label>
-                                            <select id="establishment" name="establishment" class="custom-select">
-                                                <option value="2020">2020</option>
-                                                <option value="2019">2019</option>
-                                                <option value="2018">2018</option>
-                                            </select>
+                                                <select id="establishment" name="establishment" class="custom-select"></select>
+
                                             <p id="establishmentError" class="text-danger error-message"></p>
                                         </div>
+                                        <script>
+                                            const select = document.getElementById("establishment");
+                                            const currentYear = new Date().getFullYear();
+                                            const startYear = currentYear - 49; // Last 50 years including current year
+                                        
+                                            for (let year = currentYear; year >= startYear; year--) {
+                                                const option = document.createElement("option");
+                                                option.value = year;
+                                                option.textContent = year;
+                                                select.appendChild(option);
+                                            }
+                                        </script>
+                                        
                                         <div class="mb-2 form-group">
                                             <div class="title-color mb-2 d-flex gap-1 align-items-center">
                                                 Certificate
