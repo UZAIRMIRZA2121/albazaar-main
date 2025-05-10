@@ -540,7 +540,7 @@
                 </div>
             </div>
 
-            <div class="card mt-3 rest-part physical_product_show">
+            {{-- <div class="card mt-3 rest-part physical_product_show">
                 <div class="card-header">
                     <div class="d-flex gap-2">
                         <i class="tio-user-big"></i>
@@ -591,9 +591,9 @@
                         </div>
                     </div>
                 </div>
-            </div>
+            </div> --}}
 
-            <div class="card mt-3 rest-part digitalProductVariationSetupSection">
+            {{-- <div class="card mt-3 rest-part digitalProductVariationSetupSection">
                 <div class="card-header">
                     <div class="d-flex gap-2">
                         <i class="tio-user-big"></i>
@@ -615,7 +615,7 @@
                         </div>
                     </div>
                 </div>
-            </div>
+            </div> --}}
 
             <div class="card mt-3 rest-part" id="digital-product-variation-section"></div>
 

@@ -273,9 +273,6 @@ class CustomVendorController extends Controller
             return redirect()->back()->with('error', 'Something went wrong! Please try again.');
         }
     }
-
-
-
     // Verify OTP
     public function verifyOtp(Request $request)
     {
