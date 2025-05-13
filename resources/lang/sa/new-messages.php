@@ -8609,4 +8609,5 @@ return [
 	"exc" => "Exc",
 	"tax Inc" => "Tax Inc",
 	"Shipping cost is required!" => "Shipping cost is required!",
+	"inc" => "Inc",
 ];
