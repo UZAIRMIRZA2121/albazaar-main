@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="utf-8">
-    <title>@yield('title')</title>
+    <title>Al-Bazar</title>
     <meta name="_token" content="{{ csrf_token() }}">
     <meta name="robots" content="index, follow">
     <meta property="og:site_name" content="{{ $web_config['company_name'] }}" />
