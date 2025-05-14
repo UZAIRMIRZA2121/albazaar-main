@@ -321,64 +321,81 @@
                                     </span>
                                 </div>
                             </div>
+                                <div class="d-flex gap-2">
+                                <img src="{{ asset('images/visamaster.png') }}" alt="Visa/MasterCard"
+                                    class="img-fluid" width="100">
+                                <img src="{{ asset('images/madacard.png') }}" alt="Mada" class="img-fluid"
+                                    width="100">
+
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
 
-      <div class="bg-white-overlay-50">
-    <div class="container">
-        <div class="d-flex flex-column flex-md-row justify-content-between align-items-center text-center py-3">
-            
-            {{-- Footer Text --}}
-            <div class=" mb-md-0">
-                <p class="__text-16px mb-0">© CopyRight AlBazar</p>
-               
-            </div>
-                <div class="d-flex gap-2">
-               <img src="{{ asset('images/visamaster.png') }}" alt="Visa/MasterCard" class="img-fluid" width="60">
-            <img src="{{ asset('images/madacard.png') }}" alt="Mada" class="img-fluid"  width="60">
-               
-            </div>
-
-
-            {{-- Social Media Icons --}}
-            <div class="d-flex flex-wrap justify-content-center align-items-center gap-2 mb-3 mb-md-0">
-                @if($web_config['social_media'])
-                    @foreach ($web_config['social_media'] as $item)
-                        <span class="social-media">
-                            @if ($item->name == "twitter")
-                                <a class="social-btn text-white sb-light sb-{{$item->name}} d-flex justify-content-center align-items-center"
-                                   target="_blank" href="{{$item->link}}" style="width: 36px; height: 36px;">
-                                    {{-- Twitter SVG --}}
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
-                                         viewBox="0 0 24 24" fill="currentColor">
-                                        <path d="M8.255,5l9.779,14h-2.032L6.208,5H8.255 M9.298,3h-6.93l12.593,18h6.91L9.298,3z"></path>
-                                    </svg>
-                                </a>
-                            @else
-                                <a class="social-btn text-white sb-light sb-{{$item->name}} d-flex justify-content-center align-items-center"
-                                   target="_blank" href="{{$item->link}}" style="width: 36px; height: 36px;">
-                                    <i class="{{$item->icon}}" aria-hidden="true"></i>
-                                </a>
-                            @endif
-                        </span>
-                    @endforeach
-                @endif
-            </div>
-
-            {{-- Links --}}
-            <div class="d-flex flex-wrap justify-content-center align-items-center gap-3 __text-14px">
-                <a class="widget-list-link" href="{{ route('terms') }}">{{ translate('terms_&_conditions') }}</a>
-                <a class="widget-list-link" href="{{ route('privacy-policy') }}">{{ translate('privacy_policy') }}</a>
+        <div class="bg-white-overlay-50">
+            <div class="container">
+                <div class="d-flex flex-wrap end-footer footer-end last-footer-content-align text-center pt-3 pb-4 py-md-0">
+                    <div class="mt-3">
+                         <p class="__text-16px">CopyRight AlBazar</p>
+                    </div>
+                    <div
+                        class="max-sm-100 justify-content-center d-flex flex-wrap mt-md-3 mt-0 mb-md-3">
+                        @if($web_config['social_media'])
+                            @foreach ($web_config['social_media'] as $item)
+                                <span class="social-media ">
+                                    @if ($item->name == "twitter")
+                                        <a class="social-btn text-white sb-light sb-{{$item->name}} me-2 mb-2 d-flex justify-content-center align-items-center"
+                                           target="_blank" href="{{$item->link}}">
+                                            <svg xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="16"
+                                                 height="16" viewBox="0 0 24 24">
+                                                <g opacity=".3">
+                                                    <polygon fill="#fff" fill-rule="evenodd"
+                                                     points="16.002,19 6.208,5 8.255,5 18.035,19"
+                                                             clip-rule="evenodd">
+                                                    </polygon>
+                                                    <polygon points="8.776,4 4.288,4 15.481,20 19.953,20 8.776,4">
+                                                    </polygon>
+                                                </g>
+                                                <polygon fill-rule="evenodd"
+                                                         points="10.13,12.36 11.32,14.04 5.38,21 2.74,21"
+                                                    clip-rule="evenodd">
+                                                </polygon>
+                                                <polygon fill-rule="evenodd"
+                                                         points="20.74,3 13.78,11.16 12.6,9.47 18.14,3"
+                                                         clip-rule="evenodd">
+                                                </polygon>
+                                                <path
+                                                    d="M8.255,5l9.779,14h-2.032L6.208,5H8.255 M9.298,3h-6.93l12.593,18h6.91L9.298,3L9.298,3z"
+                                                    fill="currentColor">
+                                                </path>
+                                            </svg>
+                                        </a>
+                                    @else
+                                        <a class="social-btn text-white sb-light sb-{{$item->name}} me-2 mb-2"
+                                           target="_blank" href="{{$item->link}}">
+                                            <i class="{{$item->icon}}" aria-hidden="true"></i>
+                                        </a>
+                                    @endif
+                                </span>
+                            @endforeach
+                        @endif
+                    </div>
+                    <div class="d-flex __text-14px justify-content-center">
+                        <div class="me-3">
+                            <a class="widget-list-link"
+                               href="{{route('terms')}}">{{ translate('terms_&_conditions')}}</a>
+                        </div>
+                        <div>
+                            <a class="widget-list-link" href="{{route('privacy-policy')}}">
+                                {{ translate('privacy_policy')}}
+                            </a>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
-
-      
-    </div>
-</div>
-
 
         @php($cookie = $web_config['cookie_setting'] ? json_decode($web_config['cookie_setting']['value'], true):null)
         @if($cookie && $cookie['status']==1)
