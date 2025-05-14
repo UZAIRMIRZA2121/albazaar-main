@@ -321,6 +321,7 @@
                                     </span>
                                 </div>
                             </div>
+                            
                                 <div class="d-flex gap-2">
                                 <img src="{{ asset('images/visamaster.png') }}" alt="Visa/MasterCard"
                                     class="img-fluid" width="100">
