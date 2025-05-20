@@ -90,7 +90,7 @@ Route::get('/ccc', [HomeController::class, 'optimizeClear']);
 
 
 
-Route::get('/select-method', [PaymentController::class, 'method'])->name('payment.select');
+// Route::get('/select-method', [PaymentController::class, 'method'])->name('payment.select');
 Route::post('/payment/iframe', [PaymentController::class, 'showIframe'])->name('payment.showIframe');
 
 
