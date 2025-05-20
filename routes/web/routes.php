@@ -598,6 +598,8 @@ Route::controller(CustomVendorController::class)->group(function () {
     // Resend OTP Route
     Route::post('/custom-resend-otp', 'resendOtp')->name('resend.otp');
 });
+
+
 Route::get('/send-otp', [CustomVendorController::class, 'sendOtp']);
 
 Route::get('/check-shop-name', [CustomVendorController::class, 'checkShopName'])->name('check.shop.name');

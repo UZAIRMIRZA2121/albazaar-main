@@ -24,7 +24,6 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
 use Laravel\Socialite\Facades\Socialite;
-use Illuminate\Support\Facades\Auth;
 
 class SocialAuthController extends Controller
 {
@@ -36,111 +35,111 @@ class SocialAuthController extends Controller
         private readonly FirebaseService $firebaseService,
     ) {
     }
-
-    public function handleProviderCallback(Request $request, $service)
+    public function redirectToProvider($service)
     {
         $business_setting = BusinessSetting::where('type', 'social_login')->first();
 
         if ($business_setting) {
+            // Decode the JSON string into an array
             $socialLogins = json_decode($business_setting->value, true);
-
             foreach ($socialLogins as $socialLogin) {
-                if ($socialLogin['status'] == 1 && $socialLogin['login_medium'] == $service) {
-                    $baseUrl = config('app.url');  // Note: use lowercase 'app.url' in config
-                    config([
-                        "services.{$service}.client_id" => $socialLogin['client_id'],
-                        "services.{$service}.client_secret" => $socialLogin['client_secret'],
-                        "services.{$service}.redirect" => $service === 'google'
-                            ? $baseUrl . '/customer/auth/login/google/callback'
-                            : $baseUrl . '/customer/auth/login/facebook/callback',
-                    ]);
+                if ($socialLogin['status'] == 1) { // Check if the login method is enabled
+                    if ($socialLogin['login_medium'] == $service) {
+                        $baseUrl = config('app.url');  // Get base url from config/app.php which reads from .env
+
+                        // Set configuration dynamically based on the service
+                        config([
+                            "services.{$service}.client_id" => $socialLogin['client_id'],
+                            "services.{$service}.client_secret" => $socialLogin['client_secret'],
+                            "services.{$service}.redirect" => $service === 'google'
+                                ? $baseUrl . 'customer/auth/login/google/callback'
+                                : $baseUrl . 'customer/auth/login/facebook/callback',
+                        ]);
+                    }
                 }
             }
         }
+        // Redirect to the provider
+        return Socialite::driver($service)->redirect();
+    }
 
-        // Get user info from provider
-        $userSocialData = Socialite::driver($service)->stateless()->user();
 
-        // Try to find user by email
-        $user = User::where('email', $userSocialData->getEmail())->first();
 
-        if (!$user || $user->login_medium != $service) {
-            // New user or login_medium mismatch - create new user and redirect to confirmation
 
-            $nameParts = explode(' ', $userSocialData->getName());
-            if (count($nameParts) > 1) {
-                $firstName = implode(' ', array_slice($nameParts, 0, -1));
-                $lastName = end($nameParts);
-            } else {
-                $firstName = $userSocialData->getName();
-                $lastName = '';
+   public function handleProviderCallback(Request $request, $service)
+{
+    $business_setting = BusinessSetting::where('type', 'social_login')->first();
+
+    if ($business_setting) {
+        $socialLogins = json_decode($business_setting->value, true);
+        foreach ($socialLogins as $socialLogin) {
+            if ($socialLogin['status'] == 1 && $socialLogin['login_medium'] == $service) {
+                $baseUrl = rtrim(config('app.url'), '/'); // ensure no trailing slash
+                config([
+                    "services.{$service}.client_id" => $socialLogin['client_id'],
+                    "services.{$service}.client_secret" => $socialLogin['client_secret'],
+                    "services.{$service}.redirect" => $baseUrl . "/customer/auth/login/{$service}/callback",
+                ]);
             }
-            $fullName = trim($firstName . ' ' . $lastName);
-
-            session()->forget('socialLoginEmailRemovedForOldUser');
-            session()->put('social_login_new_customer', [
-                'name' => $fullName,
-                'f_name' => $firstName,
-                'l_name' => $lastName,
-                'email' => $userSocialData->getEmail(),
-                'phone' => '',
-                'password' => bcrypt($userSocialData->getId()),
-                'is_active' => 1,
-                'login_medium' => $service,
-                'social_id' => $userSocialData->getId(),
-                'is_phone_verified' => 0,
-                'is_email_verified' => 1,
-                'referral_code' => Helpers::generate_referer_code(),
-                'temporary_token' => Str::random(40)
-            ]);
-
-            // Create new user in DB
-            $newUser = User::create([
-                'name' => $fullName,
-                'f_name' => $firstName,
-                'l_name' => $lastName,
-                'email' => $userSocialData->getEmail(),
-                'phone' => '',
-                'password' => bcrypt($userSocialData->getId()),
-                'is_active' => 1,
-                'login_medium' => $service,
-                'social_id' => $userSocialData->getId(),
-                'is_phone_verified' => 0,
-                'is_email_verified' => 1,
-                'referral_code' => Helpers::generate_referer_code(),
-                'temporary_token' => Str::random(40),
-                'country_code' => '',
-                'image' => '',
-                'referred_by' => null,
-                'street_address' => '',
-                'country' => '',
-                'city' => '',
-                'zip' => '',
-            ]);
-
-            // Start chatting or other post-creation logic
-            $this->startChatting($newUser->id);
-
-            return redirect()->route('customer.auth.social-login-confirmation', [
-                'identity' => base64_encode($userSocialData->getEmail()),
-                'fullName' => base64_encode($fullName),
-            ]);
-        } else {
-            // User exists and login_medium matches - update info and log in
-            $user->update([
-                'is_email_verified' => 1,
-                'login_medium' => $service,
-                'social_id' => $userSocialData->getId(),
-                'temporary_token' => Str::random(40)
-            ]);
-
-            // Log the user in
-            Auth::login($user);
-
-            // Redirect after login (change route as needed)
-            return redirect()->route('customer.dashboard');
         }
     }
+
+    // Get user from provider
+    $userSocialData = Socialite::driver($service)->stateless()->user();
+
+    // Check if user exists
+    $user = $this->customerRepo->getFirstWhere(params: ['email' => $userSocialData->getEmail()]);
+
+    if ($user) {
+        // ✅ User exists, update info and login
+        $this->customerRepo->updateWhere(params: ['email' => $user['email']], data: [
+            'is_email_verified' => 1,
+            'login_medium' => $service,
+            'social_id' => $userSocialData->id,
+            'temporary_token' => Str::random(40),
+        ]);
+
+        return self::actionCustomerLoginProcess($request, $user, $user['email']);
+    } else {
+        // ❌ User does not exist, create
+        $nameParts = explode(' ', $userSocialData->getName());
+        $fastName = implode(' ', array_slice($nameParts, 0, -1)) ?: $userSocialData->getName();
+        $lastName = end($nameParts) ?: '';
+
+        $fullName = $fastName . ' ' . $lastName;
+
+        $newUser = User::create([
+            'name' => $fullName,
+            'f_name' => $fastName,
+            'l_name' => $lastName,
+            'email' => $userSocialData->getEmail(),
+            'phone' => '',
+            'password' => bcrypt($userSocialData->id),
+            'is_active' => 1,
+            'login_medium' => $service,
+            'social_id' => $userSocialData->id,
+            'is_phone_verified' => 0,
+            'is_email_verified' => 1,
+            'referral_code' => Helpers::generate_referer_code(),
+            'temporary_token' => Str::random(40),
+            'country_code' => '',
+            'image' => '',
+            'referred_by' => null,
+            'street_address' => '',
+            'country' => '',
+            'city' => '',
+            'zip' => '',
+        ]);
+
+        $this->startChatting($newUser->id);
+
+        return redirect()->route('customer.auth.social-login-confirmation', [
+            'identity' => base64_encode($userSocialData->getEmail()),
+            'fullName' => base64_encode($fullName),
+        ]);
+    }
+}
+
     private function startChatting($receiverId)
     {
         Chatting::create([
