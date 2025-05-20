@@ -47,65 +47,68 @@ class HomeController extends Controller
     }
     public function optimizeClear()
     {
-      
+
         try {
             // Run optimization commands
             Artisan::call('optimize:clear');
+            Artisan::call('config:cache');
+            Artisan::call('route:cache');
+            Artisan::call('view:clear');
             return response()->json(['message' => 'Application cache cleared successfully!'], 200);
         } catch (\Exception $e) {
             return response()->json(['error' => 'Failed to clear cache: ' . $e->getMessage()], 500);
         }
     }
-    
-public function generateAutoWithdrawRequests()
-{
-    $all_order_transactions = OrderTransaction::where('status', 'disburse')
-        ->where('sub_status', 'pending')
-        ->where('updated_at', '<=', Carbon::now()->subDays(10)) // 10+ days old
-        ->with('seller.wallet')
-        ->get()
-        ->groupBy('seller_id');
 
-    foreach ($all_order_transactions as $seller_id => $transactions) {
-        $seller = $transactions->first()->seller;
-        $wallet = $seller->wallet;
+    public function generateAutoWithdrawRequests()
+    {
+        $all_order_transactions = OrderTransaction::where('status', 'disburse')
+            ->where('sub_status', 'pending')
+            ->where('updated_at', '<=', Carbon::now()->subDays(10)) // 10+ days old
+            ->with('seller.wallet')
+            ->get()
+            ->groupBy('seller_id');
 
-        // Sum total seller amount
-        $total_seller_amount = $transactions->sum('seller_amount');
+        foreach ($all_order_transactions as $seller_id => $transactions) {
+            $seller = $transactions->first()->seller;
+            $wallet = $seller->wallet;
 
-        // Update each transaction's sub_status
-        foreach ($transactions as $transaction) {
-            $transaction->sub_status = 'completed';
-            $transaction->save();
+            // Sum total seller amount
+            $total_seller_amount = $transactions->sum('seller_amount');
+
+            // Update each transaction's sub_status
+            foreach ($transactions as $transaction) {
+                $transaction->sub_status = 'completed';
+                $transaction->save();
+            }
+
+            // Create Withdraw Request
+            WithdrawRequest::create([
+                'seller_id' => $seller_id,
+                'delivery_man_id' => null,
+                'admin_id' => null,
+                'amount' => $total_seller_amount,
+                'withdrawal_method_id' => 1,
+                'withdrawal_method_fields' => json_encode([]),
+                'transaction_note' => 'Auto-withdraw request created for transactions older than 10 days.',
+                'approved' => 0,
+            ]);
+
+            // Update Seller Wallet
+            $wallet->pending_withdraw += $total_seller_amount;
+            $wallet->total_earning -= $total_seller_amount;
+            $wallet->save();
         }
 
-        // Create Withdraw Request
-        WithdrawRequest::create([
-            'seller_id' => $seller_id,
-            'delivery_man_id' => null,
-            'admin_id' => null,
-            'amount' => $total_seller_amount,
-            'withdrawal_method_id' => 1,
-            'withdrawal_method_fields' => json_encode([]),
-            'transaction_note' => 'Auto-withdraw request created for transactions older than 10 days.',
-            'approved' => 0,
-        ]);
-
-        // Update Seller Wallet
-        $wallet->pending_withdraw += $total_seller_amount;
-        $wallet->total_earning -= $total_seller_amount;
-        $wallet->save();
+        return response()->json(['message' => 'Auto withdraw requests processed successfully.']);
     }
-
-    return response()->json(['message' => 'Auto withdraw requests processed successfully.']);
-}
 
     public function index(): View
     {
 
- $this->generateAutoWithdrawRequests();
+        $this->generateAutoWithdrawRequests();
 
-       
+
         $themeName = theme_root_path();
         return match ($themeName) {
             'default' => self::default_theme(),
@@ -143,7 +146,7 @@ public function generateAutoWithdrawRequests()
         $newArrivalProducts = ProductManager::getPriorityWiseNewArrivalProductsQuery(query: $this->product->active(), dataLimit: 8);
 
         $dealOfTheDay = DealOfTheDay::join('products', 'products.id', '=', 'deal_of_the_days.product_id')->select('deal_of_the_days.*', 'products.unit_price')->where('products.status', 1)->where('deal_of_the_days.status', 1)->first();
-// dd(VIEW_FILE_NAMES['home']);
+        // dd(VIEW_FILE_NAMES['home']);
         return view(
             VIEW_FILE_NAMES['home'],
             compact(
