@@ -340,7 +340,7 @@
                                         <span class="text-nowrap fs-10">
                                             (
                                             {{ translate('tax') }}
-                                            {{ $cartItem->tax_model === 'exclude' ? translate('exc') : translate('inc') }}
+                                            
                                             {{ webCurrencyConverter(amount: $cartItem['tax'] ) }}    
                                             )
                                         </span>
@@ -400,11 +400,13 @@
                                     <div>
                                         {{ webCurrencyConverter(amount: ($cartItem['price']-$cartItem['discount'])*$cartItem['quantity']) }}
                                         <span class="text-nowrap fs-10">
-                                            (
-                                            {{ translate('tax Inc') }}
-                                            {{-- {{ $cartItem->tax_model === 'exclude' ? translate('exc') : translate('inc') }} --}}
-                                            {{ webCurrencyConverter(amount: $cartItem['tax'] * $cartItem['quantity']) }}    
-                                            )
+                                            (Inc Tax) <br>
+                                            {{-- ( --}}
+                                            {{-- {{ translate('tax') }} --}}
+                                           
+                                            {{-- {{ webCurrencyConverter(amount: $cartItem['tax'] * $cartItem['quantity']) }}     --}}
+                                            {{-- ) --}}
+
                                         </span>
                                         
                                     </div>

@@ -58,22 +58,22 @@
             <div class="d-flex justify-content-between">
                 <span class="cart_title">{{translate('sub_total')}}</span>
                 <span class="cart_value">
-                    {{ webCurrencyConverter(amount: $subTotal) }}
+                    {{ webCurrencyConverter(amount: $subTotal -  $showtotalTax) }}
                 </span>
             </div>
-            @if($totalTax > 0)
+            {{-- @if($totalTax > 0)
              
             <div class="d-flex justify-content-between">
                 <span class="cart_title">{{translate('tax')}} (exc)</span>
                 <span class="cart_value">
-                    {{ webCurrencyConverter(amount: $totalTax) }}
+                    {{ webCurrencyConverter(amount: $totalTax ) }}
                 </span>
             </div>
-            @endif
+            @endif --}}
             <div class="d-flex justify-content-between">
-                <span class="cart_title">{{translate('tax')}} (Inc)</span>
+                <span class="cart_title">{{translate('tax')}}</span>
                 <span >
-                    {{ webCurrencyConverter(amount: $showtotalTax) }}
+                    {{ webCurrencyConverter(amount: $showtotalTax + $totalTax) }}
                 </span>
             </div>
             <div class="d-flex justify-content-between">
