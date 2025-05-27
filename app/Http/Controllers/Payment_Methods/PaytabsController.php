@@ -36,7 +36,7 @@ class Paytabs
     {
         $data['profile_id'] = $this->config_values->profile_id;
         $url = $this->config_values->base_url . '/' . $request_url;
-
+        dd($this->config_values->server_key, $url, $data);
         try {
             $curl = curl_init();
             curl_setopt_array($curl, [
@@ -48,7 +48,7 @@ class Paytabs
                 CURLOPT_CUSTOMREQUEST => $request_method ?? 'POST',
                 CURLOPT_POSTFIELDS => json_encode($data),
                 CURLOPT_HTTPHEADER => [
-                    'authorization:' . 'SGJNK2HRNN-JKDNKB2LB9-WBN2TBRB2N',
+                    'authorization:' . $this->config_values->server_key,
                     'Content-Type:application/json',
                 ],
             ]);
@@ -150,7 +150,7 @@ class PaytabsController extends Controller
             "tran_type" => "sale",
             "tran_class" => "ecom",
             "cart_id" => $payment_data->id,
-            "cart_currency" => "SAR",
+            "cart_currency" => $payment_data->currency_code,
             "cart_amount" => round($payment_data->payment_amount, 2),
             "cart_description" => "products",
             "paypage_lang" => "en",
@@ -160,24 +160,22 @@ class PaytabsController extends Controller
                 "name" => $payer->name ?? 'N/A',
                 "email" => $payer->email ?? 'N/A',
                 "phone" => $payer->phone ?? "000000",
-                "street" => "123 King Fahd Road",
-                "city" => "Riyadh",
-                "state" => "Riyadh Province",
-                "country" => "SA",
-                "zip" => "11564"
-
+                "street1" => "N/A",
+                "city" => "N/A",
+                "state" => "N/A",
+                "country" => "N/A",
+                "zip" => "00000"
             ],
             "shipping_details" => [
-                "name" => "Ahmed Al-Saud",
-                "email" => "ahmed@example.com",
-                "phone" => "+966501234567",
-                "street1" => "789 Prince Mohammed St",
-                "city" => "Jeddah",
-                "state" => "Makkah Province",
-                "country" => "SA",
-                "zip" => "21564"
+                "name" => "N/A",
+                "email" => "N/A",
+                "phone" => "N/A",
+                "street1" => "N/A",
+                "city" => "N/A",
+                "state" => "N/A",
+                "country" => "N/A",
+                "zip" => "0000"
             ],
-
             "user_defined" => [
                 "udf9" => "UDF9",
                 "udf3" => "UDF3"
