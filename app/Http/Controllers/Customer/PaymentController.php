@@ -29,6 +29,8 @@ use Illuminate\Routing\Redirector;
 use Illuminate\Support\Facades\Validator;
 use Paytabscom\Laravel_paytabs\Facades\Paypage;
 
+use Illuminate\Support\Facades\Http;
+
 
 use Illuminate\View\View;
 
@@ -348,7 +350,6 @@ class PaymentController extends Controller
             attribute: 'order',
             attribute_id: idate("U")
         );
-
         $receiverInfo = new Receiver('receiver_name', 'example.png');
         return $this->generate_link($payer, $paymentInfo, $receiverInfo);
     }
@@ -485,5 +486,67 @@ class PaymentController extends Controller
             'iframe_url' => $pay->getTargetUrl()
         ]);
     }
+
+    public function createPayTabsPayment(Request $request)
+    {
+        $response = Http::withHeaders(
+            [
+                'authorization' => 'Bearer SWJNK2HRMK-JLDHMJ2BMH-9LRRBM2KGG',
+
+                'Content-Type' => 'application/json',
+            ]
+        )->post('https://merchant.paytabs.sa/payment/request', [
+                    "profile_id" => "61727",
+                    "tran_type" => "sale",
+                    "tran_class" => "ecom",
+                    "cart_id" => uniqid(),
+                    "cart_currency" => "USD",
+                    "cart_amount" => 100.00, // Replace with actual amount
+                    "cart_description" => "Test Payment",
+                    "customer_details" => [
+                        "name" => "John Doe",
+                        "email" => "john@example.com",
+                        "phone" => "+201000000001",
+                        "street1" => "123 St",
+                        "city" => "Dubai",
+                        "state" => "DU",
+                        "country" => "AE",
+                        "zip" => "12345",
+                        "ip" => $request->ip(),
+                    ],
+                    "return" => route('payment.callback'),
+                ]);
+
+        $result = $response->json();
+
+        // 👇 Dump the response for debugging
+        dd($result);
+
+        if ($result['redirect_url']) {
+            return redirect($result['redirect_url']);
+        }
+
+        return back()->with('error', 'Payment failed to initialize.');
+    }
+
+    public function processPayment(Request $request)
+    {
+        try {
+            $paymentPage = paypage::sendTransaction('sale', 'ecom')
+                ->sendCart("Order_101", 1000.00, 'Order Description')
+                ->sendFramed(true)
+                ->create_pay_page();
+
+            return $paymentPage; // May return a view, redirect URL, or iframe HTML based on gateway
+
+        } catch (\Exception $e) {
+            // Log the error for debugging
+            \Log::error('Payment initiation failed: ' . $e->getMessage());
+
+            // Redirect back with an error message
+            return back()->with('error', 'Payment initiation failed. Please try again later.');
+        }
+    }
+
 
 }

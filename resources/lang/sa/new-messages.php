@@ -8610,4 +8610,5 @@ return [
 	"tax Inc" => "Tax Inc",
 	"Shipping cost is required!" => "Shipping cost is required!",
 	"inc" => "Inc",
+	"Payment_failed" => "Payment failed",
 ];

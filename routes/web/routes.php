@@ -70,7 +70,7 @@ use Laravel\Socialite\Facades\Socialite;
 //         'carbon_now' => Carbon::now()->format('Y-m-d H:i:s'),
 //         'php_now' => date('Y-m-d H:i:s'),
 //     ];
-    
+
 // });
 // Route::get('/phpinfo', function () {
 //     phpinfo();
@@ -176,9 +176,9 @@ Route::group(['namespace' => 'Web', 'middleware' => ['maintenance_mode', 'guestC
 
     Route::get('vendor/auth/google', [GoogleController::class, 'redirectToGoogle'])->name('vendor.auth.login.google');
     Route::get('/vendor/google/callback', [GoogleController::class, 'handleGoogleCallback']);
-  
 
-  
+
+
 
     Route::get('vendor/auth/facebook', [SocialControllerFacebook::class, 'facebookRedirect'])->name('vendor.auth.login.facebook');
     Route::get('vendor/facebook/callback', [SocialControllerFacebook::class, 'loginWithFacebook']);
@@ -215,6 +215,12 @@ Route::group(['namespace' => 'Web', 'middleware' => ['maintenance_mode', 'guestC
 
         Route::get('flash-deals/{id}', 'getFlashDealsView')->name('flash-deals');
     });
+
+    Route::post('/paytabs/init', [PaymentController::class, 'createPayTabsPayment'])->name('paytabs.init');
+    Route::get('/payment/callback', [PaymentController::class, 'handleCallback'])->name('payment.callback');
+
+    Route::post('/payment/process', [PaymentController::class, 'processPayment'])->name('payment.process');
+
 
     Route::controller(PageController::class)->group(function () {
         Route::get(Pages::ABOUT_US[URI], 'getAboutUsView')->name('about-us');
@@ -581,12 +587,12 @@ if (!$isGatewayPublished) {
 
         });
     });
+    Route::get('/pay1', [PaytabsController::class, 'createPayment'])->name('payment.create');
+    Route::get('/payment/select-method', function () {
+        return view('payment.select-method');
+    })->name('payment.select');
 
-Route::get('/payment/select-method', function () {
-    return view('payment.select-method');
-})->name('payment.select');
-
-Route::post('/payment/iframe', [PaymentController::class, 'showIframe'])->name('payment.showIframe');
+    Route::post('/payment/iframe', [PaymentController::class, 'showIframe'])->name('payment.showIframe');
 
 
 }
@@ -611,8 +617,6 @@ Route::get('login/facebook', [App\Http\Controllers\Auth\SocialLoginController::c
 Route::get('login/facebook/callback', [App\Http\Controllers\Auth\SocialLoginController::class, 'handleFacebookCallback']);
 
 
-
-Route::get('/paytabs/iframe/{payment_id}', [PaytabsController::class, 'showIframe'])->name('paytabs.iframe');
 
 
 

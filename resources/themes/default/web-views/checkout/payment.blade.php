@@ -55,7 +55,7 @@
                                 </div>
                                 <p class="text-capitalize mt-2">{{ translate('select_a_payment_method_to_proceed') }}</p>
                             </div>
-                            {{-- @if (($cashOnDeliveryBtnShow && $cash_on_delivery['status']) || $digital_payment['status'] == 1)
+                           @if (($cashOnDeliveryBtnShow && $cash_on_delivery['status']) || $digital_payment['status'] == 1)
                                 <div class="d-flex flex-wrap gap-3 mb-5">
                                     @if ($cashOnDeliveryBtnShow && $cash_on_delivery['status'])
                                         <div id="cod-for-cart">
@@ -86,7 +86,7 @@
                                         </div>
                                     @endif
                                 </div>
-                            @endif --}}
+                            @endif 
 
                             @if ($digital_payment['status'] == 1)
                                 <div class="d-flex flex-wrap gap-2 align-items-center mb-4 ">
@@ -95,7 +95,7 @@
                                         class="fs-10 text-capitalize mt-1">({{ translate('faster_&_secure_way_to_pay') }})</span>
                                 </div>
 
-                                {{-- <div class="row gx-4 mb-4">
+                                 <div class="row gx-4 mb-4">
                                     @foreach ($payment_gateways_list as $payment_gateway)
                                         <div class="col-sm-6">
                                             <form method="post" class="digital_payment" id="{{($payment_gateway->key_name)}}_form" action="{{ route('customer.web-payment-request') }}">
@@ -130,95 +130,9 @@
                                             </form>
                                         </div>
                                     @endforeach
-                                </div> --}}
-                                @php
-                                    $paytabs = $payment_gateways_list->firstWhere('key_name', 'paytabs');
-                                    $additionalData =
-                                        $paytabs && $paytabs->additional_data
-                                            ? json_decode($paytabs->additional_data)
-                                            : null;
-                                    $gatewayImage =
-                                        $additionalData && $additionalData->gateway_image
-                                            ? $additionalData->gateway_image
-                                            : '';
-                                    $gatewayTitle =
-                                        $additionalData && $additionalData->gateway_title
-                                            ? $additionalData->gateway_title
-                                            : 'PayTabs';
-                                @endphp
-
-                                @if ($paytabs)
-                                    <div class="col-12">
-                                        <form method="POST" class="digital_payment" id="paytab_form"
-                                            action="{{ route('customer.web-payment-request') }}">
-                                            @csrf
-                                            <input type="hidden" name="user_id"
-                                                value="{{ auth('customer')->check() ? auth('customer')->user()->id : session('guest_id') }}">
-                                            <input type="hidden" name="customer_id"
-                                                value="{{ auth('customer')->check() ? auth('customer')->user()->id : session('guest_id') }}">
-                                            <input type="hidden" name="payment_method" value="paytabs">
-                                            <input type="hidden" name="payment_platform" value="web">
-
-                                            {{-- Callback URL --}}
-                                            @if ($paytabs->mode === 'live' && isset($paytabs->live_values['callback_url']))
-                                                <input type="hidden" name="callback"
-                                                    value="{{ $paytabs->live_values['callback_url'] }}">
-                                            @elseif ($paytabs->mode === 'test' && isset($paytabs->test_values['callback_url']))
-                                                <input type="hidden" name="callback"
-                                                    value="{{ $paytabs->test_values['callback_url'] }}">
-                                            @else
-                                                <input type="hidden" name="callback" value="">
-                                            @endif
-
-                                            <input type="hidden" name="external_redirect_link"
-                                                value="{{ route('web-payment-success') }}">
-                                            <label class="form-label d-block mb-2">
-                                                <img width="30"
-                                                    src="{{ dynamicStorage(path: 'storage/app/public/payment_modules/gateway_image') }}/{{ $paytabs->additional_data && json_decode($paytabs->additional_data)->gateway_image != null ? json_decode($paytabs->additional_data)->gateway_image : '' }}"
-                                                    alt="">
-                                                {{ $gatewayTitle }}
-                                            </label>
-
-                                            <div class="d-flex gap-3">
-                                                <label for="visa_master"
-                                                    class="card-toggle border rounded p-2 cursor-pointer">
-                                                    <input type="radio" name="card_type" id="visa_master"
-                                                        value="visa_master" class="d-none card-type-radio">
-                                                    <img src="{{ asset('images/visamaster.png') }}" alt="Visa/MasterCard"
-                                                        width="80">
-                                                </label>
-
-                                                <label for="mada" class="card-toggle border rounded p-2 cursor-pointer">
-                                                    <input type="radio" name="card_type" id="mada" value="mada"
-                                                        class="d-none card-type-radio">
-                                                    <img src="{{ asset('images/madacard.png') }}" alt="Mada"
-                                                        width="80">
-                                                </label>
-                                            </div>
-
-                                            {{-- Card Details Section --}}
-                                            <div id="card-details" style="display: none;">
-                                                <div class="text-center mb-3">
-                                                    <img id="selected-card-img" src="" alt="Selected Card"
-                                                        width="100">
-                                                </div>
-                                                <div class="mb-3">
-                                                    <input type="text" name="card_number" class="form-control"
-                                                        placeholder="Card Number" required>
-                                                </div>
-                                                <div class="mb-3">
-                                                    <input type="text" name="expiry" class="form-control"
-                                                        placeholder="MM/YY" required>
-                                                </div>
-                                                <div class="mb-3">
-                                                    <input type="text" name="cvv" class="form-control"
-                                                        placeholder="CVV" required>
-                                                </div>
-                                                <button type="submit" class="btn btn-primary w-100">Pay Now</button>
-                                            </div>
-                                        </form>
-                                    </div>
-                                @endif
+                                </div> 
+                             
+                           
                                 @if (isset($offline_payment) && $offline_payment['status'] && count($offline_payment_methods) > 0)
                                     <div class="row g-3">
                                         <div class="col-12">

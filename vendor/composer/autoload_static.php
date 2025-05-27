@@ -634,6 +634,7 @@ class ComposerStaticInit40a38a1437ad81a26fb793509859b2b1
         'Paytabscom\\Laravel_paytabs\\' => 
         array (
             0 => __DIR__ . '/..' . '/paytabscom/laravel_paytabs/src',
+            1 => __DIR__ . '/..' . '/paytabscom/laravel_paytabs/src',
         ),
         'ParagonIE\\ConstantTime\\' => 
         array (
@@ -10730,7 +10731,6 @@ class ComposerStaticInit40a38a1437ad81a26fb793509859b2b1
         'PayPal\\Validation\\NumericValidator' => __DIR__ . '/..' . '/paypal/rest-api-sdk-php/lib/PayPal/Validation/NumericValidator.php',
         'PayPal\\Validation\\UrlValidator' => __DIR__ . '/..' . '/paypal/rest-api-sdk-php/lib/PayPal/Validation/UrlValidator.php',
         'Paytabscom\\Laravel_paytabs\\Controllers\\PaytabsLaravelListenerApi' => __DIR__ . '/..' . '/paytabscom/laravel_paytabs/src/Controllers/PaytabsLaravelListenerApi.php',
-        'Paytabscom\\Laravel_paytabs\\Facades\\paypage' => __DIR__ . '/..' . '/paytabscom/laravel_paytabs/src/Facades/paypage.php',
         'Paytabscom\\Laravel_paytabs\\PaypageServiceProvider' => __DIR__ . '/..' . '/paytabscom/laravel_paytabs/src/PaypageServiceProvider.php',
         'Paytabscom\\Laravel_paytabs\\Services\\IpnRequest' => __DIR__ . '/..' . '/paytabscom/laravel_paytabs/src/Services/IpnRequest.php',
         'Paytabscom\\Laravel_paytabs\\paypage' => __DIR__ . '/..' . '/paytabscom/laravel_paytabs/src/paypage.php',

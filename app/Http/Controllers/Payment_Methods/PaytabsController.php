@@ -8,6 +8,7 @@ use App\Models\Order;
 use App\Traits\Processor;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\NotifySellerMail;
@@ -31,31 +32,68 @@ class Paytabs
         }
     }
 
-    function send_api_request($request_url, $data, $request_method = null)
+    public function send_api_request($request_url, $data, $request_method = null)
     {
         $data['profile_id'] = $this->config_values->profile_id;
-        $curl = curl_init();
-        curl_setopt_array($curl, array(
-            CURLOPT_URL => $this->config_values->base_url . '/' . $request_url,
-            CURLOPT_RETURNTRANSFER => true,
-            CURLOPT_ENCODING => '',
-            CURLOPT_MAXREDIRS => 10,
-            CURLOPT_TIMEOUT => 0,
-            CURLOPT_CUSTOMREQUEST => isset($request_method) ? $request_method : 'POST',
-            CURLOPT_POSTFIELDS => json_encode($data, true),
-            CURLOPT_HTTPHEADER => array(
-                'authorization:' . $this->config_values->server_key,
-                'Content-Type:application/json'
-            ),
-        ));
+        $url = $this->config_values->base_url . '/' . $request_url;
 
-        $response = json_decode(curl_exec($curl), true);
-        curl_close($curl);
-        // dd($response);
-        Session::put('tran_ref', $response['tran_ref']);
+        try {
+            $curl = curl_init();
+            curl_setopt_array($curl, [
+                CURLOPT_URL => $url,
+                CURLOPT_RETURNTRANSFER => true,
+                CURLOPT_ENCODING => '',
+                CURLOPT_MAXREDIRS => 10,
+                CURLOPT_TIMEOUT => 30,
+                CURLOPT_CUSTOMREQUEST => $request_method ?? 'POST',
+                CURLOPT_POSTFIELDS => json_encode($data),
+                CURLOPT_HTTPHEADER => [
+                    'authorization:' . 'SGJNK2HRNN-JKDNKB2LB9-WBN2TBRB2N',
+                    'Content-Type:application/json',
+                ],
+            ]);
 
-        return $response;
+            $result = curl_exec($curl);
+            $error = curl_error($curl);
+            curl_close($curl);
+
+            if ($error) {
+                \Log::error("cURL Error: $error");
+                return null;
+            }
+
+            $response = json_decode($result, true);
+
+            if (json_last_error() !== JSON_ERROR_NONE) {
+                \Log::error("API Request Error: JSON decode error: " . json_last_error_msg(), [
+                    'raw_response' => $result,
+                    'request_url' => $url,
+                    'payload' => $data,
+                ]);
+                return null;
+            }
+
+            if (!isset($response['tran_ref'])) {
+                \Log::warning("API responded without 'tran_ref'", [
+                    'response' => $response,
+                    'url' => $url,
+                ]);
+            } else {
+                \Session::put('tran_ref', $response['tran_ref']);
+            }
+
+            return $response;
+
+        } catch (\Exception $e) {
+            \Log::error("Exception during API request: " . $e->getMessage(), [
+                'trace' => $e->getTraceAsString(),
+                'url' => $url,
+                'data' => $data,
+            ]);
+            return null;
+        }
     }
+
 
     function is_valid_redirect($post_values)
     {
@@ -97,59 +135,69 @@ class PaytabsController extends Controller
             return response()->json($this->response_formatter(GATEWAYS_DEFAULT_400, null, $this->error_processor($validator)), 400);
         }
 
-        $payment_data = $this->payment::where(['id' => $request['payment_id']])->where(['is_paid' => 0])->first();
-        if (!isset($payment_data)) {
+        $payment_data = $this->payment::where(['id' => $request['payment_id'], 'is_paid' => 0])->first();
+
+        if (!$payment_data) {
             return response()->json($this->response_formatter(GATEWAYS_DEFAULT_204), 200);
         }
+
         $payer = json_decode($payment_data['payer_information']);
 
         $plugin = new Paytabs();
         $request_url = 'payment/request';
+
         $data = [
             "tran_type" => "sale",
             "tran_class" => "ecom",
             "cart_id" => $payment_data->id,
-            "cart_currency" => $payment_data->currency_code,
+            "cart_currency" => "SAR",
             "cart_amount" => round($payment_data->payment_amount, 2),
             "cart_description" => "products",
             "paypage_lang" => "en",
-            "callback" => route('paytabs.callback', ['payment_id' => $payment_data->id]), // Nullable - Must be HTTPS, otherwise no post data from paytabs
-            "return" => route('paytabs.callback', ['payment_id' => $payment_data->id]), // Must be HTTPS, otherwise no post data from paytabs , must be relative to your site URL
+            "callback" => route('paytabs.callback', ['payment_id' => $payment_data->id]),
+            "return" => route('paytabs.callback', ['payment_id' => $payment_data->id]),
             "customer_details" => [
-                "name" => $payer->name,
-                "email" => $payer->email,
+                "name" => $payer->name ?? 'N/A',
+                "email" => $payer->email ?? 'N/A',
                 "phone" => $payer->phone ?? "000000",
-                "street1" => "N/A",
-                "city" => "N/A",
-                "state" => "N/A",
-                "country" => "N/A",
-                "zip" => "00000"
+                "street" => "123 King Fahd Road",
+                "city" => "Riyadh",
+                "state" => "Riyadh Province",
+                "country" => "SA",
+                "zip" => "11564"
+
             ],
             "shipping_details" => [
-                "name" => "N/A",
-                "email" => "N/A",
-                "phone" => "N/A",
-                "street1" => "N/A",
-                "city" => "N/A",
-                "state" => "N/A",
-                "country" => "N/A",
-                "zip" => "0000"
+                "name" => "Ahmed Al-Saud",
+                "email" => "ahmed@example.com",
+                "phone" => "+966501234567",
+                "street1" => "789 Prince Mohammed St",
+                "city" => "Jeddah",
+                "state" => "Makkah Province",
+                "country" => "SA",
+                "zip" => "21564"
             ],
+
             "user_defined" => [
                 "udf9" => "UDF9",
                 "udf3" => "UDF3"
-            ]
+            ],
+            "framed" => true
         ];
 
         $page = $plugin->send_api_request($request_url, $data);
 
-        if (!isset($page['redirect_url'])) {
+        // Handle failed or null responses from the API
+        if (!is_array($page) || !isset($page['redirect_url'])) {
+            \Log::error('Paytabs payment request failed.', ['response' => $page]);
             return response()->json($this->response_formatter(GATEWAYS_DEFAULT_204), 200);
         }
 
-        header('Location:' . $page['redirect_url']); /* Redirect browser */
-        exit();
+        // Return view with redirect URL for iframe
+        return view('payment.card_entry', ['redirectUrl' => $page['redirect_url']]);
     }
+
+
 
     public function callback(Request $request)
     {
@@ -196,7 +244,7 @@ class PaytabsController extends Controller
                 //     // Queue the email instead of sending immediately
                 //     Mail::queue(new NotifySellerMail($detail));
                 // }
-              
+
             }
 
 
@@ -213,4 +261,13 @@ class PaytabsController extends Controller
     {
         return response()->json($this->response_formatter(GATEWAYS_DEFAULT_200), 200);
     }
+
+
+
+
+
+
+
+
+
 }

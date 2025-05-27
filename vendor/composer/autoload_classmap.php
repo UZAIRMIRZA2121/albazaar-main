@@ -9619,7 +9619,6 @@ return array(
     'PayPal\\Validation\\NumericValidator' => $vendorDir . '/paypal/rest-api-sdk-php/lib/PayPal/Validation/NumericValidator.php',
     'PayPal\\Validation\\UrlValidator' => $vendorDir . '/paypal/rest-api-sdk-php/lib/PayPal/Validation/UrlValidator.php',
     'Paytabscom\\Laravel_paytabs\\Controllers\\PaytabsLaravelListenerApi' => $vendorDir . '/paytabscom/laravel_paytabs/src/Controllers/PaytabsLaravelListenerApi.php',
-    'Paytabscom\\Laravel_paytabs\\Facades\\paypage' => $vendorDir . '/paytabscom/laravel_paytabs/src/Facades/paypage.php',
     'Paytabscom\\Laravel_paytabs\\PaypageServiceProvider' => $vendorDir . '/paytabscom/laravel_paytabs/src/PaypageServiceProvider.php',
     'Paytabscom\\Laravel_paytabs\\Services\\IpnRequest' => $vendorDir . '/paytabscom/laravel_paytabs/src/Services/IpnRequest.php',
     'Paytabscom\\Laravel_paytabs\\paypage' => $vendorDir . '/paytabscom/laravel_paytabs/src/paypage.php',
