@@ -6,26 +6,7 @@
     <link rel="stylesheet" href="{{ theme_asset(path: 'public/assets/front-end/css/payment.css') }}">
     <script src="https://polyfill.io/v3/polyfill.min.js?version=3.52.1&features=fetch"></script>
     <script src="https://js.stripe.com/v3/"></script>
-    <style>
-        .card-toggle {
-            transition: all 0.3s ease;
-            box-shadow: 0 0 0 transparent;
-        }
 
-        .card-toggle input[type="radio"]:checked+img {
-            border: 2px solid #0d6efd;
-            border-radius: 10px;
-            box-shadow: 0 0 10px rgba(13, 110, 253, 0.4);
-            padding: 4px;
-            background-color: #f0f8ff;
-        }
-
-        .card-toggle.active {
-            border: 2px solid #0d6efd;
-            background-color: #e9f5ff;
-            box-shadow: 0 0 8px rgba(13, 110, 253, 0.3);
-        }
-    </style>
 @endpush
 
 @section('content')

@@ -36,7 +36,6 @@ class Paytabs
     {
         $data['profile_id'] = $this->config_values->profile_id;
         $url = $this->config_values->base_url . '/' . $request_url;
-        dd($this->config_values->server_key, $url, $data);
         try {
             $curl = curl_init();
             curl_setopt_array($curl, [
@@ -190,7 +189,7 @@ class PaytabsController extends Controller
             \Log::error('Paytabs payment request failed.', ['response' => $page]);
             return response()->json($this->response_formatter(GATEWAYS_DEFAULT_204), 200);
         }
-
+        
         // Return view with redirect URL for iframe
         return view('payment.card_entry', ['redirectUrl' => $page['redirect_url']]);
     }
