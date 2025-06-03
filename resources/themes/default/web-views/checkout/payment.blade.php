@@ -6,7 +6,56 @@
     <link rel="stylesheet" href="{{ theme_asset(path: 'public/assets/front-end/css/payment.css') }}">
     <script src="https://polyfill.io/v3/polyfill.min.js?version=3.52.1&features=fetch"></script>
     <script src="https://js.stripe.com/v3/"></script>
+@endpush
+@push('css_or_js')
+    <style>
+        html,
+        body {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+        }
 
+        .payment-options {
+            display: flex;
+            justify-content: center;
+            margin: 20px 0;
+            gap: 20px;
+        }
+
+        .payment-btn {
+            border: 2px solid #ccc;
+            padding: 10px 20px;
+            border-radius: 8px;
+            background-color: #f9f9f9;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            transition: all 0.3s ease;
+        }
+
+        .payment-btn img {
+            height: 30px;
+            margin-right: 10px;
+        }
+
+        .payment-btn.active {
+            border-color: #007bff;
+            background-color: #e7f0ff;
+        }
+
+        iframe {
+            width: 100%;
+            height: 100vh;
+            border: none;
+            display: none;
+            margin-top: 20px;
+        }
+
+        .nav {
+            display: none !important;
+        }
+    </style>
 @endpush
 
 @section('content')
@@ -36,7 +85,7 @@
                                 </div>
                                 <p class="text-capitalize mt-2">{{ translate('select_a_payment_method_to_proceed') }}</p>
                             </div>
-                           @if (($cashOnDeliveryBtnShow && $cash_on_delivery['status']) || $digital_payment['status'] == 1)
+                            {{-- @if (($cashOnDeliveryBtnShow && $cash_on_delivery['status']) || $digital_payment['status'] == 1)
                                 <div class="d-flex flex-wrap gap-3 mb-5">
                                     @if ($cashOnDeliveryBtnShow && $cash_on_delivery['status'])
                                         <div id="cod-for-cart">
@@ -67,54 +116,108 @@
                                         </div>
                                     @endif
                                 </div>
-                            @endif 
+                            @endif  --}}
 
                             @if ($digital_payment['status'] == 1)
-                                <div class="d-flex flex-wrap gap-2 align-items-center mb-4 ">
+                                {{-- <div class="d-flex flex-wrap gap-2 align-items-center mb-4 ">
                                     <h5 class="mb-0 text-capitalize">{{ translate('pay_via_online') }}</h5>
                                     <span
                                         class="fs-10 text-capitalize mt-1">({{ translate('faster_&_secure_way_to_pay') }})</span>
-                                </div>
+                                </div> --}}
 
-                                 <div class="row gx-4 mb-4">
+                                <div class="row gx-4 mb-4">
                                     @foreach ($payment_gateways_list as $payment_gateway)
                                         <div class="col-sm-6">
-                                            <form method="post" class="digital_payment" id="{{($payment_gateway->key_name)}}_form" action="{{ route('customer.web-payment-request') }}">
+                                            <form method="post" class="digital_payment  d-none"
+                                                id="{{ $payment_gateway->key_name }}_form"
+                                                action="{{ route('customer.web-payment-request') }}">
                                                 @csrf
-                                                <input type="hidden" name="user_id" value="{{ auth('customer')->check() ? auth('customer')->user()->id : session('guest_id') }}">
-                                                <input type="hidden" name="customer_id" value="{{ auth('customer')->check() ? auth('customer')->user()->id : session('guest_id') }}">
-                                                <input type="hidden" name="payment_method" value="{{ $payment_gateway->key_name }}">
+                                                <input type="hidden" name="user_id"
+                                                    value="{{ auth('customer')->check() ? auth('customer')->user()->id : session('guest_id') }}">
+                                                <input type="hidden" name="customer_id"
+                                                    value="{{ auth('customer')->check() ? auth('customer')->user()->id : session('guest_id') }}">
+                                                <input type="hidden" name="payment_method"
+                                                    value="{{ $payment_gateway->key_name }}">
                                                 <input type="hidden" name="payment_platform" value="web">
 
                                                 @if ($payment_gateway->mode == 'live' && isset($payment_gateway->live_values['callback_url']))
-                                                    <input type="hidden" name="callback" value="{{ $payment_gateway->live_values['callback_url'] }}">
+                                                    <input type="hidden" name="callback"
+                                                        value="{{ $payment_gateway->live_values['callback_url'] }}">
                                                 @elseif ($payment_gateway->mode == 'test' && isset($payment_gateway->test_values['callback_url']))
-                                                    <input type="hidden" name="callback" value="{{ $payment_gateway->test_values['callback_url'] }}">
+                                                    <input type="hidden" name="callback"
+                                                        value="{{ $payment_gateway->test_values['callback_url'] }}">
                                                 @else
                                                     <input type="hidden" name="callback" value="">
                                                 @endif
 
-                                                <input type="hidden" name="external_redirect_link" value="{{ route('web-payment-success') }}">
-                                                <label class="d-flex align-items-center gap-2 mb-0 form-check py-2 cursor-pointer">
-                                                    <input type="radio" id="{{($payment_gateway->key_name)}}" name="online_payment" class="form-check-input custom-radio" value="{{($payment_gateway->key_name)}}">
+                                                <input type="hidden" name="external_redirect_link"
+                                                    value="{{ route('web-payment-success') }}">
+
+                                                <label
+                                                    class="d-flex align-items-center gap-2 mb-0 form-check py-2 cursor-pointer">
+                                                    <input type="radio" id="{{ $payment_gateway->key_name }}"
+                                                        name="online_payment"
+                                                        class="form-check-input custom-radio payment-radio"
+                                                        value="{{ $payment_gateway->key_name }}"
+                                                        {{ $payment_gateway->key_name === 'paytab' ? 'checked' : '' }}
+                                                        data-form-id="{{ $payment_gateway->key_name }}_form"
+                                                        checked="{{ $payment_gateway->key_name === 'paytab' ? 'checked' : '' }}">
                                                     <img width="30"
-                                                         src="{{dynamicStorage(path: 'storage/app/public/payment_modules/gateway_image')}}/{{ $payment_gateway->additional_data && (json_decode($payment_gateway->additional_data)->gateway_image) != null ? (json_decode($payment_gateway->additional_data)->gateway_image) : ''}}" alt="">
+                                                        src="{{ dynamicStorage(path: 'storage/app/public/payment_modules/gateway_image') }}/{{ $payment_gateway->additional_data && json_decode($payment_gateway->additional_data)->gateway_image != null ? json_decode($payment_gateway->additional_data)->gateway_image : '' }}"
+                                                        alt="">
                                                     <span class="text-capitalize form-check-label">
-                                                    @if ($payment_gateway->additional_data && json_decode($payment_gateway->additional_data)->gateway_title != null)
+                                                        @if ($payment_gateway->additional_data && json_decode($payment_gateway->additional_data)->gateway_title != null)
                                                             {{ json_decode($payment_gateway->additional_data)->gateway_title }}
                                                         @else
-                                                            {{ str_replace('_', ' ',$payment_gateway->key_name) }}
+                                                            {{ str_replace('_', ' ', $payment_gateway->key_name) }}
                                                         @endif
-
-                                                </span>
+                                                    </span>
                                                 </label>
                                             </form>
+
+
+
+
+
+
                                         </div>
                                     @endforeach
-                                </div> 
-                             
-                           
-                                @if (isset($offline_payment) && $offline_payment['status'] && count($offline_payment_methods) > 0)
+
+
+
+                                </div>
+                                <div class="row g-3">
+                                    <div class="col-12">
+                                        <div class="bg-primary-light rounded p-4">
+                                            <div class="container m-auto">
+
+                                                <div class="payment-options">
+                                                    <div class="payment-btn ">
+                                                        <img src="{{ asset('images/visamaster.png') }}"
+                                                            alt="Visa/MasterCard">
+
+                                                    </div>
+
+                                                    <div class="payment-btn">
+                                                        <img src="{{ asset('images/madacard.png') }}" alt="Mada">
+
+                                                    </div>
+                                                </div>
+                                                <iframe id="paymentIframe" src="{{ session('redirect_url') }}"
+                                                    allowfullscreen
+                                                    style="width: 100%; height: 600px; border: none;"></iframe>
+                                            </div>
+
+
+                                        </div>
+                                    </div>
+                                </div>
+                                <script>
+                                    function loadPayment(url) {
+                                        document.getElementById('paymentIframe').src = url;
+                                    }
+                                </script>
+                                {{-- @if (isset($offline_payment) && $offline_payment['status'] && count($offline_payment_methods) > 0)
                                     <div class="row g-3">
                                         <div class="col-12">
                                             <div class="bg-primary-light rounded p-4">
@@ -145,7 +248,7 @@
                                             </div>
                                         </div>
                                     </div>
-                                @endif
+                                @endif --}}
                             @endif
                         </div>
                     </div>
@@ -263,6 +366,60 @@
                 } else {
                     cardDetails.style.display = 'none';
                 }
+            });
+        });
+    </script>
+    {{-- JavaScript for auto-submit --}}
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Find the radio input with value "paytab"
+            const paytabRadio = document.querySelector('input[name="online_payment"][value="paytab"]');
+
+            if (paytabRadio) {
+                // Check the radio button
+                paytabRadio.checked = true;
+
+                // Find the parent form with class "digital_payment"
+                const paytabForm = paytabRadio.closest('form.digital_payment');
+
+                // Submit the form
+                if (paytabForm) {
+                    paytabForm.submit();
+                }
+            }
+        });
+    </script>
+    @if (!session('redirect_url'))
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                // Select the button
+                const checkoutButton = document.querySelector('.proceed_to_next_button');
+
+                if (checkoutButton) {
+                    // Remove 'disabled' class if present
+                    checkoutButton.classList.remove('disabled');
+
+                    // Trigger the click
+                    checkoutButton.click();
+                }
+            });
+        </script>
+    @endif
+
+@endpush
+@push('script')
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const buttons = document.querySelectorAll('.payment-btn');
+            const iframe = document.getElementById('paymentIframe');
+
+            buttons.forEach(button => {
+                button.addEventListener('click', function() {
+                    buttons.forEach(btn => btn.classList.remove('active'));
+                    this.classList.add('active');
+
+                    iframe.style.display = 'block';
+                });
             });
         });
     </script>

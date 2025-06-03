@@ -189,9 +189,11 @@ class PaytabsController extends Controller
             \Log::error('Paytabs payment request failed.', ['response' => $page]);
             return response()->json($this->response_formatter(GATEWAYS_DEFAULT_204), 200);
         }
-        
-        // Return view with redirect URL for iframe
-        return view('payment.card_entry', ['redirectUrl' => $page['redirect_url']]);
+
+        session(['redirect_url' => $page['redirect_url']]);
+
+        return redirect()->route('checkout-payment');
+
     }
 
 
