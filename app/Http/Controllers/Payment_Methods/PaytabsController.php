@@ -31,7 +31,8 @@ class Paytabs
             $this->config_values = json_decode($config->test_values);
         }
     }
-
+ 
+    
     public function send_api_request($request_url, $data, $request_method = null)
     {
         $data['profile_id'] = $this->config_values->profile_id;
