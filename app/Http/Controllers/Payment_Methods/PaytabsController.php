@@ -32,7 +32,7 @@ class Paytabs
         }
     }
  
-    
+
     public function send_api_request($request_url, $data, $request_method = null)
     {
         $data['profile_id'] = $this->config_values->profile_id;
@@ -204,11 +204,11 @@ class PaytabsController extends Controller
     
         $page = $plugin->send_api_request($request_url, $data);
 
-        // Handle failed or null responses from the API
-        if (!is_array($page) || !isset($page['redirect_url'])) {
-            \Log::error('Paytabs payment request failed.', ['response' => $page]);
-            return response()->json($this->response_formatter(GATEWAYS_DEFAULT_204), 200);
-        }
+        // // Handle failed or null responses from the API
+        // if (!is_array($page) || !isset($page['redirect_url'])) {
+        //     \Log::error('Paytabs payment request failed.', ['response' => $page]);
+        //     return response()->json($this->response_formatter(GATEWAYS_DEFAULT_204), 200);
+        // }
 
         session(['redirect_url' => $page['redirect_url']]);
 
