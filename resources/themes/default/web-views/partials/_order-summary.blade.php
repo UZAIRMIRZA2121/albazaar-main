@@ -159,11 +159,20 @@
                 </div>
             </div>
         @endif
-  @if (!session('redirect_url'))
-        <div class="pt-4">
-            <a class="btn btn--primary btn-block proceed_to_next_button {{$cart->count() <= 0 ? 'custom-disabled' : ''}} action-checkout-function">{{translate('proceed_to_Checkout')}}</a>
-        </div>
+        {{Route::currentRouteName() }}
+@if ( Route::currentRouteName() !== 'checkout-payment')
+    <div class="pt-4">
+        <a class="btn btn--primary btn-block proceed_to_next_button {{ $cart->count() <= 0 ? 'custom-disabled' : '' }} action-checkout-function">
+            {{ translate('proceed_to_Checkout') }}
+        </a>
+    </div>
 @endif
+ <div class="pt-4">
+        <a class="btn btn--primary btn-block proceed_to_next_button {{ $cart->count() <= 0 ? 'custom-disabled' : '' }} action-checkout-function">
+            {{ translate('proceed_to_Checkout') }}
+        </a>
+    </div>
+
         <div class="d-flex justify-content-center mt-3">
             <a href="{{route('home')}}" class="d-flex align-items-center gap-2 text-primary font-weight-bold">
                 <i class="tio-back-ui fs-12"></i> {{translate('continue_Shopping')}}

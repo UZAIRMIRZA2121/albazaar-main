@@ -128,7 +128,7 @@
                                 <div class="row gx-4 mb-4">
                                     @foreach ($payment_gateways_list as $payment_gateway)
                                         <div class="col-sm-6">
-                                            <form method="post" class="digital_payment  d-none"
+                                            <form method="post" class="digital_payment  "
                                                 id="{{ $payment_gateway->key_name }}_form"
                                                 action="{{ route('customer.web-payment-request') }}">
                                                 @csrf

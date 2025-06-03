@@ -36,6 +36,7 @@ class Paytabs
     {
         $data['profile_id'] = $this->config_values->profile_id;
         $url = $this->config_values->base_url . '/' . $request_url;
+
         try {
             $curl = curl_init();
             curl_setopt_array($curl, [
@@ -44,7 +45,7 @@ class Paytabs
                 CURLOPT_ENCODING => '',
                 CURLOPT_MAXREDIRS => 10,
                 CURLOPT_TIMEOUT => 30,
-                CURLOPT_CUSTOMREQUEST => $request_method ?? 'POST',
+                CURLOPT_CUSTOMREQUEST => strtoupper($request_method ?? 'POST'),
                 CURLOPT_POSTFIELDS => json_encode($data),
                 CURLOPT_HTTPHEADER => [
                     'authorization:' . $this->config_values->server_key,
@@ -54,10 +55,19 @@ class Paytabs
 
             $result = curl_exec($curl);
             $error = curl_error($curl);
+            $httpCode = curl_getinfo($curl, CURLINFO_HTTP_CODE);
             curl_close($curl);
 
             if ($error) {
                 \Log::error("cURL Error: $error");
+                return null;
+            }
+
+            if ($httpCode >= 400) {
+                \Log::error("HTTP Error $httpCode", [
+                    'response' => $result,
+                    'url' => $url,
+                ]);
                 return null;
             }
 
@@ -92,6 +102,7 @@ class Paytabs
             return null;
         }
     }
+
 
 
     function is_valid_redirect($post_values)
@@ -130,6 +141,7 @@ class PaytabsController extends Controller
             'payment_id' => 'required|uuid'
         ]);
 
+
         if ($validator->fails()) {
             return response()->json($this->response_formatter(GATEWAYS_DEFAULT_400, null, $this->error_processor($validator)), 400);
         }
@@ -145,43 +157,50 @@ class PaytabsController extends Controller
         $plugin = new Paytabs();
         $request_url = 'payment/request';
 
-        $data = [
-            "tran_type" => "sale",
-            "tran_class" => "ecom",
-            "cart_id" => $payment_data->id,
-            "cart_currency" => $payment_data->currency_code,
-            "cart_amount" => round($payment_data->payment_amount, 2),
-            "cart_description" => "products",
-            "paypage_lang" => "en",
-            "callback" => route('paytabs.callback', ['payment_id' => $payment_data->id]),
-            "return" => route('paytabs.callback', ['payment_id' => $payment_data->id]),
-            "customer_details" => [
-                "name" => $payer->name ?? 'N/A',
-                "email" => $payer->email ?? 'N/A',
-                "phone" => $payer->phone ?? "000000",
-                "street1" => "N/A",
-                "city" => "N/A",
-                "state" => "N/A",
-                "country" => "N/A",
-                "zip" => "00000"
-            ],
-            "shipping_details" => [
-                "name" => "N/A",
-                "email" => "N/A",
-                "phone" => "N/A",
-                "street1" => "N/A",
-                "city" => "N/A",
-                "state" => "N/A",
-                "country" => "N/A",
-                "zip" => "0000"
-            ],
-            "user_defined" => [
-                "udf9" => "UDF9",
-                "udf3" => "UDF3"
-            ],
-            "framed" => true
-        ];
+       $data = [
+    "tran_type" => "sale", // Transaction type: sale, auth, refund
+    "tran_class" => "ecom", // eCommerce class
+    "cart_id" => $payment_data->id, // Your internal order/payment ID
+    "cart_currency" => $payment_data->currency_code, // e.g., "SAR"
+    "cart_amount" => round($payment_data->payment_amount, 2), // Must be > 0
+    "cart_description" => "products",
 
+    "paypage_lang" => "en", // or "ar"
+
+    "callback" => route('paytabs.callback'), // Handles server response (use POST)
+    "return" => route('paytabs.response'), // Handles user redirect after payment
+
+    "customer_details" => [
+        "name" => $payer->name ?? 'Guest User',
+        "email" => $payer->email ?? 'guest@example.com',
+        "phone" => $payer->phone ?? "0000000000",
+        "street1" => "Riyadh",
+        "city" => "Riyadh",
+        "state" => "Riyadh",
+        "country" => "SA",
+        "zip" => "12345"
+    ],
+
+    "shipping_details" => [
+        "name" => $payer->name ?? 'Guest User',
+        "email" => $payer->email ?? 'guest@example.com',
+        "phone" => $payer->phone ?? "0000000000",
+        "street1" => "Riyadh",
+        "city" => "Riyadh",
+        "state" => "Riyadh",
+        "country" => "SA",
+        "zip" => "12345"
+    ],
+
+    "user_defined" => [
+        "udf1" => "order_" . $payment_data->id, // You can track custom info here
+        "udf2" => "customer_id_" . ($payer->id ?? 'guest')
+    ],
+
+    "framed" => true // Required to render PayTabs in iframe
+];
+
+    
         $page = $plugin->send_api_request($request_url, $data);
 
         // Handle failed or null responses from the API
