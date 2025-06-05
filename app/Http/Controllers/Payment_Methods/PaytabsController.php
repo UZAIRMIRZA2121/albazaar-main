@@ -174,7 +174,7 @@ class PaytabsController extends Controller
             "paypage_lang" => "en",
 
             "callback" => route('paytabs.callback'),
-            "return" => route('paytabs.response'),
+            "return" => route('paytabs.callback'),
 
             "customer_details" => [
                 "name" => $payer->name ?? 'Guest User',
@@ -221,7 +221,7 @@ class PaytabsController extends Controller
 
     public function callback(Request $request)
     {
-
+       
         $plugin = new Paytabs();
         $response_data = $_POST;
         $transRef = filter_input(INPUT_POST, 'tranRef');
@@ -257,13 +257,13 @@ class PaytabsController extends Controller
 
 
                 call_user_func($payment_data->success_hook, $payment_data);
-                // $order = Order::where(['transaction_ref' => $payment_data->transaction_id])->first();
+                 $order = Order::where(['transaction_ref' => $payment_data->transaction_id])->first();
 
 
-                // foreach ($order->orderDetails as $detail) {
-                //     // Queue the email instead of sending immediately
-                //     Mail::queue(new NotifySellerMail($detail));
-                // }
+                foreach ($order->orderDetails as $detail) {
+                    // Queue the email instead of sending immediately
+                    Mail::queue(new NotifySellerMail($detail));
+                }
 
             }
 
@@ -279,6 +279,7 @@ class PaytabsController extends Controller
 
     public function response(Request $request)
     {
+   
         return response()->json($this->response_formatter(GATEWAYS_DEFAULT_200), 200);
     }
 
