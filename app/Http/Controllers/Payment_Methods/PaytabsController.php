@@ -78,74 +78,75 @@ class PaytabsController extends Controller
         $this->user = $user;
     }
 
-   public function payment(Request $request)
-{
-    $validator = Validator::make($request->all(), [
-        'payment_id' => 'required|uuid'
-    ]);
+    public function payment(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'payment_id' => 'required|uuid'
+        ]);
 
-    if ($validator->fails()) {
-        return response()->json($this->response_formatter(GATEWAYS_DEFAULT_400, null, $this->error_processor($validator)), 400);
+        if ($validator->fails()) {
+            return response()->json($this->response_formatter(GATEWAYS_DEFAULT_400, null, $this->error_processor($validator)), 400);
+        }
+
+        $payment_data = $this->payment::where(['id' => $request['payment_id'], 'is_paid' => 0])->first();
+
+        if (!$payment_data) {
+            return response()->json($this->response_formatter(GATEWAYS_DEFAULT_204), 200);
+        }
+
+        $payer = json_decode($payment_data['payer_information']);
+
+        $plugin = new Paytabs();
+        $request_url = 'payment/request';
+
+        $data = [
+            "tran_type" => "sale",
+            "tran_class" => "ecom",
+            "cart_id" => $payment_data->id,
+            "cart_currency" => $payment_data->currency_code,
+            "cart_amount" => round($payment_data->payment_amount, 2),
+            "cart_description" => "products",
+            "paypage_lang" => "en",
+            "callback" => route('paytabs.callback'),
+            "return" => route('paytabs.response'),
+            "customer_details" => [
+                "name" => $payer->name ?? 'Guest User',
+                "email" => $payer->email ?? 'guest@example.com',
+                "phone" => $payer->phone ?? "0000000000",
+                "street1" => "Riyadh",
+                "city" => "Riyadh",
+                "state" => "Riyadh",
+                "country" => "SA",
+                "zip" => "12345"
+            ],
+            "shipping_details" => [
+                "name" => $payer->name ?? 'Guest User',
+                "email" => $payer->email ?? 'guest@example.com',
+                "phone" => $payer->phone ?? "0000000000",
+                "street1" => "Riyadh",
+                "city" => "Riyadh",
+                "state" => "Riyadh",
+                "country" => "SA",
+                "zip" => "12345"
+            ],
+            "user_defined" => [
+                "udf1" => "order_" . $payment_data->id,
+                "udf2" => "customer_id_" . ($payer->id ?? 'guest')
+            ],
+            "framed" => true,
+            "framed_message_target" => "https://mydaraz.pk", // 👈 YOUR frontend domain
+        ];
+
+        $page = $plugin->send_api_request($request_url, $data);
+
+        if (!is_array($page) || !isset($page['redirect_url'])) {
+            \Log::error('Paytabs payment request failed.', ['response' => $page]);
+            return response()->json($this->response_formatter(GATEWAYS_DEFAULT_204), 200);
+        }
+
+        // Return iframe view
+        return view('payment.card_entry', ['redirect_url' => $page['redirect_url']]);
     }
-
-    $payment_data = $this->payment::where(['id' => $request['payment_id'], 'is_paid' => 0])->first();
-
-    if (!$payment_data) {
-        return response()->json($this->response_formatter(GATEWAYS_DEFAULT_204), 200);
-    }
-
-    $payer = json_decode($payment_data['payer_information']);
-
-    $plugin = new Paytabs();
-    $request_url = 'payment/request';
-
-    $data = [
-        "tran_type" => "sale",
-        "tran_class" => "ecom",
-        "cart_id" => $payment_data->id,
-        "cart_currency" => $payment_data->currency_code,
-        "cart_amount" => round($payment_data->payment_amount, 2),
-        "cart_description" => "products",
-        "paypage_lang" => "en",
-        "callback" => route('paytabs.callback'),
-        "return" => route('paytabs.response'),
-        "customer_details" => [
-            "name" => $payer->name ?? 'Guest User',
-            "email" => $payer->email ?? 'guest@example.com',
-            "phone" => $payer->phone ?? "0000000000",
-            "street1" => "Riyadh",
-            "city" => "Riyadh",
-            "state" => "Riyadh",
-            "country" => "SA",
-            "zip" => "12345"
-        ],
-        "shipping_details" => [
-            "name" => $payer->name ?? 'Guest User',
-            "email" => $payer->email ?? 'guest@example.com',
-            "phone" => $payer->phone ?? "0000000000",
-            "street1" => "Riyadh",
-            "city" => "Riyadh",
-            "state" => "Riyadh",
-            "country" => "SA",
-            "zip" => "12345"
-        ],
-        "user_defined" => [
-            "udf1" => "order_" . $payment_data->id,
-            "udf2" => "customer_id_" . ($payer->id ?? 'guest')
-        ],
-        "framed" => true
-    ];
-
-    $page = $plugin->send_api_request($request_url, $data);
-
-    if (!is_array($page) || !isset($page['redirect_url'])) {
-        \Log::error('Paytabs payment request failed.', ['response' => $page]);
-        return response()->json($this->response_formatter(GATEWAYS_DEFAULT_204), 200);
-    }
-
-    // Return iframe view
-    return view('payment.card_entry', ['redirect_url' => $page['redirect_url']]);
-}
 
 
     public function callback(Request $request)
@@ -179,13 +180,13 @@ class PaytabsController extends Controller
             if (isset($payment_data) && function_exists($payment_data->success_hook)) {
                 call_user_func($payment_data->success_hook, $payment_data);
             }
-            return $this->payment_response($payment_data,'success');
+            return $this->payment_response($payment_data, 'success');
         }
         $payment_data = $this->payment::where(['id' => $request['payment_id']])->first();
         if (isset($payment_data) && function_exists($payment_data->failure_hook)) {
             call_user_func($payment_data->failure_hook, $payment_data);
         }
-        return $this->payment_response($payment_data,'fail');
+        return $this->payment_response($payment_data, 'fail');
     }
 
     public function response(Request $request)

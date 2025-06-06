@@ -2,22 +2,55 @@
 @extends('layouts.front-end.app')
 
 @section('content')
-    <div class="container py-5">
-        <h3 class="mb-4">Secure Payment</h3>
+ <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Secure Payment</title>
+    <style>
+        html, body {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+        }
+        iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+    </style>
+</head>
+<body>
+    <iframe id="paytabs-frame" src="{{ $redirect_url }}" allowpaymentrequest></iframe>
 
-        @if (!empty($redirect_url))
-            <div id="loader" style="text-align:center;">
-                <p>Loading Payment Page...</p>
-            </div>
+    <script>
+        window.addEventListener("message", function(event) {
+            // Ensure the message comes from PayTabs
+            if (event.origin !== "https://secure-global.paytabs.com") return;
 
-            <iframe src="{{ $redirect_url }}" width="100%" height="700px" frameborder="0" allow="payment *" allowfullscreen
-                style="border: 1px solid #ccc; border-radius: 10px;"
-                onload="document.getElementById('loader').style.display='none';">
-            </iframe>
-        @else
-            <div class="alert alert-danger">
-                Unable to load the payment page. Please try again later.
-            </div>
-        @endif
-    </div>
+            // Optionally inspect the message
+            console.log("PayTabs Message:", event.data);
+
+            // Now make a backend call to verify the transaction status
+            fetch("/verify-payment", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "X-CSRF-TOKEN": "{{ csrf_token() }}"
+                },
+                body: JSON.stringify({ transaction_reference: event.data.tran_ref })
+            })
+            .then(response => response.json())
+            .then(result => {
+                if (result.success) {
+                    window.location.href = "/payment-success";
+                } else {
+                    window.location.href = "/payment-failure";
+                }
+            });
+        });
+    </script>
+</body>
+</html>
+
 @endsection
