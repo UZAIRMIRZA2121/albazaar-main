@@ -174,12 +174,6 @@
                                                     </span>
                                                 </label>
                                             </form>
-
-
-
-
-
-
                                         </div>
                                     @endforeach
 

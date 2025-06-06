@@ -1,22 +1,23 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Secure Payment</title>
-    <style>
-        body, html {
-            height: 100%;
-            margin: 0;
-        }
-        iframe {
-            width: 100%;
-            height: 100vh;
-            border: none;
-        }
-    </style>
-</head>
-<body>
-    <iframe src="{{ $redirect_url }}" allow="payment *"></iframe>
+{{-- resources/views/payment/card_entry.blade.php --}}
+@extends('layouts.app')
 
-    
-</body>
-</html>
+@section('content')
+    <div class="container py-5">
+        <h3 class="mb-4">Secure Payment</h3>
+
+        @if (!empty($redirect_url))
+            <div id="loader" style="text-align:center;">
+                <p>Loading Payment Page...</p>
+            </div>
+
+            <iframe src="{{ $redirect_url }}" width="100%" height="700px" frameborder="0" allow="payment *" allowfullscreen
+                style="border: 1px solid #ccc; border-radius: 10px;"
+                onload="document.getElementById('loader').style.display='none';">
+            </iframe>
+        @else
+            <div class="alert alert-danger">
+                Unable to load the payment page. Please try again later.
+            </div>
+        @endif
+    </div>
+@endsection
