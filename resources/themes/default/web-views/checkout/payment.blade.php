@@ -118,15 +118,13 @@
                                 </div>
                             @endif  --}}
 
-                            
-
                             @if ($digital_payment['status'] == 1)
                                 {{-- <div class="d-flex flex-wrap gap-2 align-items-center mb-4 ">
                                     <h5 class="mb-0 text-capitalize">{{ translate('pay_via_online') }}</h5>
                                     <span
                                         class="fs-10 text-capitalize mt-1">({{ translate('faster_&_secure_way_to_pay') }})</span>
                                 </div> --}}
-                              
+
                                 <div class="row gx-4 mb-4">
                                     @foreach ($payment_gateways_list as $payment_gateway)
                                         <div class="col-sm-6">
