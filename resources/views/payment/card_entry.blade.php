@@ -1,5 +1,5 @@
 {{-- resources/views/payment/card_entry.blade.php --}}
-@extends('layouts.app')
+@extends('layouts.front-end.app')
 
 @section('content')
     <div class="container py-5">
