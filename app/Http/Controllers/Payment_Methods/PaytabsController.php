@@ -134,6 +134,8 @@ class PaytabsController extends Controller
                 "udf2" => "customer_id_" . ($payer->id ?? 'guest')
             ],
             "framed" => true,
+            "framed_return_top" => true,
+            "framed_return_parent" => true,
             "framed_message_target" => "https://mydaraz.pk", // 👈 YOUR frontend domain
         ];
 
@@ -190,7 +192,7 @@ class PaytabsController extends Controller
     }
 
     public function response(Request $request)
-    {
+    {   dd($request->all());
         return response()->json($this->response_formatter(GATEWAYS_DEFAULT_200), 200);
     }
 }
