@@ -107,8 +107,9 @@ class PaytabsController extends Controller
             "cart_amount" => round($payment_data->payment_amount, 2),
             "cart_description" => "products",
             "paypage_lang" => "en",
-            "callback" => route('paytabs.callback'),
-            "return" => route('paytabs.response'),
+           "callback" => route('paytabs.callback', ['payment_id' => $payment_data->id]), // Nullable - Must be HTTPS, otherwise no post data from paytabs
+            "return" => route('paytabs.callback', ['payment_id' => $payment_data->id]), // Must be HTTPS, otherwise no post data from paytabs , must be relative to your site URL
+
             "customer_details" => [
                 "name" => $payer->name ?? 'Guest User',
                 "email" => $payer->email ?? 'guest@example.com',
@@ -146,13 +147,16 @@ class PaytabsController extends Controller
             return response()->json($this->response_formatter(GATEWAYS_DEFAULT_204), 200);
         }
 
-        // Return iframe view
-        return view('payment.card_entry', ['redirect_url' => $page['redirect_url']]);
+         session(['redirect_url' => $page['redirect_url']]);
+
+        return redirect()->route('checkout-payment');
     }
 
 
     public function callback(Request $request)
     {
+        session()->forget('redirect_url');
+
         $plugin = new Paytabs();
         $response_data = $_POST;
         $transRef = filter_input(INPUT_POST, 'tranRef');
