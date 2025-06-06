@@ -4,18 +4,11 @@ namespace App\Http\Controllers\Payment_Methods;
 
 use App\Models\PaymentRequest;
 use App\Models\User;
-use App\Models\Order;
 use App\Traits\Processor;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
-use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Validator;
-use Illuminate\Support\Facades\Mail;
-use App\Mail\NotifySellerMail;
 
-
-// OR using the Session facade
-use Illuminate\Support\Facades\Session;
 class Paytabs
 {
     use Processor;
@@ -32,79 +25,28 @@ class Paytabs
         }
     }
 
-
-    public function send_api_request($request_url, $data, $request_method = null)
+    function send_api_request($request_url, $data, $request_method = null)
     {
         $data['profile_id'] = $this->config_values->profile_id;
-        $url = $this->config_values->base_url . '/' . $request_url;
+        $curl = curl_init();
+        curl_setopt_array($curl, array(
+            CURLOPT_URL => $this->config_values->base_url . '/' . $request_url,
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_ENCODING => '',
+            CURLOPT_MAXREDIRS => 10,
+            CURLOPT_TIMEOUT => 0,
+            CURLOPT_CUSTOMREQUEST => isset($request_method) ? $request_method : 'POST',
+            CURLOPT_POSTFIELDS => json_encode($data, true),
+            CURLOPT_HTTPHEADER => array(
+                'authorization:' . $this->config_values->server_key,
+                'Content-Type:application/json'
+            ),
+        ));
 
-        try {
-            $curl = curl_init();
-            curl_setopt_array($curl, [
-                CURLOPT_URL => $url,
-                CURLOPT_RETURNTRANSFER => true,
-                CURLOPT_ENCODING => '',
-                CURLOPT_MAXREDIRS => 10,
-                CURLOPT_TIMEOUT => 30,
-                CURLOPT_CUSTOMREQUEST => strtoupper($request_method ?? 'POST'),
-                CURLOPT_POSTFIELDS => json_encode($data),
-                CURLOPT_HTTPHEADER => [
-                    'authorization:' . $this->config_values->server_key,
-                    'Content-Type:application/json',
-                ],
-            ]);
-
-            $result = curl_exec($curl);
-            $error = curl_error($curl);
-            $httpCode = curl_getinfo($curl, CURLINFO_HTTP_CODE);
-            curl_close($curl);
-
-            if ($error) {
-                \Log::error("cURL Error: $error");
-                return null;
-            }
-
-            if ($httpCode >= 400) {
-                \Log::error("HTTP Error $httpCode", [
-                    'response' => $result,
-                    'url' => $url,
-                ]);
-                return null;
-            }
-
-            $response = json_decode($result, true);
-
-            if (json_last_error() !== JSON_ERROR_NONE) {
-                \Log::error("API Request Error: JSON decode error: " . json_last_error_msg(), [
-                    'raw_response' => $result,
-                    'request_url' => $url,
-                    'payload' => $data,
-                ]);
-                return null;
-            }
-
-            if (!isset($response['tran_ref'])) {
-                \Log::warning("API responded without 'tran_ref'", [
-                    'response' => $response,
-                    'url' => $url,
-                ]);
-            } else {
-                \Session::put('tran_ref', $response['tran_ref']);
-            }
-
-            return $response;
-
-        } catch (\Exception $e) {
-            \Log::error("Exception during API request: " . $e->getMessage(), [
-                'trace' => $e->getTraceAsString(),
-                'url' => $url,
-                'data' => $data,
-            ]);
-            return null;
-        }
+        $response = json_decode(curl_exec($curl), true);
+        curl_close($curl);
+        return $response;
     }
-
-
 
     function is_valid_redirect($post_values)
     {
@@ -143,26 +85,17 @@ class PaytabsController extends Controller
         ]);
 
         if ($validator->fails()) {
-            return response()->json(
-                $this->response_formatter(GATEWAYS_DEFAULT_400, null, $this->error_processor($validator)),
-                400
-            );
+            return response()->json($this->response_formatter(GATEWAYS_DEFAULT_400, null, $this->error_processor($validator)), 400);
         }
 
-        $payment_data = $this->payment::where([
-            'id' => $request['payment_id'],
-            'is_paid' => 0
-        ])->first();
-
-        if (!$payment_data) {
+        $payment_data = $this->payment::where(['id' => $request['payment_id']])->where(['is_paid' => 0])->first();
+        if (!isset($payment_data)) {
             return response()->json($this->response_formatter(GATEWAYS_DEFAULT_204), 200);
         }
-
         $payer = json_decode($payment_data['payer_information']);
 
         $plugin = new Paytabs();
         $request_url = 'payment/request';
-
         $data = [
             "tran_type" => "sale",
             "tran_class" => "ecom",
@@ -170,12 +103,9 @@ class PaytabsController extends Controller
             "cart_currency" => $payment_data->currency_code,
             "cart_amount" => round($payment_data->payment_amount, 2),
             "cart_description" => "products",
-
             "paypage_lang" => "en",
-
-            "callback" => route('paytabs.callback'),
-            "return" => route('paytabs.callback'),
-
+            "callback" => route('paytabs.callback', ['payment_id' => $payment_data->id]), // Nullable - Must be HTTPS, otherwise no post data from paytabs
+            "return" => route('paytabs.callback', ['payment_id' => $payment_data->id]), // Must be HTTPS, otherwise no post data from paytabs , must be relative to your site URL
             "customer_details" => [
                 "name" => $payer->name ?? 'Guest User',
                 "email" => $payer->email ?? 'guest@example.com',
@@ -197,31 +127,22 @@ class PaytabsController extends Controller
                 "country" => "SA",
                 "zip" => "12345"
             ],
-
             "user_defined" => [
-                "udf1" => "order_" . $payment_data->id,
-                "udf2" => "customer_id_" . ($payer->id ?? 'guest')
-            ],
+                "udf9" => "UDF9",
+                "udf3" => "UDF3"
+            ]
         ];
 
         $page = $plugin->send_api_request($request_url, $data);
-
-        if (!is_array($page) || !isset($page['redirect_url'])) {
-            \Log::error('Paytabs payment request failed.', ['response' => $page]);
+        if (!isset($page['redirect_url'])) {
             return response()->json($this->response_formatter(GATEWAYS_DEFAULT_204), 200);
         }
-
-        // ✅ Return PayTabs redirect URL as JSON (to be used in iframe)
-        return redirect()->away($page['redirect_url']);
-
+        header('Location:' . $page['redirect_url']); /* Redirect browser */
+        exit();
     }
-
-
-
 
     public function callback(Request $request)
     {
-       
         $plugin = new Paytabs();
         $response_data = $_POST;
         $transRef = filter_input(INPUT_POST, 'tranRef');
@@ -239,7 +160,6 @@ class PaytabsController extends Controller
         $data = [
             "tran_ref" => $transRef
         ];
-
         $verify_result = $plugin->send_api_request($request_url, $data);
         $is_success = $verify_result['payment_result']['response_status'] === 'A';
         if ($is_success) {
@@ -248,26 +168,10 @@ class PaytabsController extends Controller
                 'is_paid' => 1,
                 'transaction_id' => $transRef,
             ]);
-
             $payment_data = $this->payment::where(['id' => $request['payment_id']])->first();
-
             if (isset($payment_data) && function_exists($payment_data->success_hook)) {
-
-
-
-
                 call_user_func($payment_data->success_hook, $payment_data);
-                 $order = Order::where(['transaction_ref' => $payment_data->transaction_id])->first();
-
-
-                foreach ($order->orderDetails as $detail) {
-                    // Queue the email instead of sending immediately
-                    Mail::queue(new NotifySellerMail($detail));
-                }
-
             }
-
-
             return $this->payment_response($payment_data, 'success');
         }
         $payment_data = $this->payment::where(['id' => $request['payment_id']])->first();
@@ -279,16 +183,6 @@ class PaytabsController extends Controller
 
     public function response(Request $request)
     {
-   
         return response()->json($this->response_formatter(GATEWAYS_DEFAULT_200), 200);
     }
-
-
-
-
-
-
-
-
-
 }

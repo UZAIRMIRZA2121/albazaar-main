@@ -118,6 +118,8 @@
                                 </div>
                             @endif  --}}
 
+                            
+
                             @if ($digital_payment['status'] == 1)
                                 {{-- <div class="d-flex flex-wrap gap-2 align-items-center mb-4 ">
                                     <h5 class="mb-0 text-capitalize">{{ translate('pay_via_online') }}</h5>
