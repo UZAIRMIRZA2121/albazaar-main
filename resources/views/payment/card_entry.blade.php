@@ -16,5 +16,7 @@
 </head>
 <body>
     <iframe src="{{ $redirect_url }}" allow="payment *"></iframe>
+
+    
 </body>
 </html>
