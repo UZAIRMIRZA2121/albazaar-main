@@ -192,6 +192,8 @@ class PaytabsController extends Controller
         if (isset($payment_data) && function_exists($payment_data->failure_hook)) {
             call_user_func($payment_data->failure_hook, $payment_data);
         }
+
+        session(['payment_status' => 'failed']);
         return $this->payment_response($payment_data, 'fail');
     }
 

@@ -68,18 +68,19 @@ class WebController extends Controller
     use CacheManagerTrait;
 
     public function __construct(
-        private OrderDetail                                   $order_details,
-        private Product                                       $product,
-        private Wishlist                                      $wishlist,
-        private Order                                         $order,
-        private Category                                      $category,
-        private Brand                                         $brand,
-        private Seller                                        $seller,
-        private TryOttoService                                $tryOtto,
-        private ProductCompare                                $compare,
+        private OrderDetail $order_details,
+        private Product $product,
+        private Wishlist $wishlist,
+        private Order $order,
+        private Category $category,
+        private Brand $brand,
+        private Seller $seller,
+        private TryOttoService $tryOtto,
+        private ProductCompare $compare,
         private readonly RobotsMetaContentRepositoryInterface $robotsMetaContentRepo,
-        private readonly ProductService                       $productService,
-    ) {}
+        private readonly ProductService $productService,
+    ) {
+    }
 
     public function maintenance_mode(): View|RedirectResponse
     {
@@ -130,17 +131,26 @@ class WebController extends Controller
         if (!$robotsMetaContentData) {
             $robotsMetaContentData = $this->robotsMetaContentRepo->getFirstWhere(params: ['page_name' => 'default']);
         }
-        $categories = Category::with(['product' => function ($query) {
-            return $query->active()->withCount(['orderDetails']);
-        }])->when($request['search'], function ($query) use ($request) {
+        $categories = Category::with([
+            'product' => function ($query) {
+                return $query->active()->withCount(['orderDetails']);
+            }
+        ])->when($request['search'], function ($query) use ($request) {
             return $query->where('name', 'like', "%{$request['search']}%");
-        })->withCount(['product' => function ($query) {
-            $query->active();
-        }])->with(['childes' => function ($query) {
-            $query->with(['childes' => function ($query) {
-                $query->withCount(['subSubCategoryProduct'])->where('position', 2);
-            }])->withCount(['subCategoryProduct'])->where('position', 1);
-        }, 'childes.childes'])->where('position', 0)->get();
+        })->withCount([
+                    'product' => function ($query) {
+                        $query->active();
+                    }
+                ])->with([
+                    'childes' => function ($query) {
+                        $query->with([
+                            'childes' => function ($query) {
+                                $query->withCount(['subSubCategoryProduct'])->where('position', 2);
+                            }
+                        ])->withCount(['subCategoryProduct'])->where('position', 1);
+                    },
+                    'childes.childes'
+                ])->where('position', 0)->get();
 
         return view('web-views.products.categories', [
             'categories' => CategoryManager::getPriorityWiseCategorySortQuery(query: $categories),
@@ -165,9 +175,11 @@ class WebController extends Controller
         $brandStatus = getWebConfig(name: 'product_brand');
         session()->put('product_brand', $brandStatus);
         if ($brandStatus == 1) {
-            $brandList = Brand::active()->with(['brandProducts' => function ($query) {
-                return $query->withCount(['orderDetails']);
-            }])
+            $brandList = Brand::active()->with([
+                'brandProducts' => function ($query) {
+                    return $query->withCount(['orderDetails']);
+                }
+            ])
                 ->withCount('brandProducts')
                 ->when($request->has('search'), function ($query) use ($request) {
                     $query->where('name', 'LIKE', '%' . $request['search'] . '%');
@@ -229,9 +241,11 @@ class WebController extends Controller
         }
 
         $vendorsList = Shop::active()
-            ->withCount(['products' => function ($query) {
-                $query->active();
-            }])
+            ->withCount([
+                'products' => function ($query) {
+                    $query->active();
+                }
+            ])
             ->when(isset($request['shop_name']), function ($query) use ($request) {
                 $key = explode(' ', $request['shop_name']);
                 return $query->where(function ($q) use ($key) {
@@ -311,7 +325,8 @@ class WebController extends Controller
                 $vendorsList = $vendorsList->sortByDesc('average_rating');
             } else if ($request['order_by'] == 'rating-low-to-high') {
                 $vendorsList = $vendorsList->sortBy('average_rating');
-            };
+            }
+            ;
         }
 
         return view(VIEW_FILE_NAMES['all_stores_page'], [
@@ -393,7 +408,7 @@ class WebController extends Controller
 
     public function checkout_details(Request $request)
     {
-     
+        session()->forget('redirect_url');
         if (
             (!auth('customer')->check() || Cart::where(['customer_id' => auth('customer')->id()])->count() < 1)
             && (!getWebConfig(name: 'guest_checkout') || !session()->has('guest_id') || !session('guest_id'))
@@ -401,7 +416,7 @@ class WebController extends Controller
             Toastr::error(translate('invalid_access'));
             return redirect('/');
         }
-   
+
         $response = self::checkValidationForCheckoutPages($request);
         if ($response['status'] == 0) {
             foreach ($response['message'] as $message) {
@@ -409,7 +424,7 @@ class WebController extends Controller
             }
             return isset($response['redirect']) ? redirect($response['redirect']) : redirect('/');
         }
-        
+
         $countryRestrictStatus = getWebConfig(name: 'delivery_country_restriction');
         $zipRestrictStatus = getWebConfig(name: 'delivery_zip_code_area_restriction');
         $countries = $countryRestrictStatus ? $this->get_delivery_country_array() : COUNTRIES;
@@ -422,7 +437,7 @@ class WebController extends Controller
             'customer_id' => $user == 'offline' ? session('guest_id') : auth('customer')->id(),
             'is_guest' => $user == 'offline' ? 1 : '0',
         ])->get();
-    
+
         $countriesName = [];
         $countriesCode = [];
         foreach ($countries as $country) {
@@ -448,7 +463,7 @@ class WebController extends Controller
     public function checkout_payment(Request $request): View|RedirectResponse
     {
 
-      
+
         $response = self::checkValidationForCheckoutPages($request);
         if ($response['status'] == 0) {
             foreach ($response['message'] as $message) {
@@ -511,7 +526,7 @@ class WebController extends Controller
 
     public function getCashOnDeliveryCheckoutComplete(Request $request): View|RedirectResponse|JsonResponse
     {
-    
+
         if ($request['payment_method'] != 'cash_on_delivery') {
             if ($request->ajax()) {
                 return response()->json([
@@ -522,7 +537,7 @@ class WebController extends Controller
             return back()->with('error', 'Something_went_wrong');
         }
 
-       
+
         $uniqueID = OrderManager::gen_unique_id();
         $orderIds = [];
         $cartGroupIds = CartManager::get_cart_group_ids(request: $request, type: 'checked');
@@ -577,7 +592,7 @@ class WebController extends Controller
                     Toastr::error(translate('Already_registered'));
                     return back();
                 }
-              
+
                 $addCustomer = User::create([
                     'name' => $newCustomerRegister['name'],
                     'f_name' => $newCustomerRegister['name'],
@@ -589,14 +604,14 @@ class WebController extends Controller
                     'referral_code' => $newCustomerRegister['referral_code'],
                 ]);
                 session()->put('newRegisterCustomerInfo', $addCustomer);
-          
+
                 $customerID = session()->has('guest_id') ? session('guest_id') : 0;
                 ShippingAddress::where(['customer_id' => $customerID, 'is_guest' => 1, 'id' => session('address_id')])
                     ->update(['customer_id' => $addCustomer['id'], 'is_guest' => 0]);
                 ShippingAddress::where(['customer_id' => $customerID, 'is_guest' => 1, 'id' => session('billing_address_id')])
                     ->update(['customer_id' => $addCustomer['id'], 'is_guest' => 0]);
             }
-        
+
             foreach ($cartGroupIds as $groupId) {
                 $data = [
                     'payment_method' => 'cash_on_delivery',
@@ -614,19 +629,19 @@ class WebController extends Controller
 
 
                 ];
-            
+
                 $orderId = OrderManager::generate_order($data);
                 $orderIds[] = $orderId;
-             
+
             }
-          
+
             $order = OrderDetail::with('product')->where('order_id', $orderIds)->first();
             $currentDateTime = Carbon::now();
             $userAddress = json_decode($order->shipping_address_data);
             $product = json_decode($order->product_details);
             $_orderOrder = Order::where('id', $orderIds[0])->first();
             $userAddress = $_orderOrder->shipping_address_data;
-           
+
             $data = [
                 "orderId" => $order?->order_id,
                 "deliveryOptionId" => rand(00000, 99999),
@@ -862,9 +877,9 @@ class WebController extends Controller
 
     public function order_placed(): View
     {
-     
+
         $isNewCustomerInSession = session('newCustomerRegister');
-       
+
         session()->forget('newCustomerRegister');
         return view(VIEW_FILE_NAMES['order_complete'], compact('isNewCustomerInSession'));
     }
@@ -881,9 +896,11 @@ class WebController extends Controller
             if (theme_root_path() === "theme_fashion") {
 
                 $sellerList = $this->seller->approved()->with(['shop', 'product.reviews'])
-                    ->withCount(['product' => function ($query) {
-                        $query->active();
-                    }])->get();
+                    ->withCount([
+                        'product' => function ($query) {
+                            $query->active();
+                        }
+                    ])->get();
                 $sellerList?->map(function ($seller) {
                     $rating = 0;
                     $count = 0;
@@ -1117,10 +1134,10 @@ class WebController extends Controller
             ], 200);
         }
         if ($request['data_from'] == 'category') {
-            $data['brand_name'] = Category::find((int)$request['id'])->name;
+            $data['brand_name'] = Category::find((int) $request['id'])->name;
         }
         if ($request['data_from'] == 'brand') {
-            $data['brand_name'] = Brand::active()->find((int)$request['id'])->name;
+            $data['brand_name'] = Brand::active()->find((int) $request['id'])->name;
         }
 
         return view(VIEW_FILE_NAMES['products_view_page'], compact('products', 'data'), $data);
@@ -1390,9 +1407,11 @@ class WebController extends Controller
             $isPhysicalProductExist = false;
             $cartList = Cart::whereHas('product', function ($query) {
                 return $query->active();
-            })->with(['product' => function ($query) {
-                return $query->active();
-            }])->where(['cart_group_id' => $groupId, 'is_checked' => 1])->get();
+            })->with([
+                        'product' => function ($query) {
+                            return $query->active();
+                        }
+                    ])->where(['cart_group_id' => $groupId, 'is_checked' => 1])->get();
             foreach ($cartList as $cart) {
                 if ($cart->product_type == 'physical') {
                     $isPhysicalProductExist = true;
@@ -1402,9 +1421,11 @@ class WebController extends Controller
 
             $cartList = Cart::whereHas('product', function ($query) {
                 return $query->active();
-            })->with(['product' => function ($query) {
-                return $query->active();
-            }])->groupBy('cart_group_id')->where(['cart_group_id' => $groupId, 'is_checked' => 1])->get();
+            })->with([
+                        'product' => function ($query) {
+                            return $query->active();
+                        }
+                    ])->groupBy('cart_group_id')->where(['cart_group_id' => $groupId, 'is_checked' => 1])->get();
             $productStockCheck = CartManager::product_stock_check($cartList);
             if (!$productStockCheck) {
                 $productStockStatus = false;
@@ -1533,7 +1554,8 @@ class WebController extends Controller
                     'status' => 0,
                     'message' => translate('Payment_must_be_confirmed_first') . ' !!',
                 ]);
-            };
+            }
+            ;
 
             if ($orderDetailsData->order->is_guest) {
                 $customerEmail = $orderDetailsData->order->shipping_address_data ? $orderDetailsData->order->shipping_address_data->email : ($orderDetailsData->order->billing_address_data ? $orderDetailsData->order->billing_address_data->email : '');

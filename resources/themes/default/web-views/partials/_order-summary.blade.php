@@ -159,19 +159,29 @@
                 </div>
             </div>
         @endif
-        {{Route::currentRouteName() }}
+    
 @if ( Route::currentRouteName() !== 'checkout-payment')
     <div class="pt-4">
         <a class="btn btn--primary btn-block proceed_to_next_button {{ $cart->count() <= 0 ? 'custom-disabled' : '' }} action-checkout-function">
             {{ translate('proceed_to_Checkout') }}
         </a>
     </div>
-@endif
- <div class="pt-4">
-        <a class="btn btn--primary btn-block proceed_to_next_button {{ $cart->count() <= 0 ? 'custom-disabled' : '' }} action-checkout-function">
+@endif 
+
+
+@if ( Route::currentRouteName() == 'checkout-payment')
+    <div class="pt-4">
+        <a class="btn btn--primary btn-block proceed_to_next_button  action-checkout-function">
+             @if(session('payment_status') === 'failed')
+            {{ translate('Payment Failed - Try Again') }}
+        @else
             {{ translate('proceed_to_Checkout') }}
+        @endif
         </a>
     </div>
+@endif 
+
+
 
         <div class="d-flex justify-content-center mt-3">
             <a href="{{route('home')}}" class="d-flex align-items-center gap-2 text-primary font-weight-bold">

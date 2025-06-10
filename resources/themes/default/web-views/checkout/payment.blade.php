@@ -180,6 +180,7 @@
 
 
                                 </div>
+                                  @if (session('redirect_url'))
                                 <div class="row g-3">
                                     <div class="col-12">
                                         <div class="bg-primary-light rounded p-4">
@@ -206,6 +207,7 @@
                                         </div>
                                     </div>
                                 </div>
+                                @endif
                                 <script>
                                     function loadPayment(url) {
                                         document.getElementById('paymentIframe').src = url;
