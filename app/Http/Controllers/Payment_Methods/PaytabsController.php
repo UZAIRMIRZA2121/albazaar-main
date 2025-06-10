@@ -80,6 +80,7 @@ class PaytabsController extends Controller
 
     public function payment(Request $request)
     {
+        session()->forget('payment_failed');
         $validator = Validator::make($request->all(), [
             'payment_id' => 'required|uuid'
         ]);
@@ -107,7 +108,7 @@ class PaytabsController extends Controller
             "cart_amount" => round($payment_data->payment_amount, 2),
             "cart_description" => "products",
             "paypage_lang" => "en",
-           "callback" => route('paytabs.callback', ['payment_id' => $payment_data->id]), // Nullable - Must be HTTPS, otherwise no post data from paytabs
+            "callback" => route('paytabs.callback', ['payment_id' => $payment_data->id]), // Nullable - Must be HTTPS, otherwise no post data from paytabs
             "return" => route('paytabs.callback', ['payment_id' => $payment_data->id]), // Must be HTTPS, otherwise no post data from paytabs , must be relative to your site URL
 
             "customer_details" => [
@@ -147,7 +148,8 @@ class PaytabsController extends Controller
             return response()->json($this->response_formatter(GATEWAYS_DEFAULT_204), 200);
         }
 
-         session(['redirect_url' => $page['redirect_url']]);
+        session(['redirect_url' => $page['redirect_url']]);
+    
 
         return redirect()->route('checkout-payment');
     }
@@ -193,12 +195,13 @@ class PaytabsController extends Controller
             call_user_func($payment_data->failure_hook, $payment_data);
         }
 
-        session(['payment_status' => 'failed']);
+        session()->flash('payment_failed', true);
         return $this->payment_response($payment_data, 'fail');
     }
 
     public function response(Request $request)
-    {   dd($request->all());
+    {
+        dd($request->all());
         return response()->json($this->response_formatter(GATEWAYS_DEFAULT_200), 200);
     }
 }

@@ -169,17 +169,16 @@
 @endif 
 
 
-@if ( Route::currentRouteName() == 'checkout-payment')
-    <div class="pt-4">
-        <a class="btn btn--primary btn-block proceed_to_next_button  action-checkout-function">
-             @if(session('payment_status') === 'failed')
-            {{ translate('Payment Failed - Try Again') }}
-        @else
-            {{ translate('proceed_to_Checkout') }}
-        @endif
-        </a>
-    </div>
-@endif 
+@if(Route::currentRouteName() == 'checkout-payment')
+    @if(session()->has('payment_failed') && session('payment_failed') == true)
+        <div class="pt-4">
+            <a class="btn btn--primary btn-block proceed_to_next_button action-checkout-function">
+                {{ translate('Payment Failed - Try Again') }}
+            </a>
+        </div>
+ 
+    @endif
+@endif
 
 
 

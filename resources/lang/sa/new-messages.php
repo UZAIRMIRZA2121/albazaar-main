@@ -8612,4 +8612,5 @@ return [
 	"inc" => "Inc",
 	"Payment_failed" => "Payment failed",
 	"for_offline_payment_options,_please_follow_the_steps_below" => "For offline payment options  please follow the steps below",
+	"Payment Failed - Try Again" => "Payment Failed - Try Again",
 ];
