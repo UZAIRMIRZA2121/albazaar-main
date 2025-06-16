@@ -104,7 +104,7 @@ class PaytabsController extends Controller
             "tran_type" => "sale",
             "tran_class" => "ecom",
             "cart_id" => $payment_data->id,
-            "cart_currency" => $payment_data->currency_code,
+            "cart_currency" => 'PKR',
             "cart_amount" => round($payment_data->payment_amount, 2),
             "cart_description" => "products",
             "paypage_lang" => "en",
