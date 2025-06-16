@@ -587,7 +587,6 @@ if (!$isGatewayPublished) {
 
         });
     });
-    Route::get('/pay1', [PaytabsController::class, 'createPayment'])->name('payment.create');
     Route::get('/payment/select-method', function () {
         return view('payment.select-method');
     })->name('payment.select');
