@@ -28,6 +28,7 @@ class Paytabs
     function send_api_request($request_url, $data, $request_method = null)
     {
         $data['profile_id'] = $this->config_values->profile_id;
+     
         $curl = curl_init();
         curl_setopt_array($curl, array(
             CURLOPT_URL => $this->config_values->base_url . '/' . $request_url,
@@ -80,6 +81,7 @@ class PaytabsController extends Controller
 
     public function payment(Request $request)
     {
+       
         session()->forget('payment_failed');
         $validator = Validator::make($request->all(), [
             'payment_id' => 'required|uuid'
@@ -104,7 +106,7 @@ class PaytabsController extends Controller
             "tran_type" => "sale",
             "tran_class" => "ecom",
             "cart_id" => $payment_data->id,
-            "cart_currency" => 'PKR',
+            "cart_currency" => 'SAR',
             "cart_amount" => round($payment_data->payment_amount, 2),
             "cart_description" => "products",
             "paypage_lang" => "en",
@@ -138,13 +140,14 @@ class PaytabsController extends Controller
             "framed" => true,
             "framed_return_top" => true,
             "framed_return_parent" => true,
-            "framed_message_target" => "https://mydaraz.pk", // 👈 YOUR frontend domain
+            "framed_message_target" => "https://albazar.sa", // 👈 YOUR frontend domain
         ];
 
         $page = $plugin->send_api_request($request_url, $data);
 
         if (!is_array($page) || !isset($page['redirect_url'])) {
-            \Log::error('Paytabs payment request failed.', ['response' => $page]);
+            dd('Paytabs payment request failed.', ['response' => $page]);
+       
             return response()->json($this->response_formatter(GATEWAYS_DEFAULT_204), 200);
         }
 
