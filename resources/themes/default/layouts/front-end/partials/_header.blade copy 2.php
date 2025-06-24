@@ -117,6 +117,7 @@
 
 </head>
 
+<body>
     @php($announcement = getWebConfig(name: 'announcement'))
     @php($businessMode = getWebConfig(name: 'business_mode'))
     @if (isset($announcement) && $announcement['status'] == 1)
@@ -330,3 +331,7 @@
             .append("<i class='czi-arrow-{{ Session::get('direction') === 'rtl' ? 'left' : 'right' }}'></i>");
     </script>
 
+
+</body>
+
+</html>

@@ -43,17 +43,15 @@ class CustomerAPIAuthController extends Controller
 
     public function register(Request $request): JsonResponse
     {
-        $validator = Validator::make($request->all(), [
-            'f_name' => 'required',
-            'l_name' => 'required',
-            'email' => 'required|unique:users',
-            'phone' => 'required|min:6|max:20|unique:users',
-            'password' => 'required|min:6',
-        ], [
-            'f_name.required' => translate('The first name field is required.'),
-            'l_name.required' => translate('The last name field is required.'),
-        ]);
+        $validator =   $validated = $request->validate([
+        'f_name' => 'required|string',
+        'l_name' => 'required|string',
+        'email' => 'required|email|unique:users,email',
+        'phone' => 'required|unique:users,phone',
+        'password' => 'required|min:6',
+    ]);
 
+        
         if ($validator->fails()) {
             return response()->json(['errors' => Helpers::validationErrorProcessor($validator)], 403);
         }
