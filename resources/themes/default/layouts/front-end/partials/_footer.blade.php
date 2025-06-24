@@ -185,11 +185,11 @@
                 <div class="col-md-4 text-center mb-3 mb-md-0">
                     <div class="d-flex justify-content-center align-items-center gap-2">
                         <a href="#" class="app-download-btn">
-                            <img src="{{ asset('images/app-store.png') }}" alt="App Store" class="img-fluid"
+                            <img src="{{ asset('public/images/app-store.png') }}" alt="App Store" class="img-fluid"
                                 style="height: 40px;">
                         </a>
                         <a href="#" class="app-download-btn">
-                            <img src="{{ asset('images/google-play.png') }}" alt="Google Play" class="img-fluid"
+                            <img src="{{ asset('public/images/google-play.png') }}" alt="Google Play" class="img-fluid"
                                 style="height: 40px;">
                         </a>
                     </div>
@@ -216,7 +216,7 @@
                 </style>
 
                 <div class="col-md-4 text-center text-md-end">
-                    <img src="{{ asset('images/payment-methods.png') }}" alt="Payment Methods" class="img-fluid"
+                    <img src="{{ asset('public/images/payment-methods.png') }}" alt="Payment Methods" class="img-fluid"
                         style="max-height: 30px;">
                 </div>
             </div>
