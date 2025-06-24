@@ -181,9 +181,9 @@
         <!-- Nav Links -->
         <div class="col-md-4 d-none d-md-flex">
             <nav class="nav">
-                <a class="nav-link" href="#">Home</a>
-                <a class="nav-link" href="#">New Arrivals</a>
-                <a class="nav-link" href="#">All Vendors</a>
+                <a class="nav-link" href="{{ route('home') }}">Home</a>
+                <a class="nav-link" href="{{ route('home') }}#new-arrival-section">New Arrivals</a>
+                <a class="nav-link" href="{{ route('vendors') }}">All Vendors</a>
             </nav>
         </div>
 
