@@ -68,7 +68,7 @@
 
                     <!-- Logo (optional to keep above) -->
                     <a class="navbar-brand d-none d-sm-block me-3 flex-shrink-0" href="{{ route('home') }}">
-                        <img src="{{ asset('images/albazar-logo.png') }}" class="img-fluid mb-3"
+                        <img src="{{ asset('public/images/albazar-logo.png') }}" class="img-fluid mb-3"
                             style="max-height:70px;" alt="logo">
                     </a>
 
