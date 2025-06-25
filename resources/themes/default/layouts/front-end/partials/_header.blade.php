@@ -277,7 +277,28 @@
                         <span class="badge rounded-pill badge-custom">0</span>
                     </a>
                 </span>
-                <i class="bi bi-person fs-5"></i>
+
+                <div class="dropdown ms-3">
+                       <span class="dropdown-toggle d-none d-md-inline" type="button" id="languageDropdown"
+                        data-bs-toggle="dropdown" aria-expanded="false">
+                       <i class="bi bi-person fs-5"></i> 
+                    </span>
+                    <ul class="dropdown-menu" aria-labelledby="languageDropdown">
+                        <li class="change-language" data-action="{{ route('change-language') }}"
+                            data-language-code="">
+                            <a class="dropdown-item pb-1" href="javascript:void(0);">
+                                <span class="text-capitalize">Customer Login</span>
+                            </a>
+                        </li>
+                         <li class="change-language" data-action="{{ route('change-language') }}"
+                            data-language-code="">
+                            <a class="dropdown-item pb-1" href="javascript:void(0);">
+                                <span class="text-capitalize">Vendor Login</span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+                
 
                 {{-- <span class="d-none d-md-inline">Eng <i class="bi bi-caret-down-fill"></i></span> --}}
                 <!-- Language Dropdown (Desktop) -->
@@ -308,7 +329,6 @@
         </div>
     </div>
 </header>
-
 <script>
     document.addEventListener("DOMContentLoaded", function() {
         document.querySelectorAll(".category-option").forEach(function(item) {

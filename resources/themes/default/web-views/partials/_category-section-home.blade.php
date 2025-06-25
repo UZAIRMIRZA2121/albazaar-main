@@ -1,63 +1,62 @@
+<style>
+    .category-circle {
+        width: 120px;
+        height: 120px;
+        border-radius: 50%;
+        overflow: hidden;
+        border: 2px solid #f0f0f0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background-color: #fff;
+        box-shadow: 0 0 5px rgba(0,0,0,0.1);
+        transition: transform 0.3s;
+        margin: auto;
+    }
 
-@if ($categories->count() > 0 )
-    <section class="pb-4 rtl">
-        <div class="">
-            <div>
-                <div class="card __shadow h-100 max-md-shadow-0">
-                    <div class="card-body">
-                        <div class="d-flex justify-content-between">
-                            <div class="categories-title m-0">
-                                <span class="font-semibold">{{ translate('categories')}}</span>
-                            </div>
-                            <div>
-                                <a class="text-capitalize view-all-text web-text-primary"
-                                   href="{{route('categories')}}">{{ translate('view_all')}}
-                                    <i class="czi-arrow-{{Session::get('direction') === "rtl" ? 'left mr-1 ml-n1 mt-1 float-left' : 'right ml-1 mr-n1'}}"></i>
-                                </a>
-                            </div>
-                        </div>
-                        <div class="d-none d-lg-block">
-                          <div class="categories--slider owl-carousel mt-3">
-                              @foreach($categories as $key => $category)
-                                  @if ($key < 8)
-                                      <div class="text-center __m-5px __cate-item">
-                                          <a href="{{ route('products', ['category_id' => $category['id'], 'data_from' => 'category', 'page' => 1]) }}" 
-                                             class="d-flex flex-column align-items-center">
-                                              <div class="__img">
-                                                  <img alt="{{ $category->name }}" 
-                                                       src="{{ getStorageImages(path:$category->icon_full_url, type: 'category') }}">
-                                              </div>
-                                              <p class="text-center fs-13 font-semibold mt-2">
-                                                  {{ Str::limit($category->name, 15) }}
-                                              </p>
-                                          </a>
-                                      </div>
-                                  @endif
-                              @endforeach
-                          </div>
-                      </div>
-                      
-                        <div class="d-lg-none">
-                            <div class="owl-theme owl-carousel categories--slider mt-3" id="">
-                                @foreach($categories as $key => $category)
-                                    @if ($key<8)
-                                        <div class="text-center m-0 __cate-item w-100">
-                                            <a href="{{route('products',['category_id'=> $category['id'],'data_from'=>'category','page'=>1])}}">
-                                                <div class="__img mw-100 h-auto">
-                                                    <img alt="{{ $category->name }}"
-                                                         src="{{ getStorageImages(path: $category->icon_full_url, type: 'category') }}">
-                                                </div>
-                                                <p class="text-center line--limit-2 small mt-2">{{ $category->name }}</p>
-                                            </a>
-                                        </div>
-                                    @endif
-                                @endforeach
-                            </div>
-                        </div>
+    .category-circle img {
+        max-width: 100%;
+        max-height: 100%;
+        object-fit: cover;
+    }
+
+    .category-circle:hover {
+        transform: scale(1.05);
+    }
+</style>
+
+@if ($categories->count() > 0)
+    <section class="pb-4 rtl container">
+        <div class="card __shadow h-100 max-md-shadow-0">
+            <div class="card-body">
+                <div class="d-flex justify-content-between">
+                    <div class="categories-title m-0">
+                        <span class="font-semibold">{{ translate('Top categories') }}</span>
+                    </div>
+                    <div>
+                        <a class="text-capitalize view-all-text web-text-primary"
+                           href="{{ route('categories') }}">{{ translate('view_all') }}
+                            <i class="czi-arrow-{{ Session::get('direction') === "rtl" ? 'left mr-1 ml-n1 mt-1 float-left' : 'right ml-1 mr-n1' }}"></i>
+                        </a>
                     </div>
                 </div>
+
+                <div class="row mt-4">
+                    @foreach($categories->take(12) as $key => $category)
+                        <div class="col-md-2 col-6 text-center mb-4">
+                            <a href="{{ route('products', ['category_id' => $category['id'], 'data_from' => 'category', 'page' => 1]) }}">
+                                <div class="category-circle mb-2">
+                                    <img src="{{ getStorageImages(path: $category->icon_full_url, type: 'category') }}"
+                                         alt="{{ $category->name }}">
+                                </div>
+                                <div class="fw-bold small">{{ Str::limit($category->name, 15) }}</div>
+                                <div class="text-muted small">{{ $category->product->count() ?? 0 }} Items</div>
+                            </a>
+                        </div>
+                    @endforeach
+                </div>
+
             </div>
         </div>
     </section>
 @endif
-

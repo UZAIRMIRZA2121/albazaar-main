@@ -1,177 +1,164 @@
 @if (count($bannerTypeMainBanner) > 0)
-    <section class="pb-4 rtl">
-        <div class="">
-            <div>
-                <style>
-                    /* Set image width and height */
-                    .carousel-item img {
-                        width: 100%;
-                        height: auto;
-                        min-height: 450px;
-                        /* Fixed height for large screens */
-                        object-fit: cover;
-                    }
+<section class="py-5">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
 
-                    .desktop-view {
-                        display: block;
-                    }
+    <style>
+        .hero-carousel {
+            background: linear-gradient(to right, #fff5f0, #fefaf6);
+            border-radius: 20px;
+            padding: 40px 20px;
+            overflow: hidden;
+        }
 
-                    .mobile-view {
-                        display: none;
-                    }
+        .hero-text h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            line-height: 1.2;
+        }
 
-                    /* Responsively manage height for smaller screens */
-                    @media (max-width: 767px) {
-                        .carousel-item img {
-                            height: auto;
-                            /* Adjust height for smaller screens */
-                            min-height: unset !important;
-                        }
+        .hero-text h1 span {
+            color: #f54a05;
+        }
 
-                        .mobile-view {
-                            display: block;
-                        }
+        .hero-text p {
+            font-size: 1.1rem;
+            color: #555;
+            margin-top: 15px;
+        }
 
-                        .desktop-view {
-                            display: none;
-                        }
-                    }
+        .hero-button {
+            margin-top: 25px;
+        }
 
-                    /* Carousel inner style */
-                    .carousel-inner {
-                        display: flex;
-                    }
+        .hero-button a {
+            background-color: #f54a05;
+            color: #fff;
+            padding: 12px 28px;
+            border-radius: 10px;
+            text-decoration: none;
+            font-weight: 600;
+        }
 
-                    #imageCarousel {
-                        background-color: #000000;
-                    }
-                </style>
-                <style>
-                    .carousel-btn {
-                        position: absolute;
-                        top: 50%;
-                        transform: translateY(-50%);
-                        background-color: transparent;
-                        border: none;
-                        color: white;
-                        font-size: 2rem;
-                        z-index: 10;
-                        padding: 0.5rem 1rem;
-                        cursor: pointer;
+        .hero-images img {
+            width: 100%;
+            height: auto;
+            border-radius: 20px;
+            object-fit: cover;
+        }
 
-                        border-radius: 50%;
-                        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.5);
-                        transition: color 0.3s ease, background-color 0.3s ease;
-                        background-color: #000000
-                    }
-                
-                    .carousel-btn:hover {
-                        color: #ddd; /* slight hover effect */
-                    }
-                
-                    .prev-btn {
-                        left: 10px;
-                    }
-                
-                    .next-btn {
-                        right: 10px;
-                    }
-                </style>
-                
+        @media (min-width: 768px) {
+            .hero-text h1 {
+                font-size: 3rem;
+            }
+        }
+        .custom-carousel-btn {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background-color: #d9d9d9;
+    border: none;
+    color: #333;
+    font-size: 1.5rem;
+    border-radius: 50%;
+    width: 36px;
+    height: 36px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 5;
+    transition: all 0.3s ease;
+    box-shadow: 0 0 5px rgba(0,0,0,0.2);
+}
 
-                <!-- Bootstrap Carousel Wrapper -->
-                <div id="imageCarousel" class="carousel slide desktop-view" data-bs-ride="carousel">
-                    <div class="carousel-inner">
-                        @php
-                            $totalSlides = ceil(count($bannerTypeMainBanner) / 4); // Calculate total slides needed
-                        @endphp
+.custom-carousel-btn:hover {
+    background-color: #b5b5b5;
+}
 
-                        @foreach ($bannerTypeMainBanner->chunk(4) as $chunkIndex => $bannerChunk)
-                            <div class="carousel-item {{ $chunkIndex == 0 ? 'active' : '' }}">
-                                <div class="row">
-                                    @foreach ($bannerChunk as $banner)
-                                        <div class="col-3">
-                                            <a href="{{ $banner['url'] }}" class="d-block" target="_blank">
-                                                <img src="{{ getStorageImages(path: $banner->photo_full_url, type: 'banner') }}"
-                                                    alt="Banner Image" class="img-fluid">
-                                            </a>
-                                        </div>
-                                    @endforeach
-                                </div>
+.custom-prev {
+    left: 10px;
+}
+
+.custom-next {
+    right: 10px;
+}
+
+.hero-carousel {
+    margin: 0;
+    padding-left: 3rem;
+    padding-right: 3rem;
+    width: 100% ;
+}
+
+    </style>
+
+    <div id="heroCarousel" class="carousel slide" data-bs-ride="carousel">
+        <div class="carousel-inner">
+
+            @foreach ($bannerTypeMainBanner->chunk(2) as $index => $chunk)
+              @php $firstBanner = $chunk->first(); @endphp
+            <div class="carousel-item {{ $index == 0 ? 'active' : '' }}">
+                <div class="hero-carousel d-flex align-items-center px-4">
+                    <div class="row align-items-center px-5">
+                        <!-- Text Column -->
+                        <div class="col-md-6 hero-text ">
+                            <h1>
+                                Discover a Smarter<br>
+                                Way to Shop with <span>Albazar</span>
+                            </h1>
+                            <p>
+                                Explore a wide selection of electronics, fashion, perfumes, and more — handpicked for quality,
+                                value, and everyday convenience.
+                            </p>
+                            <div class="hero-button">
+                                <a href="{{ $firstBanner['url'] }}">SHOP NOW →</a>
                             </div>
-                        @endforeach
-                    </div>
-                    <!-- Carousel Controls -->
-               <!-- Left Arrow Button -->
-<button type="button" class="carousel-btn prev-btn" data-bs-target="#imageCarousel" data-bs-slide="prev">
-    &#8592;
-</button>
+                        </div>
 
-<!-- Right Arrow Button -->
-<button type="button" class="carousel-btn next-btn" data-bs-target="#imageCarousel" data-bs-slide="next">
-    &#8594;
-</button>
-
-
-                </div>
-                <div id="imageCarousel" class="carousel slide mobile-view" data-bs-ride="carousel">
-                    <div class="carousel-inner">
-                        @php
-                            $totalSlides = ceil(count($bannerTypeMainBanner) / 4); // Calculate total slides needed
-                        @endphp
-
-                        @foreach ($bannerTypeMainBanner->chunk(2) as $chunkIndex => $bannerChunk)
-                            <div class="carousel-item {{ $chunkIndex == 0 ? 'active' : '' }}">
-                                <div class="row">
-                                    @foreach ($bannerChunk as $banner)
-                                        <div class="col-6">
-                                            <a href="{{ $banner['url'] }}" class="d-block" target="_blank">
-                                                <img src="{{ getStorageImages(path: $banner->photo_full_url, type: 'banner') }}"
-                                                    alt="Banner Image" class="img-fluid">
-                                            </a>
-                                        </div>
-                                    @endforeach
-                                </div>
+                        <!-- Image Columns -->
+                        <div class="col-md-6">
+                            <div class="row g-3 hero-images">
+                                @foreach ($chunk as $banner)
+                                    <div class="col-6">
+                                        <a href="{{ $banner['url'] }}" target="_blank">
+                                            <img src="{{ getStorageImages(path: $banner->photo_full_url, type: 'banner') }}" alt="Banner Image">
+                                        </a>
+                                    </div>
+                                @endforeach
                             </div>
-                        @endforeach
+                        </div>
                     </div>
-               <!-- Left Arrow Button -->
-               <button type="button" class="carousel-btn prev-btn" data-bs-target="#imageCarousel" data-bs-slide="prev">
-                &#8592;
-            </button>
-            
-            <!-- Right Arrow Button -->
-            <button type="button" class="carousel-btn next-btn" data-bs-target="#imageCarousel" data-bs-slide="next">
-                &#8594;
-            </button>
-            
-
                 </div>
             </div>
+            @endforeach
+
         </div>
-    </section>
 
-    <!-- Bootstrap JS (Ensure it's included) -->
+        <!-- Controls -->
+       <!-- Custom Arrows -->
+<button class="custom-carousel-btn custom-prev" type="button" data-bs-target="#heroCarousel" data-bs-slide="prev">
+    <i class="bi bi-chevron-left"></i>
+</button>
+<button class="custom-carousel-btn custom-next" type="button" data-bs-target="#heroCarousel" data-bs-slide="next">
+    <i class="bi bi-chevron-right"></i>
+</button>
+    <style>
+        .custom-badge {
+            font-size: 14px;
+            font-weight: 500;
+            color: #333;
+            background-color: #f8f9fa;
+            border: 1px solid #dee2e6;
+            padding: 8px 12px;
+            border-radius: 4px;
+            white-space: nowrap;
+        }
+        .badge-container {
+            gap: 10px;
+        }
+    </style>
+    </div>
+
+   
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-
-    <!-- Manual Carousel Initialization (Optional but helpful) -->
-    <script>
-        $(document).ready(function () {
-            // Auto-start carousel every 5 seconds
-            $('#imageCarousel').carousel({
-                interval: 5000,
-                ride: 'carousel'
-            });
-    
-            // Optional manual control (already handled by buttons via data attributes)
-            $('.prev-btn').click(function () {
-                $('#imageCarousel').carousel('prev');
-            });
-    
-            $('.next-btn').click(function () {
-                $('#imageCarousel').carousel('next');
-            });
-        });
-    </script>
-    
+</section>
 @endif
