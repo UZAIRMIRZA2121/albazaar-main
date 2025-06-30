@@ -18,6 +18,11 @@ enum Pages
         URI => 'helpTopic',
         VIEW => ''
     ];
+    const HELP_TOPIC_SELLER = [
+        URI => 'helpTopic-seller',
+        VIEW => ''
+    ];
+
 
     const REFUND_POLICY = [
         URI => 'refund-policy',

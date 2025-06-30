@@ -210,7 +210,7 @@
                                 </a>
                                 <div class="dropdown-divider"></div>
                                 <a class="dropdown-item" href="{{ route('customer.auth.sign-up') }}">
-                                    <i class="fa fa-user-circle mr-2"></i>{{ translate('sign_up') }}
+                                    <i class="fa fa-user-circle mr-2"></i> {{ translate('sign_up') }}
                                 </a>
                             </div>
                         </div>
@@ -426,14 +426,7 @@
 
                     </ul>
 
-                    @if (auth('customer')->check())
-                        <div class="logout-btn mt-auto d-md-none">
-                            <hr>
-                            <a href="{{ route('customer.auth.logout') }}" class="nav-link">
-                                <strong class="text-base">{{ translate('logout') }}</strong>
-                            </a>
-                        </div>
-                    @endif
+               
 
                 </div>
                 <!-- Latest Font Awesome CDN -->

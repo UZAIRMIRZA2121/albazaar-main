@@ -8867,4 +8867,5 @@ return [
 	"then_you_would_not_able_change_any_status" => "Then you would not able change any status",
 	"without_a_proper_payment_info,you_cannot_change_the_Refund_Status" => "Without a proper payment info you cannot change the Refund Status",
 	"withdraw_request_has_been_sent" => "Withdraw request has been sent",
+	"Top categories" => "Top categories",
 ];

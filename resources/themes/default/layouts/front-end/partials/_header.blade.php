@@ -284,18 +284,32 @@
                        <i class="bi bi-person fs-5"></i> 
                     </span>
                     <ul class="dropdown-menu" aria-labelledby="languageDropdown">
-                        <li class="change-language" data-action="{{ route('change-language') }}"
+                        <li class="" data-action="{{ route('customer.auth.login') }}"
                             data-language-code="">
-                            <a class="dropdown-item pb-1" href="javascript:void(0);">
+                            <a class="dropdown-item pb-1" href="{{ route('customer.auth.login') }}">
                                 <span class="text-capitalize">Customer Login</span>
                             </a>
                         </li>
-                         <li class="change-language" data-action="{{ route('change-language') }}"
+                         <li class="" >
+                            <a class="dropdown-item pb-1" href="{{ route('vendor.auth.login') }}">
+                                <span class="text-capitalize">Vendor Login</span>
+                            </a>
+                        </li>
+                             @if (auth('customer')->check())
+                        <div class="logout-btn mt-auto d-md-none">
+                            <hr>
+                            <a href="{{ route('customer.auth.logout') }}" class="nav-link">
+                                <strong class="text-base">{{ translate('logout') }}</strong>
+                            </a>
+                        </div>
+
+                            <li class="change-language" data-action="{{ route('change-language') }}"
                             data-language-code="">
                             <a class="dropdown-item pb-1" href="javascript:void(0);">
                                 <span class="text-capitalize">Vendor Login</span>
                             </a>
                         </li>
+                    @endif
                     </ul>
                 </div>
                 

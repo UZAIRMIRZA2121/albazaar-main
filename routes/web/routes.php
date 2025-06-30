@@ -226,6 +226,7 @@ Route::group(['namespace' => 'Web', 'middleware' => ['maintenance_mode', 'guestC
         Route::get(Pages::ABOUT_US[URI], 'getAboutUsView')->name('about-us');
         Route::get(Pages::CONTACTS[URI], 'getContactView')->name('contacts');
         Route::get(Pages::HELP_TOPIC[URI], 'getHelpTopicView')->name('helpTopic');
+        Route::get(Pages::HELP_TOPIC_SELLER[URI], 'getHelpTopicViewseller')->name('helpTopic.seller');
         Route::get(Pages::REFUND_POLICY[URI], 'getRefundPolicyView')->name('refund-policy');
         Route::get(Pages::RETURN_POLICY[URI], 'getReturnPolicyView')->name('return-policy');
         Route::get(Pages::PRIVACY_POLICY[URI], 'getPrivacyPolicyView')->name('privacy-policy');

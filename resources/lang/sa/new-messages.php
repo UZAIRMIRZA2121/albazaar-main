@@ -8617,4 +8617,6 @@ return [
 	"Featured products" => "Featured products",
 	"View all" => "View all",
 	"quick_add" => "Quick add",
+	"there_is_no_FAQs" => "There is no FAQs",
+	"terms_and_Condition" => "Terms and Condition",
 ];

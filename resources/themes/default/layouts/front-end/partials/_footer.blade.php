@@ -134,10 +134,11 @@
                     <h6 class="text-uppercase font-weight-bold">Customers Care</h6>
                     <ul class="list-unstyled">
                         <li class="mb-2"><a href="#" class="text-dark">Contact Us</a></li>
-                        <li class="mb-2"><a href="#" class="text-dark">Customers FAQ</a></li>
-                        <li class="mb-2"><a href="#" class="text-dark">Customer Terms and Conditions</a></li>
+                        <li class="mb-2"><a href="{{route('helpTopic')}}" class="text-dark">Customers FAQ</a></li>
+                        <li class="mb-2"><a href="{{route('terms')}}" class="text-dark">Customer Terms and Conditions</a></li>
                         <li class="mb-2"><a href="#" class="text-dark">Privacy Policy</a></li>
-                        <li><a href="#" class="text-dark">Return Policy</a></li>
+                        <li class="mb-2"><a href="{{route('refund-policy')}}" class="text-dark">Refund Policy</a></li>
+                        <li><a href="{{route('return-policy')}}" class="text-dark">Return Policy</a></li>
                     </ul>
                 </div>
 
@@ -146,7 +147,7 @@
                     <h6 class="text-uppercase font-weight-bold">Sell on Albazar</h6>
                     <ul class="list-unstyled">
                         <li class="mb-2"><a href="#" class="text-dark">Join albazar</a></li>
-                        <li class="mb-2"><a href="#" class="text-dark">Seller FAQ</a></li>
+                        <li class="mb-2"><a href="{{route('helpTopic.seller')}}" class="text-dark">Seller FAQ</a></li>
                         <li class="mb-2"><a href="#" class="text-dark">Seller Terms and Conditions</a></li>
                         <li><a href="#" class="text-dark">What to sell on albazar?</a></li>
                     </ul>
@@ -158,8 +159,8 @@
                     <address class="text-dark">
                         <p class="mb-2">8086 Green Lake Drive</p>
                         <p class="mb-2">Chewy Chore, MD 20815</p>
-                        <p class="mb-2">+391 (0)35 2568 4583</p>
-                        <p><a href="mailto:support@albazar.sa" class="text-dark">support@albazar.sa</a></p>
+                        <p class="mb-2"> {{getWebConfig(name: 'company_phone')}}</p>
+                        <p><a href="{{ 'mailto:'.getWebConfig(name: 'company_email') }}" class="text-dark">{{getWebConfig(name: 'company_email')}}</a></p>
                     </address>
                 </div>
 
