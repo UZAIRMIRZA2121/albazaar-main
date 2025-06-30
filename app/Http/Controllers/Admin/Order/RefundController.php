@@ -76,6 +76,7 @@ class RefundController extends BaseController
         foreach ($order->details as $key => $or_d) {
             $totalProductPrice += ($or_d->qty * $or_d->price) + $or_d->tax - $or_d->discount;
         }
+     
         $subtotal = $refund->orderDetails->price * $refund->orderDetails->qty - $refund->orderDetails->discount + $refund->orderDetails->tax;
         $couponDiscount = ($order->discount_amount * $subtotal) / $totalProductPrice;
         $refundAmount = $subtotal - $couponDiscount;

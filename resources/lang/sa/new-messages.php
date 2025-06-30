@@ -8619,4 +8619,6 @@ return [
 	"quick_add" => "Quick add",
 	"there_is_no_FAQs" => "There is no FAQs",
 	"terms_and_Condition" => "Terms and Condition",
+	"want_to_cancel_this_order?" => "Want to cancel this order ",
+	"best_product,_highly_recommended" => "Best product  highly recommended",
 ];

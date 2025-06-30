@@ -84,6 +84,34 @@
         .categoryMenu li a:hover {
             background-color: #f8f9fa;
         }
+
+        /* Hide dropdown by default */
+        .dropdown-menu {
+            display: none;
+            position: absolute;
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            min-width: 180px;
+            z-index: 1000;
+        }
+
+        /* Show dropdown when active */
+        .dropdown-menu.active {
+            display: block;
+        }
+
+        /* Optional: basic hover style */
+        .dropdown-menu li a {
+            display: block;
+            padding: 6px 12px;
+            text-decoration: none;
+            color: #333;
+        }
+
+        .dropdown-menu li a:hover {
+            background-color: #f0f0f0;
+        }
     </style>
     <!-- Custom CSS -->
     <style>
@@ -116,6 +144,11 @@
 
         .custom-dropdown-menu li:hover {
             background: #f1f1f1;
+        }
+
+        /* Make the toggle show pointer on hover */
+        #dropdownToggle {
+            cursor: pointer;
         }
     </style>
 
@@ -278,51 +311,55 @@
                     </a>
                 </span>
 
-                <div class="dropdown ms-3">
-                       <span class="dropdown-toggle d-none d-md-inline" type="button" id="languageDropdown"
-                        data-bs-toggle="dropdown" aria-expanded="false">
-                       <i class="bi bi-person fs-5"></i> 
+                <div class="dropdown ms-3" id="customDropdown">
+                    <span class="dropdown-toggle d-none d-md-inline" id="dropdownToggle">
+                        @if (auth('customer')->check())
+                            <small>
+                                {{ Str::limit(auth('customer')->user()->f_name, 10) }}
+                            </small>
+                        @else
+                            <i class="bi bi-person fs-5"></i>
+                        @endif
                     </span>
-                    <ul class="dropdown-menu" aria-labelledby="languageDropdown">
-                        <li class="" data-action="{{ route('customer.auth.login') }}"
-                            data-language-code="">
-                            <a class="dropdown-item pb-1" href="{{ route('customer.auth.login') }}">
-                                <span class="text-capitalize">Customer Login</span>
-                            </a>
-                        </li>
-                         <li class="" >
-                            <a class="dropdown-item pb-1" href="{{ route('vendor.auth.login') }}">
-                                <span class="text-capitalize">Vendor Login</span>
-                            </a>
-                        </li>
-                             @if (auth('customer')->check())
-                        <div class="logout-btn mt-auto d-md-none">
-                            <hr>
-                            <a href="{{ route('customer.auth.logout') }}" class="nav-link">
-                                <strong class="text-base">{{ translate('logout') }}</strong>
-                            </a>
-                        </div>
-
-                            <li class="change-language" data-action="{{ route('change-language') }}"
-                            data-language-code="">
-                            <a class="dropdown-item pb-1" href="javascript:void(0);">
-                                <span class="text-capitalize">Vendor Login</span>
-                            </a>
-                        </li>
-                    @endif
+                    <ul class="dropdown-menu" id="dropdownMenu">
+                        @if (auth('customer')->check())
+                            <li>
+                                <a class="dropdown-item pb-1" href="{{ route('account-oder') }}">
+                                    <span class="text-capitalize">{{ translate('my_Order') }}</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a class="dropdown-item pb-1" href="{{ route('user-account') }}">
+                                    <span class="text-capitalize">{{ translate('my_Profile') }}</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a class="dropdown-item pb-1" href="{{ route('customer.auth.logout') }}">
+                                    <span class="text-capitalize">{{ translate('logout') }}</span>
+                                </a>
+                            </li>
+                        @else
+                            <li>
+                                <a class="dropdown-item pb-1" href="{{ route('customer.auth.login') }}">
+                                    <span class="text-capitalize">Customer Login</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a class="dropdown-item pb-1" href="{{ route('vendor.auth.login') }}">
+                                    <span class="text-capitalize">Vendor Login</span>
+                                </a>
+                            </li>
+                        @endif
                     </ul>
                 </div>
-                
 
-                {{-- <span class="d-none d-md-inline">Eng <i class="bi bi-caret-down-fill"></i></span> --}}
-                <!-- Language Dropdown (Desktop) -->
 
-                <div class="dropdown ms-3">
-                    <span class=" dropdown-toggle d-none d-md-inline" type="button" id="languageDropdown"
-                        data-bs-toggle="dropdown" aria-expanded="false">
+
+                <div class="dropdown ms-3" id="languageDropdownWrapper">
+                    <span class="dropdown-toggle d-none d-md-inline" id="languageDropdownToggle">
                         <i class="bi bi-globe fs-5"></i> Eng
                     </span>
-                    <ul class="dropdown-menu" aria-labelledby="languageDropdown">
+                    <ul class="dropdown-menu" id="languageDropdownMenu">
                         @foreach ($web_config['language'] as $key => $data)
                             @if ($data['status'] == 1)
                                 <li class="change-language" data-action="{{ route('change-language') }}"
@@ -338,6 +375,7 @@
                         @endforeach
                     </ul>
                 </div>
+
 
             </div>
         </div>
@@ -366,4 +404,67 @@
     $(".category-menu").find(".mega_menu").parents("li")
         .addClass("has-sub-item").find("> a")
         .append("<i class='czi-arrow-{{ Session::get('direction') === 'rtl' ? 'left' : 'right' }}'></i>");
+</script>
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const toggle = document.getElementById('dropdownToggle');
+        const menu = document.getElementById('dropdownMenu');
+
+        // Toggle on click
+        toggle.addEventListener('click', function(e) {
+            e.stopPropagation(); // Prevent click from bubbling to document
+
+            menu.classList.toggle('active');
+        });
+
+        // Close dropdown when clicking outside
+        document.addEventListener('click', function(e) {
+            if (menu.classList.contains('active')) {
+                menu.classList.remove('active');
+            }
+        });
+
+        // Optional: close dropdown on ESC key
+        document.addEventListener('keydown', function(e) {
+            if (e.key === "Escape") {
+                menu.classList.remove('active');
+            }
+        });
+    });
+</script>
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    const langToggle = document.getElementById('languageDropdownToggle');
+    const langMenu = document.getElementById('languageDropdownMenu');
+
+    // Toggle on click
+    langToggle.addEventListener('click', function(e) {
+        e.stopPropagation(); // Prevent click bubbling
+        langMenu.classList.toggle('active');
+    });
+
+    // Close when clicking outside
+    document.addEventListener('click', function() {
+        langMenu.classList.remove('active');
+    });
+
+    // Close on ESC
+    document.addEventListener('keydown', function(e) {
+        if (e.key === "Escape") {
+            langMenu.classList.remove('active');
+        }
+    });
+
+    // Handle language change click
+    const langItems = document.querySelectorAll('#languageDropdownMenu .change-language');
+    langItems.forEach(function(item) {
+        item.addEventListener('click', function(e) {
+            const actionUrl = item.dataset.action;
+            const langCode = item.dataset.languageCode;
+            // You can submit an AJAX request here or redirect
+            // For example, redirect to change language
+            window.location.href = actionUrl + '?code=' + encodeURIComponent(langCode);
+        });
+    });
+});
 </script>
