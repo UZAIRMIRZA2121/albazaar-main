@@ -367,7 +367,7 @@
                             @foreach($order->details as $detail)
                             <tr>
                                 <td>{{$detail->product->name ?? 'N/A'}}</td>
-                                <td>{{$detail->quantity}}</td>
+                                <td>{{$detail->qty}}</td>
                                 <td>{{ setCurrencySymbol(amount: usdToDefaultCurrency(amount: $detail->price), currencyCode: getCurrencyCode()) }}</td>
                                 <td>{{ setCurrencySymbol(amount: usdToDefaultCurrency(amount: $detail->price * $detail->quantity), currencyCode: getCurrencyCode()) }}</td>
                             </tr>

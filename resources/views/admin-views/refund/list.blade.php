@@ -91,8 +91,9 @@
                                                class="title-color font-weight-bold hover-c1">
                                                 {{Str::limit($refund->product->name,35)}}
                                             </a>
+                                           
                                             <span
-                                                class="fz-12">{{translate('QTY')}} : {{ $refund->orderDetails->qty }}</span>
+                                                class="fz-12">{{translate('QTY')}} : {{ $refund->orderDetails->qty ?? 1 }}</span>
                                         </div>
                                     </div>
                                 @else

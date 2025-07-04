@@ -1,3 +1,6 @@
+@php($cart=\App\Utils\CartManager::get_cart())
+@php($cartList=\App\Utils\CartManager::get_cart(type: 'checked'))
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -216,7 +219,7 @@
             <nav class="nav">
                 <a class="nav-link" href="{{ route('home') }}">Home</a>
                 <a class="nav-link" href="{{ route('home') }}#new-arrival-section">New Arrivals</a>
-                <a class="nav-link" href="{{ route('vendors') }}">All Vendors</a>
+                <a class="nav-link" href="#">Raw Material</a>
             </nav>
         </div>
 
@@ -307,7 +310,7 @@
                     <a href="{{ asset('shop-cart') }}" class="text-dark">
 
                         <i class="bi bi-cart fs-5"></i>
-                        <span class="badge rounded-pill badge-custom">0</span>
+                        <span class="badge rounded-pill badge-custom"> {{ $cart->count() }}</span>
                     </a>
                 </span>
 
@@ -341,12 +344,12 @@
                         @else
                             <li>
                                 <a class="dropdown-item pb-1" href="{{ route('customer.auth.login') }}">
-                                    <span class="text-capitalize">Customer Login</span>
+                                    <span class="text-capitalize">Customer</span>
                                 </a>
                             </li>
                             <li>
                                 <a class="dropdown-item pb-1" href="{{ route('vendor.auth.login') }}">
-                                    <span class="text-capitalize">Vendor Login</span>
+                                    <span class="text-capitalize">Vendor</span>
                                 </a>
                             </li>
                         @endif

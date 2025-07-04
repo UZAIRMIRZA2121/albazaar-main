@@ -7,6 +7,7 @@ use App\Models\User;
 use App\Traits\Processor;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
 
 class Paytabs
@@ -28,7 +29,6 @@ class Paytabs
     function send_api_request($request_url, $data, $request_method = null)
     {
         $data['profile_id'] = $this->config_values->profile_id;
-     
         $curl = curl_init();
         curl_setopt_array($curl, array(
             CURLOPT_URL => $this->config_values->base_url . '/' . $request_url,
@@ -81,7 +81,7 @@ class PaytabsController extends Controller
 
     public function payment(Request $request)
     {
-       
+
         session()->forget('payment_failed');
         $validator = Validator::make($request->all(), [
             'payment_id' => 'required|uuid'
@@ -101,12 +101,15 @@ class PaytabsController extends Controller
 
         $plugin = new Paytabs();
         $request_url = 'payment/request';
-
+        $host = request()->getHost(); // e.g., "localhost" or "albazar.sa"
+       
+        $cart_currency = ($host === 'albazar.sa') ? 'SAR' : 'PKR';
+       
         $data = [
             "tran_type" => "sale",
             "tran_class" => "ecom",
             "cart_id" => $payment_data->id,
-            "cart_currency" => 'SAR',
+            "cart_currency" => $cart_currency,
             "cart_amount" => round($payment_data->payment_amount, 2),
             "cart_description" => "products",
             "paypage_lang" => "en",
@@ -146,13 +149,12 @@ class PaytabsController extends Controller
         $page = $plugin->send_api_request($request_url, $data);
 
         if (!is_array($page) || !isset($page['redirect_url'])) {
-            dd('Paytabs payment request failed.', ['response' => $page]);
-       
+            Log::error('Paytabs payment request failed.', ['response' => $page]);
             return response()->json($this->response_formatter(GATEWAYS_DEFAULT_204), 200);
         }
 
         session(['redirect_url' => $page['redirect_url']]);
-    
+
 
         return redirect()->route('checkout-payment');
     }

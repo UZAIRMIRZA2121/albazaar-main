@@ -146,10 +146,10 @@
                 <div class="col-md-2 mb-4">
                     <h6 class="text-uppercase font-weight-bold">Sell on Albazar</h6>
                     <ul class="list-unstyled">
-                        <li class="mb-2"><a href="#" class="text-dark">Join albazar</a></li>
+                        <li class="mb-2"><a href="{{ route('vendor.auth.registration.index') }}" class="text-dark">Join albazar</a></li>
                         <li class="mb-2"><a href="{{route('helpTopic.seller')}}" class="text-dark">Seller FAQ</a></li>
-                        <li class="mb-2"><a href="#" class="text-dark">Seller Terms and Conditions</a></li>
-                        <li><a href="#" class="text-dark">What to sell on albazar?</a></li>
+                        <li class="mb-2"><a href="{{route('terms')}}" class="text-dark">{{ translate('terms_&_conditions')}}</a></li>
+                        <li><a href="{{ route('vendor.auth.registration.index') }}" class="text-dark">What to sell on albazar?</a></li>
                     </ul>
                 </div>
 

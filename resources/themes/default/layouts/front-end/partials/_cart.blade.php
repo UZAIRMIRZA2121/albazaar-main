@@ -1,5 +1,4 @@
-@php($cart=\App\Utils\CartManager::get_cart())
-@php($cartList=\App\Utils\CartManager::get_cart(type: 'checked'))
+
 
 <div class="navbar-tool dropdown me-2 {{Session::get('direction') === "rtl" ? 'mr-md-3' : 'ml-md-3'}}">
     @if($web_config['guest_checkout_status'] || auth('customer')->check())

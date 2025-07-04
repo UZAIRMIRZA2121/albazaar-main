@@ -8621,4 +8621,11 @@ return [
 	"terms_and_Condition" => "Terms and Condition",
 	"want_to_cancel_this_order?" => "Want to cancel this order ",
 	"best_product,_highly_recommended" => "Best product  highly recommended",
+	"Order_is_already_delivered_and_transaction_amount_has_been_disbursed_changing_status_can_be_the_reason_of_miscalculation" => "Order is already delivered and transaction amount has been disbursed changing status can be the reason of miscalculation",
+	"without_a_proper_payment_info,you_cannot_change_the_Refund_Status" => "Without a proper payment info you cannot change the Refund Status",
+	"total_refunded_amount" => "Total refunded amount",
+	"Not a vendor yet? Register here" => "Not a vendor yet  Register here",
+	"Not a vendor yet ? " => "Not a vendor yet   ",
+	"Register here" => "Register here",
+	"VAT 15%" => "VAT 15%",
 ];

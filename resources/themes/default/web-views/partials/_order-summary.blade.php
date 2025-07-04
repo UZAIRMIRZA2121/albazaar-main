@@ -71,7 +71,7 @@
             </div>
             @endif --}}
             <div class="d-flex justify-content-between">
-                <span class="cart_title">{{translate('tax')}}</span>
+                <span class="cart_title">{{translate('VAT 15%')}}</span>
                 <span >
                     {{ webCurrencyConverter(amount: $showtotalTax + $totalTax) }}
                 </span>
@@ -167,7 +167,11 @@
         </a>
     </div>
 @endif 
-
+     <div class="pt-4">
+            <a class="btn btn--primary btn-block proceed_to_next_button action-checkout-function">
+                {{ translate('Payment Failed - Try Again') }}
+            </a>
+        </div>
 
 @if(Route::currentRouteName() == 'checkout-payment')
     @if(session()->has('payment_failed') && session('payment_failed') == true)

@@ -44,7 +44,8 @@
                 <div class="auth-wrapper-form">
                     <div class="d-block d-lg-none">
                         <a class="d-inline-flex mb-3" href="{{ route('home') }}">
-                            <img width="100" src="{{ getStorageImages(path: $eCommerceLogo, type: 'backend-logo') }}"
+                            <img width="100"
+                                src="{{ getStorageImages(path: $eCommerceLogo, type: 'backend-logo') }}"
                                 alt="Logo">
                         </a>
                     </div>
@@ -134,12 +135,16 @@
                             {{ translate('sign_in') }}
                         </button>
                     </form>
+                     {{ translate('Not a vendor yet ? ') }}
+                    <a href="{{ route('vendor.auth.registration.index') }}">
+                        {{ translate('Register here') }}
+                    </a>
+
                     <div class="d-flex justify-content-center my-3 gap-2">
-                        <a class="d-block" href="{{ route('vendor.auth.login.google')}}">
-                            <img src="https://albazar.sa/public/assets/front-end/img/icons/google.png"
-                                alt="Google">
+                        <a class="d-block" href="{{ route('vendor.auth.login.google') }}">
+                            <img src="https://albazar.sa/public/assets/front-end/img/icons/google.png" alt="Google">
                         </a>
-                        <a class="d-block" href="{{ route('vendor.auth.login.facebook')}}">
+                        <a class="d-block" href="{{ route('vendor.auth.login.facebook') }}">
                             <img src="https://albazar.sa/public/assets/front-end/img/icons/facebook.png"
                                 alt="Facebook">
                         </a>
