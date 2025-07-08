@@ -615,11 +615,14 @@ Route::get('login/google/callback', [App\Http\Controllers\Auth\SocialLoginContro
 
 Route::get('login/facebook', [App\Http\Controllers\Auth\SocialLoginController::class, 'redirectToFacebook']);
 Route::get('login/facebook/callback', [App\Http\Controllers\Auth\SocialLoginController::class, 'handleFacebookCallback']);
-
-
-
-
-
+// Route::get('/test', [CustomVendorController::class, 'test'])
+//     ->withoutMiddleware([\App\Http\Middleware\VerifyCsrfToken::class]);
+// Route::post('/debug-post', function (Request $request) {
+//     return response()->json([
+//         'success' => true,
+//         'data' => $request->all()
+//     ]);
+// });
 
 use App\Http\Controllers\TryotoController;
 use App\Http\Controllers\WebhookController;
@@ -628,8 +631,8 @@ use App\Http\Controllers\Shop\OrderController;
 Route::post('/update-shipping-option', [TryotoController::class, 'updateShippingOption'])->name('shipping.update');
 Route::post('/shipping-options', [TryotoController::class, 'getShippingOptions']);
 Route::post('/create-order', [TryotoController::class, 'createOrderWithShipping']);
-Route::post('/tryoto-webhook', [WebhookController::class, 'handleTryotoWebhook']);
+ Route::post('/tryoto-webhook', [WebhookController::class, 'handleTryotoWebhook']);
 Route::get('/order-tracking/{orderId}', [TryotoController::class, 'getOrderTracking']);
 Route::post('/test-order-creation', [TryotoController::class, 'testOrderCreation']);
-Route::get('/order/awb/{orderId}', [OrderController::class, 'getAWB'])->name('order.awb');
+// Route::get('/order/awb/{orderId}', [OrderController::class, 'getAWB'])->name('order.awb');
 

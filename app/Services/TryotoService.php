@@ -100,9 +100,7 @@ class TryotoService
     {
         $endpoint = '/rest/v2/createOrder';
 
-        // Log the request data
-        \Log::info('Creating order with data:', $orderData);
-
+     
         try {
             $response = Http::withoutVerifying()
                 ->withToken($this->accessToken)

@@ -2,10 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Cart;
-use App\Models\CartShipping;
 use App\Services\TryotoService;
-use App\Utils\CartManager;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 
@@ -20,18 +17,15 @@ class TryotoController extends Controller
 
     public function getShippingOptions(Request $request)
     {
-
         try {
             $validatedData = $request->validate([
-                'originCity' => 'nullable|array', // change this line to accept array
-                'originCity.*' => 'string|nullable', // validate each item in the array
+                'originCity' => 'required|string',
                 'destinationCity' => 'required|string',
                 'weight' => 'required',
                 'height' => 'nullable|numeric',
                 'width' => 'nullable|numeric',
-                'length' => 'nullable|numeric',
+                'length' => 'nullable|numeric'
             ]);
-        
 
             $response = $this->tryotoService->getDeliveryFees($validatedData);
 
@@ -40,7 +34,7 @@ class TryotoController extends Controller
                 'data' => $response
             ]);
         } catch (\Exception $e) {
-            Log::error('Shipping options error: ' . $e->getMessage());
+            \Log::error('Shipping options error: ' . $e->getMessage());
             return response()->json([
                 'success' => false,
                 'message' => $e->getMessage()
@@ -104,10 +98,12 @@ class TryotoController extends Controller
 
     public function createOrderWithShipping(Request $request)
     {
+
         // Log the incoming payload for debugging
         Log::info('Order creation payload:', $request->all());
 
         try {
+
             // 1. Validate the request
             $validatedData = $request->validate([
                 'orderId' => 'required|string',
@@ -132,28 +128,47 @@ class TryotoController extends Controller
                 'items.*.sku' => 'required|string'
             ]);
 
+
             // 2. Format orderId like shown in dashboard
             $timestamp = date('ymdHis');
             $validatedData['orderId'] = 'test' . $timestamp;
 
-            // 3. Prepare order data
             $orderData = [
+                // Basic Order Details
                 'orderId' => $validatedData['orderId'],
-                'pickupLocationCode' => $validatedData['pickupLocationCode'],
-                'createShipment' => true, // Force boolean true
-                'deliveryOptionId' => (int) $validatedData['deliveryOptionId'], // Ensure integer
+                'ref1' => '1234ABCDE',
+                'pickupLocationCode' => '12364',
+                'createShipment' => true,
+                'deliveryOptionId' => (int) $validatedData['deliveryOptionId'],
+                'storeName' => 'Brand A English',
                 'payment_method' => $validatedData['payment_method'],
-                'amount' => (float) $validatedData['amount'], // Ensure float
-                'currency' => 'SAR', // Force SAR
-                "customsValue" => (float) 12,
-                'customsCurrency' => 'SAR', // Add customs currency
-                'packageCount' => 1, // Add package count
-                'packageWeight' => 1, // Add package weight
-                'boxWidth' => 10, // Add dimensions
+                'amount' => (float) $validatedData['amount'],
+                'amount_due' => 0,
+                'shippingAmount' => 20,
+                'subtotal' => (float) $validatedData['amount'],
+                'currency' => 'SAR',
+
+                // Customs Info
+                'customsValue' => '12',
+                'customsCurrency' => 'SAR',
+                'shippingNotes' => 'be careful. it is fragile',
+                'packageSize' => 'small',
+
+                // Package Info
+                'packageCount' => 1,
+                'packageWeight' => 1,
+                'boxWidth' => 10,
                 'boxLength' => 10,
                 'boxHeight' => 10,
-                'orderDate' => date('d/m/Y H:i'), // Add order date
-                'senderName' => 'Test Company', // Add sender name
+
+                // Meta Info
+                'orderDate' => date('d/m/Y H:i'),
+                'deliverySlotDate' => date('d/m/Y'),
+                'deliverySlotFrom' => '2:30pm',
+                'deliverySlotTo' => '12pm',
+                'senderName' => 'Test Company',
+
+                // Customer Details
                 'customer' => [
                     'name' => $validatedData['customer']['name'],
                     'email' => $validatedData['customer']['email'],
@@ -162,34 +177,44 @@ class TryotoController extends Controller
                     'district' => $validatedData['customer']['district'],
                     'city' => $validatedData['customer']['city'],
                     'country' => $validatedData['customer']['country'],
-                    'postcode' => '102030', // Add postcode
-                    'refID' => '1000012' // Add refID
+                    'postcode' => '102030',
+                    'lat' => '40.706333',
+                    'lon' => '29.888211',
+                    'refID' => '1000012',
+                    'W3WAddress' => 'alarmed.cards.stuffy'
                 ],
+
+                // Items List
                 'items' => array_map(function ($item) {
                     return [
-                        'productId' => 90902, // Add productId
+                        'productId' => 90902,
                         'name' => $item['name'],
                         'price' => (float) $item['price'],
                         'rowTotal' => (float) $item['price'] * (int) $item['quantity'],
-                        'taxAmount' => 15, // Add tax amount
+                        'taxAmount' => 15,
                         'quantity' => (int) $item['quantity'],
-                        'sku' => $item['sku']
+                        'sku' => $item['sku'],
+                        'image' => 'http://....'
                     ];
                 }, $validatedData['items'])
             ];
-            Log::info('API Request:', ['data' => $orderData]);
-            $response = $this->tryotoService->createOrder($orderData);
-            Log::info('API Response:', ['response' => $response]);
+
+
+            // Log the formatted order data
+            Log::info('Creating order with data:', $orderData);
 
             // 4. Make the API call to Tryoto service
             $response = $this->tryotoService->createOrder($orderData);
 
+            // Log the response from the API
+            Log::info('Order creation response:', ['response' => $response]);
 
             // 5. Return a success response
             return response()->json([
                 'success' => true,
                 'data' => $response,
-                'orderId' => $validatedData['orderId']
+                'orderId' => $validatedData['orderId'],
+                'orderdata' => $validatedData
             ]);
         } catch (ValidationException $e) {
             // Log validation errors
@@ -219,57 +244,75 @@ class TryotoController extends Controller
         try {
             $orderData = [
                 "orderId" => "test" . time() . rand(1000, 9999),
-                "pickupLocationCode" => "test",
+                "ref1" => "1234ABCDE",
+                "pickupLocationCode" => "12364",
                 "createShipment" => true,
-                "deliveryOptionId" => 2242,
+                "deliveryOptionId" => "12364",
+                "storeName" => "Brand A English",
                 "payment_method" => "paid",
-                "amount" => 10,
+                "amount" => 100,
+                "amount_due" => 0,
+                "shippingAmount" => 20,
+                "subtotal" => 100,
                 "currency" => "SAR",
                 "customsValue" => "12",
-                "customsCurrency" => "SAR",
+                "customsCurrency" => "USD",
+                "shippingNotes" => "be careful. it is fragile",
+                "packageSize" => "small",
                 "packageCount" => 2,
                 "packageWeight" => 1,
                 "boxWidth" => 10,
                 "boxLength" => 10,
                 "boxHeight" => 10,
-                "orderDate" => date("d/m/Y H:i"),
-                "senderName" => "Test Company",
+                "orderDate" => "30/12/2022 15:45",
+                "deliverySlotDate" => "31/12/2022",
+                "deliverySlotFrom" => "2:30pm",
+                "deliverySlotTo" => "12pm",
                 "customer" => [
                     "name" => "عبدالله الغامدي",
                     "email" => "test@test.com",
                     "mobile" => "546607389",
-                    "address" => "6832, Abruq AR Rughamah District",
+                    "address" => "6832, Abruq AR Rughamah District, Jeddah 22272 3330, Saudi Arabia",
                     "district" => "Al Hamra",
                     "city" => "Riyadh",
                     "country" => "SA",
-                    "postcode" => "202530",
-                    "refID" => "1000012"
+                    "postcode" => "12345",
+                    "lat" => "40.706333",
+                    "lon" => "29.888211",
+                    "refID" => "1000012",
+                    "W3WAddress" => "alarmed.cards.stuffy"
                 ],
                 "items" => [
                     [
-                        "productId" => 303030,
-                        "name" => "Test Item",
+                        "productId" => 112,
+                        "name" => "test product",
                         "price" => 100,
-                        "rowTotal" => 100,
-                        "taxAmount" => 15,
                         "quantity" => 1,
-                        "sku" => "test-product"
+                        "sku" => "test-product",
+                        "image" => "http://...."
+                    ],
+                    [
+                        "name" => "test product 2",
+                        "price" => 100,
+                        "quantity" => 1,
+                        "sku" => "test-product-2",
+                        "image" => "http://...."
                     ]
                 ]
             ];
 
-
+            \Log::info('Testing order creation with data:', $orderData);
 
             $response = $this->tryotoService->createOrder($orderData);
 
-            Log::info('Test order creation response:', ['response' => $response]);
+            \Log::info('Test order creation response:', ['response' => $response]);
 
             return response()->json([
                 'success' => true,
                 'data' => $response
             ]);
         } catch (\Exception $e) {
-            Log::error('Test order creation failed:', [
+            \Log::error('Test order creation failed:', [
                 'error' => $e->getMessage()
             ]);
 
@@ -279,77 +322,70 @@ class TryotoController extends Controller
             ], 500);
         }
     }
-    public function updateShippingOption(Request $request)
+
+    public function createOrderFromData(array $validatedData)
     {
+        $timestamp = date('ymdHis');
+        $validatedData['orderId'] = 'test' . $timestamp;
 
+        $orderData = [
+            'orderId' => $validatedData['orderId'],
+            'ref1' => '1234ABCDE',
+            'pickupLocationCode' => '12364',
+            'createShipment' => true,
+            'deliveryOptionId' => (int) $validatedData['deliveryOptionId'],
+            'storeName' => 'Brand A English',
+            'payment_method' => $validatedData['payment_method'],
+            'amount' => (float) $validatedData['amount'],
+            'amount_due' => 0,
+            'shippingAmount' => 20,
+            'subtotal' => (float) $validatedData['amount'],
+            'currency' => 'SAR',
+            'customsValue' => '12',
+            'customsCurrency' => 'SAR',
+            'shippingNotes' => 'be careful. it is fragile',
+            'packageSize' => 'small',
+            'packageCount' => 1,
+            'packageWeight' => 1,
+            'boxWidth' => 10,
+            'boxLength' => 10,
+            'boxHeight' => 10,
+            'orderDate' => date('d/m/Y H:i'),
+            'deliverySlotDate' => date('d/m/Y'),
+            'deliverySlotFrom' => '2:30pm',
+            'deliverySlotTo' => '12pm',
+            'senderName' => 'Test Company',
+            'customer' => [
+                'name' => $validatedData['customer']['name'],
+                'email' => $validatedData['customer']['email'],
+                'mobile' => $validatedData['customer']['mobile'],
+                'address' => $validatedData['customer']['address'],
+                'district' => $validatedData['customer']['district'],
+                'city' => $validatedData['customer']['city'],
+                'country' => $validatedData['customer']['country'],
+                'postcode' => '102030',
+                'lat' => '40.706333',
+                'lon' => '29.888211',
+                'refID' => '1000012',
+                'W3WAddress' => 'alarmed.cards.stuffy'
+            ],
+            'items' => array_map(function ($item) {
+                return [
+                    'productId' => 90902,
+                    'name' => $item['name'],
+                    'price' => (float) $item['price'],
+                    'rowTotal' => (float) $item['price'] * (int) $item['quantity'],
+                    'taxAmount' => 15,
+                    'quantity' => (int) $item['quantity'],
+                    'sku' => $item['sku'],
+                    'image' => 'http://....'
+                ];
+            }, $validatedData['items'])
+        ];
 
+        \Log::info('Creating Tryoto order:', $orderData);
 
-        // Validate the request
-        $request->validate([
-            'option_id' => 'required|integer',
-            'price' => 'required',
-            'chosen_shipping_id' => 'required',
-
-        ]);
-        $optionId = $request->input('option_id');
-        $price = $request->input('price');
-        $service_name = $request->input('service_name');
-        $cart_group_id = $request->input('chosen_shipping_id');
-        $totalQuantity = Cart::where('cart_group_id', $request->chosen_shipping_id)->where('is_checked', 1)->sum('quantity');
-
-        log::info($request->all());
-
-        $originalPrice = $price; // Store the original price
-        $price *= 1.10; // Increase price by 10%
-        $price = number_format($price, 2, '.', ''); // Format to 2 decimal places
-
-        $shippingCommission = number_format($price - $originalPrice, 2, '.', ''); // Calculate the commission
-
-        log::info($totalQuantity);
-
-        $cart = CartShipping::updateOrCreate(
-            ['cart_group_id' => $cart_group_id], // Condition to check existence
-            [
-                'shipping_method_id' => null,
-                'option_id' => $optionId,
-                'service_name' => $service_name,
-                'shipping_cost' => $originalPrice,
-                'shipping_comission' => $shippingCommission,
-            ]
-        );
-
-
-
-        $chosenShipping = CartShipping::where('id', $request->chosen_shipping_id)->first();
-
-        if ($chosenShipping) {
-
-            $chosenShipping->option_id = $optionId;
-            $chosenShipping->shipping_comission = $shippingCommission;
-            $chosenShipping->service_name = $service_name;
-            $chosenShipping->shipping_cost = $price;
-            $chosenShipping->save();
-
-            // Explicitly call the relationship and fetch the first cart
-            $cart = $chosenShipping->cart()->first();
-
-            if ($cart) {
-                $cart->update(['shipping_cost' => $price]);
-            }
-        }
-
-
-
-        // Process the shipping option (store in session, DB, etc.)
-        session(['selected_shipping_option' => $optionId, 'selected_shipping_price' => $price]);
-
-        // Return JSON response
-        return response()->json([
-            'success' => true,
-            'message' => 'Shipping option updated successfully!',
-            'option_id' => $optionId,
-            'price' => $price
-        ]);
+        // This is your original Tryoto API call
+        return $this->createOrder($orderData);
     }
-
 }

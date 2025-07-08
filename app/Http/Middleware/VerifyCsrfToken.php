@@ -34,5 +34,7 @@ class VerifyCsrfToken extends Middleware
         'payment/paytabs/callback*',
         'customer/auth/login/google/callback',
         'vendor/google/callback',
+        '/create-order',
+        'debug-post',
     ];
 }

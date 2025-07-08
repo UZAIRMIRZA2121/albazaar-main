@@ -91,7 +91,7 @@ class CustomVendorController extends Controller
             'data' => $response,
         ]);
     }
-    
+
     public function vendor_add(Request $request)
     {
 
@@ -170,7 +170,7 @@ class CustomVendorController extends Controller
 
         $recaptchaResponse = $request->input('g-recaptcha-response');
         $secretKey = env('NOCAPTCHA_SECRET');
-     
+
         $response = Http::asForm()->post('https://www.google.com/recaptcha/api/siteverify', [
             'secret' => $secretKey,
             'response' => $recaptchaResponse,
@@ -237,9 +237,9 @@ class CustomVendorController extends Controller
             //     'shop' => $shop,
             // ]);
             // Custom email message
-  // Get the email address
-  $email = $seller->email;
-  $status = $seller->status;
+            // Get the email address
+            $email = $seller->email;
+            $status = $seller->status;
 
             $data = [
                 'companyName' => htmlspecialchars(is_array($companyName = getWebConfig('company_name')) ? implode(', ', $companyName) : $companyName ?? ''),
@@ -253,15 +253,15 @@ class CustomVendorController extends Controller
 
 
             ];
-            
-            
-          
+
+
+
             $mail = Mail::send('vendor-registration-pending', $data, function ($message) use ($email) {
                 $message->to($email)
                     ->subject('Email Verification')
                     ->from(env('MAIL_FROM_ADDRESS'), env('MAIL_FROM_NAME'));
             });
-          
+
 
             // Clear all session data
             session()->flush();
@@ -315,6 +315,15 @@ class CustomVendorController extends Controller
 
         // Return success response
         return response()->json(['message' => 'success']);
+    }
+    // In app/Http/Controllers/CustomVendorController.php
+    public function test()
+    {
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Test endpoint is working!',
+            'data' => ['sample' => 'data']
+        ]);
     }
 
 }

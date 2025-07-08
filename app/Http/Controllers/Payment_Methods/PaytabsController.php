@@ -9,7 +9,7 @@ use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
-
+use App\Services\TryotoService;
 class Paytabs
 {
     use Processor;
@@ -29,6 +29,7 @@ class Paytabs
     function send_api_request($request_url, $data, $request_method = null)
     {
         $data['profile_id'] = $this->config_values->profile_id;
+
         $curl = curl_init();
         curl_setopt_array($curl, array(
             CURLOPT_URL => $this->config_values->base_url . '/' . $request_url,
@@ -101,15 +102,12 @@ class PaytabsController extends Controller
 
         $plugin = new Paytabs();
         $request_url = 'payment/request';
-        $host = request()->getHost(); // e.g., "localhost" or "albazar.sa"
-       
-        $cart_currency = ($host === 'albazar.sa') ? 'SAR' : 'PKR';
-       
+
         $data = [
             "tran_type" => "sale",
             "tran_class" => "ecom",
             "cart_id" => $payment_data->id,
-            "cart_currency" => $cart_currency,
+            "cart_currency" => 'SAR',
             "cart_amount" => round($payment_data->payment_amount, 2),
             "cart_description" => "products",
             "paypage_lang" => "en",
@@ -143,13 +141,14 @@ class PaytabsController extends Controller
             "framed" => true,
             "framed_return_top" => true,
             "framed_return_parent" => true,
-            "framed_message_target" => "https://albazar.sa", // 👈 YOUR frontend domain
+            "framed_message_target" => "https://albazar.sa", // ðŸ‘ˆ YOUR frontend domain
         ];
 
         $page = $plugin->send_api_request($request_url, $data);
 
         if (!is_array($page) || !isset($page['redirect_url'])) {
-            Log::error('Paytabs payment request failed.', ['response' => $page]);
+            dd('Paytabs payment request failed.', ['response' => $page]);
+
             return response()->json($this->response_formatter(GATEWAYS_DEFAULT_204), 200);
         }
 
@@ -160,13 +159,16 @@ class PaytabsController extends Controller
     }
 
 
-    public function callback(Request $request)
+    use App\Services\TryotoService;
+
+    public function callback(Request $request, TryotoService $tryotoService)
     {
         session()->forget('redirect_url');
 
         $plugin = new Paytabs();
         $response_data = $_POST;
         $transRef = filter_input(INPUT_POST, 'tranRef');
+        Log::info($request->all());
 
         if (!$transRef) {
             return response()->json($this->response_formatter(GATEWAYS_DEFAULT_204), 200);
@@ -183,26 +185,62 @@ class PaytabsController extends Controller
         ];
         $verify_result = $plugin->send_api_request($request_url, $data);
         $is_success = $verify_result['payment_result']['response_status'] === 'A';
+
         if ($is_success) {
             $this->payment::where(['id' => $request['payment_id']])->update([
                 'payment_method' => 'paytabs',
                 'is_paid' => 1,
                 'transaction_id' => $transRef,
             ]);
+
+            // Build your Tryoto order data (example shown)
+            $orderPayload = [
+                'orderId' => 'myorder' . time(),
+                'pickupLocationCode' => '12364',
+                'createShipment' => true,
+                'deliveryOptionId' => 12364,
+                'payment_method' => 'paid',
+                'amount' => 100,
+                'currency' => 'SAR',
+                'customer' => [
+                    'name' => 'John Doe',
+                    'email' => 'john@example.com',
+                    'mobile' => '0551234567',
+                    'address' => '123 Main Street',
+                    'district' => 'Central',
+                    'city' => 'Riyadh',
+                    'country' => 'Saudi Arabia',
+                ],
+                'items' => [
+                    [
+                        'name' => 'Sample Product',
+                        'price' => 100,
+                        'quantity' => 1,
+                        'sku' => 'SKU123'
+                    ]
+                ]
+            ];
+
+            // ✅ Create order in Tryoto
+            $tryotoResponse = $tryotoService->createOrderFromData($orderPayload);
+            Log::info('Tryoto order created:', ['response' => $tryotoResponse]);
+
             $payment_data = $this->payment::where(['id' => $request['payment_id']])->first();
             if (isset($payment_data) && function_exists($payment_data->success_hook)) {
                 call_user_func($payment_data->success_hook, $payment_data);
             }
             return $this->payment_response($payment_data, 'success');
         }
+
+        // handle fail
         $payment_data = $this->payment::where(['id' => $request['payment_id']])->first();
         if (isset($payment_data) && function_exists($payment_data->failure_hook)) {
             call_user_func($payment_data->failure_hook, $payment_data);
         }
-
         session()->flash('payment_failed', true);
         return $this->payment_response($payment_data, 'fail');
     }
+
 
     public function response(Request $request)
     {
