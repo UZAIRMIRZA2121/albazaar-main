@@ -70,6 +70,7 @@ class POSOrderController extends BaseController
      */
     public function index(?Request $request, string $type = null): View|Collection|LengthAwarePaginator|null|callable|RedirectResponse
     {
+      
         return $this->getOrderDetails(id:$type);
     }
 
@@ -87,6 +88,7 @@ class POSOrderController extends BaseController
             return redirect()->back();
         }
         $order = $this->orderRepo->getFirstWhere(params:['id'=>$id],relations:['details', 'shipping', 'seller']);
+   
         return view(POSOrder::ORDER_DETAILS[VIEW], compact('order'));
     }
 

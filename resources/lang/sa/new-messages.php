@@ -8641,4 +8641,7 @@ return [
 	"1password" => "1password",
 	"Wherehouse Details" => "Wherehouse Details",
 	"Warehouse Details" => "Warehouse Details",
+	"TST2508702243064" => "TST2508702243064",
+	"Order Status History" => "Order Status History",
+	"Order Status History by Tryotto" => "Order Status History by Tryotto",
 ];

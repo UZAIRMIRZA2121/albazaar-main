@@ -728,5 +728,33 @@ class TryotoService
         return $response->json();
     }
 
+   public function getOrderdetails($orderId)
+{
+    try {
+        $endpoint = "/rest/v2/orderDetails";
+
+        // Send GET request with query param
+        $response = Http::withoutVerifying()
+            ->withToken($this->accessToken)
+            ->get($this->baseUrl . $endpoint, [
+                'orderId' => $orderId
+            ]);
+
+        \Log::info('Order details response:', [
+            'status' => $response->status(),
+            'body' => $response->body()
+        ]);
+
+        if ($response->successful()) {
+            return $response->json();
+        }
+
+        throw new \Exception('Failed to get order details');
+    } catch (\Exception $e) {
+        \Log::error('Order details error:', ['error' => $e->getMessage()]);
+        throw $e;
+    }
+}
+
 
 }

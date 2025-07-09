@@ -387,12 +387,13 @@ class TryotoController extends Controller
             ];
         }
 
-
+        $sellerId = Auth::guard('seller')->id();
+        $seller = \App\Models\Seller::findOrFail($sellerId);
         // 5️⃣ Build the final array
         $orderData = [
             'orderId' => $orderId,
             'ref1' => '1234ABCDE',
-            'pickupLocationCode' => '12364',
+            'pickupLocationCode' => ,
             'createShipment' => true,
             'deliveryOptionId' => (int) ($order->option_id ?? 12364),
             'storeName' => 'Brand A English',
