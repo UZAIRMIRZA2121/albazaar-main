@@ -36,7 +36,7 @@ class DashboardController extends BaseController
         private readonly ProductRepositoryInterface $productRepo,
         private readonly DeliveryManRepositoryInterface $deliveryManRepo,
         private readonly OrderRepositoryInterface $orderRepo,
-        private readonly CustomerRepositoryInterface $customerRepo,
+        private readonly CustomerRepositoryInterface $customerRepo, 
         private readonly BrandRepository $brandRepo,
         private readonly VendorWalletRepositoryInterface $vendorWalletRepo,
         private readonly VendorWalletService $vendorWalletService,

@@ -25,6 +25,7 @@ use App\Enums\ViewPaths\Vendor\Shop;
 use App\Enums\ViewPaths\Vendor\Withdraw;
 use App\Http\Controllers\BannerController;
 use App\Http\Controllers\FeaturedProductController;
+use App\Http\Controllers\TryotoController;
 use App\Http\Controllers\Vendor\Auth\ForgotPasswordController;
 use App\Http\Controllers\Vendor\Auth\LoginController;
 use App\Enums\ViewPaths\Vendor\Order;
@@ -259,11 +260,11 @@ Route::group(['middleware' => ['maintenance_mode']], function () {
             Route::group(['prefix' => 'Featured-Product', 'as' => 'featured-product.'], function () {
                 Route::controller(FeaturedProductController::class)->group(function () {
                     Route::get('/{promotionId?}', 'index')->name('index');
-                    Route::post('/store', 'store')->name('store'); 
-                    Route::get('/payment/status', 'payment_return')->name('payment_return'); 
+                    Route::post('/store', 'store')->name('store');
+                    Route::get('/payment/status', 'payment_return')->name('payment_return');
                 });
             });
-            
+
             /** Notification and push notification */
             Route::group(['prefix' => 'push-notification', 'as' => 'push-notification.'], function () {
                 Route::controller(PushNotificationSettingsController::class)->group(function () {
@@ -335,7 +336,15 @@ Route::group(['middleware' => ['maintenance_mode']], function () {
                     Route::patch(Profile::UPDATE[URI] . '/{id}', 'updatePassword');
                     Route::get(Profile::BANK_INFO_UPDATE[URI] . '/{id}', 'getBankInfoUpdateView')->name('update-bank-info');
                     Route::post(Profile::BANK_INFO_UPDATE[URI] . '/{id}', 'updateBankInfo');
+
                 });
+                Route::controller(TryotoController::class)->group(function () {
+                    // 🚀 New Warehouse routes
+                    Route::get('warehouse/create', 'getWarehouseCreateView')->name('warehouse.create');
+                    Route::post('warehouse/store', 'storeWarehouse')->name('warehouse.store');
+                });
+
+
             });
 
             Route::group(['prefix' => 'shop', 'as' => 'shop.'], function () {
@@ -349,8 +358,8 @@ Route::group(['middleware' => ['maintenance_mode']], function () {
                     // ✅ Corrected the availability route
                     Route::get('availability', 'availability')->name('availability');
                     Route::POST('availability/update/{id?}', 'updateAvailability')->name('update-availability');
-                 
-                
+
+
                 });
 
 

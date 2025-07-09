@@ -116,7 +116,8 @@ class Order extends Model
         'tryotto_order_status',
         'tryotto_transaction_ref',
         'tryotto_payment_by',
-        'tryotto_payment_method'
+        'tryotto_payment_method',
+        'tryotto_order_id'
     ];
     protected $casts = [
         'customer_id' => 'integer',

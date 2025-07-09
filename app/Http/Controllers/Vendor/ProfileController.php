@@ -61,7 +61,9 @@ class ProfileController extends BaseController
             Toastr::warning(translate('you_can_not_change_others_profile'));
             return redirect()->back();
         }
+        
         $vendor = $this->vendorRepo->getFirstWhere(['id'=>auth('seller')->id()]);
+      
         $shopBanner = $this->shopRepo->getFirstWhere(['seller_id'=>auth('seller')->id()])->banner;
         return view(Profile::UPDATE[VIEW],compact('vendor','shopBanner'));
     }

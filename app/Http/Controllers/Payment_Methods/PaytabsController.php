@@ -159,9 +159,7 @@ class PaytabsController extends Controller
     }
 
 
-    use App\Services\TryotoService;
-
-    public function callback(Request $request, TryotoService $tryotoService)
+    public function callback(Request $request)
     {
         session()->forget('redirect_url');
 
@@ -192,43 +190,17 @@ class PaytabsController extends Controller
                 'is_paid' => 1,
                 'transaction_id' => $transRef,
             ]);
-
-            // Build your Tryoto order data (example shown)
-            $orderPayload = [
-                'orderId' => 'myorder' . time(),
-                'pickupLocationCode' => '12364',
-                'createShipment' => true,
-                'deliveryOptionId' => 12364,
-                'payment_method' => 'paid',
-                'amount' => 100,
-                'currency' => 'SAR',
-                'customer' => [
-                    'name' => 'John Doe',
-                    'email' => 'john@example.com',
-                    'mobile' => '0551234567',
-                    'address' => '123 Main Street',
-                    'district' => 'Central',
-                    'city' => 'Riyadh',
-                    'country' => 'Saudi Arabia',
-                ],
-                'items' => [
-                    [
-                        'name' => 'Sample Product',
-                        'price' => 100,
-                        'quantity' => 1,
-                        'sku' => 'SKU123'
-                    ]
-                ]
-            ];
-
-            // ✅ Create order in Tryoto
-            $tryotoResponse = $tryotoService->createOrderFromData($orderPayload);
-            Log::info('Tryoto order created:', ['response' => $tryotoResponse]);
-
             $payment_data = $this->payment::where(['id' => $request['payment_id']])->first();
             if (isset($payment_data) && function_exists($payment_data->success_hook)) {
                 call_user_func($payment_data->success_hook, $payment_data);
             }
+          
+              // Instantiate the controller
+        $tryotoController = app(\App\Http\Controllers\TryotoController::class);
+
+        // Call the method
+        $response = $tryotoController->createOrderFromData($transRef);
+                     // ✅ Create order in Tryoto
             return $this->payment_response($payment_data, 'success');
         }
 
@@ -238,6 +210,8 @@ class PaytabsController extends Controller
             call_user_func($payment_data->failure_hook, $payment_data);
         }
         session()->flash('payment_failed', true);
+        
+  
         return $this->payment_response($payment_data, 'fail');
     }
 

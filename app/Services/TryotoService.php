@@ -2,6 +2,7 @@
 
 namespace App\Services;
 use App\Utils\CartManager;
+use Auth;
 use Exception;
 use Illuminate\Support\Facades\Http;
 use Log;
@@ -100,7 +101,7 @@ class TryotoService
     {
         $endpoint = '/rest/v2/createOrder';
 
-     
+
         try {
             $response = Http::withoutVerifying()
                 ->withToken($this->accessToken)
@@ -378,7 +379,7 @@ class TryotoService
             ];
 
 
-         
+
 
         } catch (\Exception $e) {
             Log::error('Error getting delivery fees: ' . $e->getMessage());
@@ -387,7 +388,7 @@ class TryotoService
     }
 
 
-    // public function getDeliveryFees(array $data)
+
     // {
     //     Log::info('Tryoto Service Configuration:', [
     //         'webhook_secret' => config('services.tryoto.webhook_secret'),
@@ -683,4 +684,49 @@ class TryotoService
             throw $e;
         }
     }
+
+    public function createPickupLocation(array $data)
+    {
+        $url = $this->baseUrl . '/rest/v2/createPickupLocation';
+
+        $response = Http::withToken($this->accessToken)
+            ->acceptJson()
+            ->post($url, $data);
+
+        \Log::info('Tracking response:', [
+            'status' => $response->status(),
+            'body' => $response->body()
+        ]);
+        // Get current authenticated seller ID
+        $sellerId = Auth::guard('seller')->id();
+
+        // Make sure the seller exists
+        $seller = \App\Models\Seller::findOrFail($sellerId);
+
+        // Update the pickup_location_code
+        $seller->pickup_location_code = $data['code'];
+
+        // Save the seller
+        $seller->save();
+
+
+        return $response->json();
+    }
+    public function updatePickupLocation(array $data)
+    {
+        $url = $this->baseUrl . '/rest/v2/updatePickupLocation';
+
+        $response = Http::withToken($this->getAccessToken())
+            ->acceptJson()
+            ->post($url, $data);
+
+        \Log::info('Update response:', [
+            'status' => $response->status(),
+            'body' => $response->body()
+        ]);
+
+        return $response->json();
+    }
+
+
 }

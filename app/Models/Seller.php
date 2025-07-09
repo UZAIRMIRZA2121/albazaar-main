@@ -77,6 +77,7 @@ class Seller extends Authenticatable
         'google_id',
         'facebook_id',
         'otp',
+        'pickup_location_code',
     ];
 
     protected $casts = [
