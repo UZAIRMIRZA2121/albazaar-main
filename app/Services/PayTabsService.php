@@ -55,7 +55,7 @@ class PayTabsService
                 'tran_class' => 'ecom',
                 'cart_id' => $order['cart_id'],
                 'cart_description' => $order['description'],
-                'cart_currency' => 'PKR',
+                'cart_currency' => 'SAR',
                 'cart_amount' => $order['amount'],
                 'callback' => $this->callbackUrl,
                 'return' => $this->returnUrl,
