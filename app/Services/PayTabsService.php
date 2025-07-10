@@ -44,6 +44,16 @@ class PayTabsService
 
     public function createPayment($order)
     {
+        $host = request()->getHost(); // get current domain
+
+        // Example: if domain contains 'localhost' or 'your-local-domain.com' use PKR, else SAR
+        if (str_contains($host, '127.0.0.1') || str_contains($host, 'albazar.sa')) {
+            $currency = 'PKR';
+        } else {
+            $currency = 'SAR';
+        }
+
+
         $response = $this->client->post("{$this->baseUrl}payment/request", [
             'headers' => [
                 'authorization' => $this->serverKey,
@@ -55,19 +65,28 @@ class PayTabsService
                 'tran_class' => 'ecom',
                 'cart_id' => $order['cart_id'],
                 'cart_description' => $order['description'],
-                'cart_currency' => 'SAR',
+                'cart_currency' => $currency,
                 'cart_amount' => $order['amount'],
-                'callback' => $this->callbackUrl,
-                'return' => $this->returnUrl,
+                'callback' => route('vendor.featured-product.payment.return', ['id' => $order['cart_id']]),
+                'return' => route('vendor.featured-product.payment.return', ['id' => $order['cart_id']]),
+
                 'customer_details' => $order['customer_details'],
+
+                // ✅ Add these for iframe
+                'framed' => true,
+                'framed_return_top' => true,
+                'framed_return_parent' => true,
+                'framed_message_target' => request()->getSchemeAndHttpHost(),
             ],
         ]);
 
+
         $result = json_decode($response->getBody()->getContents(), true);
-     
+       
+
         // Return only the redirect URL
         return $result ?? null;
-        
+
     }
 
 

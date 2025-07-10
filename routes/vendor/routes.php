@@ -261,12 +261,13 @@ Route::group(['middleware' => ['maintenance_mode']], function () {
                 Route::controller(FeaturedProductController::class)->group(function () {
                     Route::get('/{promotionId?}', 'index')->name('index');
                     Route::post('/store', 'store')->name('store');
-                    Route::get('/payment/status', 'payment_return')->name('payment_return');
                     Route::get('/paytabs/iframe', 'showIframe')->name('paytabs.iframe');
-
+  
 
                 });
             });
+           
+
 
             /** Notification and push notification */
             Route::group(['prefix' => 'push-notification', 'as' => 'push-notification.'], function () {

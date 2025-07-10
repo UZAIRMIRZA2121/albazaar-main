@@ -3,6 +3,7 @@
 use App\Enums\ViewPaths\Web\Pages;
 use App\Enums\ViewPaths\Web\Review;
 use App\Enums\ViewPaths\Web\Chatting;
+use App\Http\Controllers\FeaturedProductController;
 use Illuminate\Support\Facades\Route;
 use App\Enums\ViewPaths\Web\UserLoyalty;
 use App\Enums\ViewPaths\Web\ShopFollower;
@@ -631,8 +632,17 @@ use App\Http\Controllers\Shop\OrderController;
 Route::post('/update-shipping-option', [TryotoController::class, 'updateShippingOption'])->name('shipping.update');
 Route::post('/shipping-options', [TryotoController::class, 'getShippingOptions']);
 Route::post('/create-order', [TryotoController::class, 'createOrderWithShipping']);
- Route::post('/tryoto-webhook', [WebhookController::class, 'handleTryotoWebhook']);
+Route::post('/tryoto-webhook', [WebhookController::class, 'handleTryotoWebhook']);
 Route::get('/order-tracking/{orderId}', [TryotoController::class, 'getOrderTracking']);
 Route::post('/test-order-creation', [TryotoController::class, 'testOrderCreation']);
 // Route::get('/order/awb/{orderId}', [OrderController::class, 'getAWB'])->name('order.awb');
 
+Route::get('/payment/status/{id}', [FeaturedProductController::class, 'paymentReturn'])
+    ->name('vendor.featured-product.payment.return');
+Route::get('/vendor/featured-products/payment-success/{promotionId}', function ($promotionId) {
+    return view('vendor-views.featured-products.payment_success', compact('promotionId'));
+})->name('vendor-views.featured-products.payment_success');
+
+Route::get('/vendor/featured-products/payment-failed', function () {
+    return view('vendor-views.featured-products.payment_failed');
+})->name('vendor-views.featured-products.payment_failed');

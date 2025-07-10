@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Category;
+use App\Models\PromotionTransaction;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Product;
 use Carbon\Carbon;
@@ -35,6 +36,7 @@ class FeaturedProductController extends Controller
 
     public function store(Request $request)
     {
+
         $validatedData = $request->validate([
             'promotion_id' => 'required|exists:promotions,id',
             'product_id' => 'required|array', // Accept multiple product IDs
@@ -90,27 +92,35 @@ class FeaturedProductController extends Controller
         ];
 
 
-        $order['return'] = route('vendor.featured-product.payment_return');
-
         // Send order to payment gateway
         $paymentResponse = $this->paytabsService->createPayment($order);
 
 
+
         // Redirect to payment URL if available
         if (isset($paymentResponse['redirect_url'])) {
+            // Store promotion transaction
+            PromotionTransaction::create([
+                'cart_id' => $order['cart_id'],
+                'tran_ref' => $paymentResponse['tran_ref'] ?? null,
+                'promotion_id' => $request->promotion_id,
+                'product_ids' => $request->product_id,
+                'start_date' => $request->start_date,
+                'end_date' => $request->end_date,
+                'promotion_type' => $promotion->promotion_type,
+            ]);
+
             return view('vendor-views.featured-products.paytabs_iframe', [
                 'iframeUrl' => $paymentResponse['redirect_url'],
             ]);
         }
 
-        Toastr::success('Product featured successfully!', 'Success');
-        return redirect()->back();
     }
 
 
-    public function payment_return(Request $request)
+    public function payment_return(Request $request, $id)
     {
-
+        dd($id);
         $tranRef = session('tran_ref');
 
         $featuredProductData = session('featured_product_data');
@@ -174,6 +184,49 @@ class FeaturedProductController extends Controller
         }
 
         return view('vendor-views.featured-products.paytabs_iframe', compact('iframeUrl'));
+    }
+
+    public function paymentReturn(Request $request, $id)
+    {
+
+        $cartId = $id;
+
+        if (!$cartId) {
+            return redirect()->route('vendor.dashboard.promotion.index')->with('error', 'Cart ID missing.');
+        }
+
+        // Fetch transaction by cart_id
+        $transaction = PromotionTransaction::where('cart_id', $cartId)->first();
+
+        if (!$transaction || !$transaction->tran_ref) {
+            return redirect()->route('vendor.dashboard.promotion.index')->with('error', 'Transaction not found or missing reference.');
+        }
+
+        // Check status from PayTabs
+        $payment = $this->paytabsService->checkTransactionStatus($transaction->tran_ref);
+
+        if (isset($payment['payment_result']['response_status']) && $payment['payment_result']['response_status'] === 'A') {
+            $transaction->update(['payment_status' => 1]);
+            // Apply promotion to all products
+            $products = Product::whereIn('id', $transaction->product_ids)->get();
+          
+            foreach ($products as $product) {
+                $product->update([
+                    'promotion_id' => $transaction->promotion_id,
+                    'start_date' => $transaction->start_date,
+                    'end_date' => $transaction->end_date,
+                    'featured_till' => Carbon::parse($transaction->end_date),
+                    'payment_status' => 1,
+                    'featured' => 1,
+                ]);
+            }
+
+            Toastr::success('Payment successful and products featured!', 'Success');
+            return redirect()->route('vendor-views.featured-products.payment_success', ['promotionId' => $transaction->promotion_id]);
+        } else {
+            Toastr::error('Payment failed.', 'Error');
+            return redirect()->route('vendor-views.featured-products.payment_failed');
+        }
     }
 
 

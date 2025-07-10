@@ -41,7 +41,7 @@
                                 <th>#</th>
                                 <th>Promotion Type</th>
                                 <th>Price (SR per day)</th>
-                                <th>Maximum Allowed</th>
+                                {{-- <th>Maximum Allowed</th> --}}
                                 <th>Action</th>
                             </tr>
                         </thead>
@@ -51,7 +51,7 @@
                                     <td>{{ $key + 1 }}</td>
                                     <td>{{ $promotion->promotion_type }}</td>
                                     <td>{{ $promotion->price }}</td>
-                                    <td>{{ $promotion->maximum_allowed }}</td>
+                                    {{-- <td>{{ $promotion->maximum_allowed }}</td> --}}
                                     <td>
                                         @if ($promotion->promotion_type == 'Push Notification')
                                             <a href="{{ route('vendor.push-notification.index', $promotion->id) }}"

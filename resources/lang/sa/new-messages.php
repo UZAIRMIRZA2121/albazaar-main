@@ -8645,4 +8645,5 @@ return [
 	"Order Status History" => "Order Status History",
 	"Order Status History by Tryotto" => "Order Status History by Tryotto",
 	"PayTabs Payment" => "PayTabs Payment",
+	"Complete Your Payment" => "Complete Your Payment",
 ];
