@@ -44,7 +44,7 @@ class PayTabsService
 
     public function createPayment($order)
     {
-        $response = $this->client->post("{$this->baseUrl}/payment/request", [
+        $response = $this->client->post("{$this->baseUrl}payment/request", [
             'headers' => [
                 'authorization' => $this->serverKey,
                 'content-type' => 'application/json',
@@ -73,7 +73,7 @@ class PayTabsService
 
     public function checkTransactionStatus($tran_ref)
     {
-        $response = $this->client->post("{$this->baseUrl}/payment/query", [
+        $response = $this->client->post("{$this->baseUrl}payment/query", [
             'headers' => [
                 'authorization' => $this->serverKey,
                 'content-type' => 'application/json',
