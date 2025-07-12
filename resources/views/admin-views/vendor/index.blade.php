@@ -57,6 +57,7 @@
                                 <tr>
                                     <th>{{ translate('SL') }}</th>
                                     <th>{{ translate('shop_name') }}</th>
+                                    <th>{{ translate('Certificate') }}</th>
                                     <th>{{ translate('vendor_name') }}</th>
                                     <th>{{ translate('contact_info') }}</th>
                                     <th>{{ translate('status') }}</th>
@@ -68,14 +69,9 @@
                             <tbody>
                                 @foreach ($vendors as $key => $seller)
                                     <tr>
-                                     <td>
-                                        <img width="50" class="avatar rounded-circle object-fit-cover"
-                                        src="{{ asset('storage/seller/' . ($seller->upload_certifice ?? 'default.png')) }}"
-                                        alt="Seller Certificate">
-                                   
-                                     
-                                     </td>
+
                                         <td>{{ $vendors->firstItem() + $key }}</td>
+                                     
                                         <td>
                                             <div class="d-flex align-items-center gap-10 w-max-content">
                                                 <img width="50" class="avatar rounded-circle object-fit-cover"
@@ -98,6 +94,13 @@
                                                     </span>
                                                 </div>
                                             </div>
+                                        </td>
+                                           <td>
+                                            <img width="50" class="avatar rounded-circle object-fit-cover"
+                                                src="{{ asset('public/storage/seller/' . ($seller->upload_certifice ?? 'default.png')) }}"
+                                                alt="Seller Certificate">
+
+
                                         </td>
                                         <td>
                                             <a title="{{ translate('view') }}" class="title-color"
@@ -133,11 +136,11 @@
                                         <td>
                                             <div class="d-flex justify-content-center gap-2">
 
-                                                <a href="{{ asset('storage/seller/' . ($seller->upload_certifice ?? 'default.png')) }}" 
-                                                    download="{{ $seller->upload_certifice ?? 'certificate.png' }}" 
-                                                   class="btn btn-outline-info btn-sm square-btn">
-                                                   <i class="tio-print"></i>
-                                                 </a>
+                                                <a href="{{ asset('public/storage/seller/' . ($seller->upload_certifice ?? 'default.png')) }}"
+                                                    download="{{ $seller->upload_certifice ?? 'certificate.png' }}"
+                                                    class="btn btn-outline-info btn-sm square-btn">
+                                                    <i class="tio-print"></i>
+                                                </a>
                                                 <!-- View Button -->
                                                 <a title="{{ translate('view') }}"
                                                     class="btn btn-outline-info btn-sm square-btn"

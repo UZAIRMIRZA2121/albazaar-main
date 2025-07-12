@@ -112,7 +112,7 @@
         {{-- <div class="container rtl pt-4 px-0 px-md-3">
             <a href="" target="_blank" class="cursor-pointer d-block">
                 <img class="d-block footer_banner_img __inline-63" alt=""
-                    src="{{ asset('storage/banner/2025-03-07-67cb38978a10f.png') }}">
+                    src="{{ asset('public/storage/banner/2025-03-07-67cb38978a10f.png') }}">
             </a>
         </div> --}}
  
@@ -124,7 +124,7 @@
                         <a href="{{ $banner->url }}" target="_blank" class="d-block">
                             <img class="d-block footer_banner_img __inline-63 w-100" 
                                  alt="Banner Image" 
-                                 src="{{ asset('storage/banner/' . $banner->photo) }}">
+                                 src="{{ asset('public/storage/banner/' . $banner->photo) }}">
                         </a>
                     </div>
                 @endforeach

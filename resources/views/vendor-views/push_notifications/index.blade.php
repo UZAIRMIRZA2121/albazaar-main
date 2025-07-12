@@ -84,7 +84,7 @@
 
                                 <td>
                                     @if($notification->image)
-                                        <img src="{{ asset('storage/notification/' . $notification->image) }}" width="80" height="50" alt="Notification Image">
+                                        <img src="{{ asset('public/storage/notification/' . $notification->image) }}" width="80" height="50" alt="Notification Image">
                                     @else
                                         No Image
                                     @endif

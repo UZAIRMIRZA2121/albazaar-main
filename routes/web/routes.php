@@ -303,7 +303,7 @@ Route::group(['namespace' => 'Web', 'middleware' => ['maintenance_mode', 'guestC
         ROute::get('account-address-edit/{id}', 'address_edit')->name('address-edit');
         Route::post('account-address-update', 'address_update')->name('address-update');
         Route::get('account-payment', 'account_payment')->name('account-payment');
-        Route::get('account-oder', 'account_order')->name('account-oder')->middleware('customer');
+        Route::get('account-order', 'account_order')->name('account-oder')->middleware('customer');
         Route::get('account-order-details', 'account_order_details')->name('account-order-details')->middleware('customer');
         Route::get('account-order-details-vendor-info', 'account_order_details_seller_info')->name('account-order-details-vendor-info')->middleware('customer');
         Route::get('account-order-details-delivery-man-info', 'account_order_details_delivery_man_info')->name('account-order-details-delivery-man-info')->middleware('customer');

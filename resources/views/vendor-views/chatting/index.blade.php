@@ -324,7 +324,7 @@
         @endphp
 
         <span id="chatting-post-url" data-url="{{ $baseUrl . '?' . $queryParams }}"></span>
-        <span id="image-url" data-url="{{ asset('storage/app/public/chatting') }}"></span>
+        <span id="image-url" data-url="{{ asset('public/storage/app/public/chatting') }}"></span>
     </div>
     <span id="get-file-icon" data-default-icon="{{ dynamicAsset('public/assets/back-end/img/default-icon.png') }}"
         data-word-icon="{{ dynamicAsset('public/assets/back-end/img/default-icon.png') }}"></span>

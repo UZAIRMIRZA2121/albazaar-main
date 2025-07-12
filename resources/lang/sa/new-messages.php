@@ -8646,4 +8646,6 @@ return [
 	"Order Status History by Tryotto" => "Order Status History by Tryotto",
 	"PayTabs Payment" => "PayTabs Payment",
 	"Complete Your Payment" => "Complete Your Payment",
+	"Certificate" => "Certificate",
+	"push_notification_successfully" => "Push notification successfully",
 ];

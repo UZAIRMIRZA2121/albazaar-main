@@ -48,7 +48,7 @@
                     
                     <div class="col-md-3 mb-3">
                         @if($notification->image)
-                        <img id="imagePreview" src="{{ asset('storage/notification/' . $notification->image) }}" alt="Selected Image" class="img-fluid {{$notification->image ? '':'d-none'}} " style="max-width: 100px; max-height: 140px; border: 1px solid #ccc; padding: 5px;">
+                        <img id="imagePreview" src="{{ asset('public/storage/notification/' . $notification->image) }}" alt="Selected Image" class="img-fluid {{$notification->image ? '':'d-none'}} " style="max-width: 100px; max-height: 140px; border: 1px solid #ccc; padding: 5px;">
 
                     @else
                         No Image

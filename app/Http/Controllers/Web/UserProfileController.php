@@ -338,7 +338,7 @@ class UserProfileController extends Controller
         $order_by = $request->order_by ?? 'desc';
         if (theme_root_path() == 'theme_fashion') {
             $show_order = $request->show_order ?? 'ongoing';
-
+            dd(123);
             $array = ['pending', 'confirmed', 'out_for_delivery', 'processing'];
             $orders = $this->order->withSum('orderDetails', 'qty')
                 ->where(['customer_id' => auth('customer')->id(), 'is_guest' => '0'])
@@ -356,6 +356,7 @@ class UserProfileController extends Controller
             $orders = $this->order->withSum('orderDetails', 'qty')->where(['customer_id' => auth('customer')->id(), 'is_guest' => '0'])
                 ->orderBy('id', $order_by)
                 ->paginate(10);
+                //  dd(VIEW_FILE_NAMES['account_orders']);
         }
 
         return view(VIEW_FILE_NAMES['account_orders'], compact('orders', 'order_by'));

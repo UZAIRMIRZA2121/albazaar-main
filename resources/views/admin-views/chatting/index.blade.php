@@ -292,7 +292,7 @@
                       ? route('admin.messages.message') . '?delivery_man_id=' 
                       : route('admin.messages.message') . '?seller_id=') }}">
 </span>
-  <span id="image-url" data-url="{{ asset('storage/app/public/chatting') }}"></span>
+  <span id="image-url" data-url="{{ asset('public/storage/app/public/chatting') }}"></span>
     </div>
     <span id="get-file-icon" data-default-icon="{{dynamicAsset("public/assets/back-end/img/default-icon.png")}}"
           data-word-icon="{{dynamicAsset("public/assets/back-end/img/default-icon.png")}}"></span>
