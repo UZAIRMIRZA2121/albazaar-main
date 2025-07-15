@@ -58,25 +58,25 @@ class OrderController extends BaseController
 
 
 
-   public function __construct(
-    private readonly OrderRepositoryInterface $orderRepo,
-    private readonly CustomerRepositoryInterface $customerRepo,
-    private readonly VendorRepositoryInterface $vendorRepo,
-    private readonly DeliveryManRepositoryInterface $deliveryManRepo,
-    private readonly DeliveryCountryCodeRepositoryInterface $deliveryCountryCodeRepo,
-    private readonly DeliveryZipCodeRepositoryInterface $deliveryZipCodeRepo,
-    private readonly OrderDetailRepositoryInterface $orderDetailRepo,
-    private readonly WalletTransactionRepository $walletTransactionRepo,
-    private readonly DeliveryManWalletRepositoryInterface $deliveryManWalletRepo,
-    private readonly DeliveryManTransactionRepositoryInterface $deliveryManTransactionRepo,
-    private readonly OrderStatusHistoryRepositoryInterface $orderStatusHistoryRepo,
-    private readonly OrderTransactionRepositoryInterface $orderTransactionRepo,
-    private readonly LoyaltyPointTransactionRepositoryInterface $loyaltyPointTransactionRepo,
-    private readonly BusinessSettingRepositoryInterface $businessSettingRepo,
-    private readonly TryotoService $tryotoService
-) {
-    // No need to assign again
-}
+    public function __construct(
+        private readonly OrderRepositoryInterface $orderRepo,
+        private readonly CustomerRepositoryInterface $customerRepo,
+        private readonly VendorRepositoryInterface $vendorRepo,
+        private readonly DeliveryManRepositoryInterface $deliveryManRepo,
+        private readonly DeliveryCountryCodeRepositoryInterface $deliveryCountryCodeRepo,
+        private readonly DeliveryZipCodeRepositoryInterface $deliveryZipCodeRepo,
+        private readonly OrderDetailRepositoryInterface $orderDetailRepo,
+        private readonly WalletTransactionRepository $walletTransactionRepo,
+        private readonly DeliveryManWalletRepositoryInterface $deliveryManWalletRepo,
+        private readonly DeliveryManTransactionRepositoryInterface $deliveryManTransactionRepo,
+        private readonly OrderStatusHistoryRepositoryInterface $orderStatusHistoryRepo,
+        private readonly OrderTransactionRepositoryInterface $orderTransactionRepo,
+        private readonly LoyaltyPointTransactionRepositoryInterface $loyaltyPointTransactionRepo,
+        private readonly BusinessSettingRepositoryInterface $businessSettingRepo,
+        private readonly TryotoService $tryotoService
+    ) {
+        // No need to assign again
+    }
 
     /**
      * @param Request|null $request
@@ -263,7 +263,7 @@ class OrderController extends BaseController
     public function getView(string|int $id, DeliveryCountryCodeService $service, OrderService $orderService): View
     {
         $vendorId = auth('seller')->id();
-      
+
         $countryRestrictStatus = getWebConfig(name: 'delivery_country_restriction');
         $zipRestrictStatus = getWebConfig(name: 'delivery_zip_code_area_restriction');
         $deliveryCountry = $this->deliveryCountryCodeRepo->getList(dataLimit: 'all');
@@ -272,12 +272,12 @@ class OrderController extends BaseController
         $params = ['id' => $id, 'seller_id' => $vendorId, 'seller_is' => 'seller'];
         $relations = ['deliveryMan', 'verificationImages', 'details', 'customer', 'shipping', 'offlinePayments'];
         $order = $this->orderRepo->getFirstWhere(params: $params, relations: $relations);
-     
+
         $response = $this->tryotoService->getOrderdetails($order->tryotto_order_id);
         // Separate status history
-$statusHistory = $response['statusHistory'] ?? [];
+        $statusHistory = $response['statusHistory'] ?? [];
 
- 
+
 
         $physicalProduct = false;
         if (isset($order->details)) {

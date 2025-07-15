@@ -1,89 +1,69 @@
-<div class="col-lg-6 px-max-md-0">
-    <div class="card card __shadow h-100">
-        <div class="card-body p-xl-35">
-            <div class="row d-flex justify-content-between mx-1 mb-3">
-                <div>
-                    <img class="size-30" src="{{theme_asset(path: "public/assets/front-end/png/top-rated.png")}}"
-                         alt="">
-                    <span class="font-bold pl-1">{{ translate('top_rated')}}</span>
-                </div>
-                <div>
-                    <a class="text-capitalize view-all-text web-text-primary"
-                       href="{{route('products',['data_from'=>'top-rated','page'=>1])}}">{{ translate('view_all')}}
-                        <i class="czi-arrow-{{Session::get('direction') === "rtl" ? 'left mr-1 ml-n1 mt-1 float-left' : 'right ml-1 mr-n1'}}"></i>
-                    </a>
-                </div>
-            </div>
-            <div class="row g-3">
-                @foreach($topRatedProducts as $key => $product)
-                    @if($key < 6)
-                        <div class="col-sm-6">
-                            <a class="__best-selling" href="{{route('product', $product->slug)}}">
-                                @if($product->discount > 0)
-                                    <div class="d-flex">
-                                    <span class="for-discount-value p-1 pl-2 pr-2 font-bold fs-13">
-                                        <span class="direction-ltr d-block">
-                                            @if ($product->discount_type == 'percent')
-                                                -{{ round($product->discount)}}%
-                                            @elseif($product->discount_type =='flat')
-                                                -{{ webCurrencyConverter(amount: $product->discount) }}
-                                            @endif
-                                        </span>
-                                    </span>
-                                    </div>
-                                @endif
-                                <div class="d-flex flex-wrap">
-                                    <div class="top-rated-image">
-                                        <img class="rounded"
-                                             src="{{ getStorageImages(path: $product->thumbnail_full_url, type: 'product') }}"
-                                             alt="{{ translate('product') }}"/>
-                                    </div>
-                                    <div class="top-rated-details">
-                                        <h6 class="widget-product-title">
-                                            <span class="ptr">
-                                                {{ Str::limit($product['name'],100) }}
-                                            </span>
-                                        </h6>
-                                        @php($overallRating = getOverallRating($product['reviews']))
-                                        @if($overallRating[0] != 0 )
-                                            <div class="rating-show">
-                                                <span class="d-inline-block font-size-sm text-body">
-                                                    @for ($inc = 1; $inc <= 5; $inc++)
-                                                        @if ($inc <= (int)$overallRating[0])
-                                                            <i class="sr-star czi-star-filled "></i>
-                                                        @elseif ($overallRating[0] != 0 && $inc <= (int)$overallRating[0] + 1.1)
-                                                            <i class="tio-star-half text-warning"></i>
-                                                        @else
-                                                            <i class="sr-star czi-star "></i>
-                                                        @endif
-                                                    @endfor
-                                                    <label class="badge-style">
-                                                        ( {{ count($product['reviews']) }} )
-                                                    </label>
-                                                </span>
-                                            </div>
+<div class="container-fluid mx-4 bg-[#ffffff] md:mt-[50px] mt-[20px]   md:block">
+    <div class="max-w-[100%] md:max-w-[100%] lg:md:max-w-[78%] mx-auto justify-between items-center  text-sm py-2 ">
+        <!-- Section Title -->
+        <div class="flex justify-between items-center mb-6">
+            <h2 class="text-2xl font-bold">{{ translate('top_rated') }}</h2>
+        </div>
+        <!-- Product Cards -->
+        <div class="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-8">
+            @foreach ($topRatedProducts as $key => $product)
+                @if ($key < 6)
+                    <!-- Card 1 -->
+                    <div class="overflow-hidden text-center rounded-[10px] ">
+                        @if ($product->discount > 0)
+                            <div class="d-flex">
+                                <span class="for-discount-value p-1 pl-2 pr-2 font-bold fs-13">
+                                    <span class="direction-ltr d-block">
+                                        @if ($product->discount_type == 'percent')
+                                            -{{ round($product->discount) }}%
+                                        @elseif($product->discount_type == 'flat')
+                                            -{{ webCurrencyConverter(amount: $product->discount) }}
                                         @endif
-                                        <div class="widget-product-meta d-flex flex-wrap gap-8 align-items-center row-gap-0">
-                                            <span>
-                                                @if($product->discount > 0)
+                                    </span>
+                                </span>
+                            </div>
+                        @endif
+                        <div class=" overflow-hidden rounded-[10px]">
+                            <img src="{{ getStorageImages(path: $product->thumbnail_full_url, type: 'product') }}"
+                                alt="{{ translate('product') }}" class="w-full h-full object-cover object-center" />
+                        </div>
+                        <!-- Rating -->
+                        <div class="text-orange-500 mt-2 flex justify-center space-x-1">
+                            @php($overallRating = getOverallRating($product['reviews']))
+                            @if ($overallRating[0] != 0)
+                                @for ($inc = 1; $inc <= 5; $inc++)
+                                    @if ($inc <= floor($overallRating[0]))
+                                        <i class="fas fa-star text-orange-500"></i>
+                                    @elseif($overallRating[0] > floor($overallRating[0]) && $inc == ceil($overallRating[0]))
+                                        <i class="fas fa-star-half-alt text-orange-500"></i>
+                                    @else
+                                        <i class="far fa-star text-orange-300"></i>
+                                    @endif
+                                @endfor
+                                ( {{ count($product['reviews']) }} )
+                            @endif
+                        </div>
+                        <!-- Title & Price -->
+                        <div class="p-2">
+                            <h3 class="text-md font-medium">  {{ Str::limit($product['name'],100) }}</h3>
+                               @if($product->discount > 0)
                                                     <del class="__text-12px __color-9B9B9B">
                                                         {{ webCurrencyConverter(amount: $product->unit_price) }}
                                                     </del>
                                                 @endif
-                                            </span>
-                                            <span class="text-accent text-dark">
-                                                {{ webCurrencyConverter(amount:
+                            <p class="text-orange-500 font-semibold mt-1">  {{ webCurrencyConverter(amount:
                                                 $product->unit_price-(getProductDiscount(product: $product, price: $product->unit_price))
-                                                ) }}
-                                            </span>
-                                        </div>
-                                    </div>
-                                </div>
-                            </a>
+                                                ) }}</p>
                         </div>
-                    @endif
-                @endforeach
-            </div>
+                    </div>
+                @endif
+            @endforeach
+
         </div>
+        <a href="{{ route('products', ['data_from' => 'top-rated', 'page' => 1]) }}"
+            class="text-orange-600 text-[16px] underline hover:text-orange-700 transition duration-200 text-center block mt-3">
+            {{ translate('view_all') }}
+        </a>
     </div>
 </div>
+<!-- Top Related -->

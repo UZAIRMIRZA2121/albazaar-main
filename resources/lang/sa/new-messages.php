@@ -8648,4 +8648,5 @@ return [
 	"Complete Your Payment" => "Complete Your Payment",
 	"Certificate" => "Certificate",
 	"push_notification_successfully" => "Push notification successfully",
+	"Top Categories" => "Top Categories",
 ];

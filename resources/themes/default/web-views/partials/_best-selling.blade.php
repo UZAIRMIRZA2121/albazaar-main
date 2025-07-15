@@ -1,87 +1,77 @@
-<div class="col-lg-6 px-max-md-0">
-    <div class="card card __shadow h-100">
-        <div class="card-body p-xl-35">
-            <div class="row d-flex justify-content-between mx-1 mb-3">
-                <div>
-                    <img class="size-30" src="{{theme_asset(path: "public/assets/front-end/png/best-sellings.png")}}"
-                         alt="">
-                    <span class="font-bold pl-1">{{ translate('best_sellings')}}</span>
-                </div>
-                <div>
-                    <a class="text-capitalize view-all-text web-text-primary"
-                       href="{{route('products',['data_from'=>'best-selling','page'=>1])}}">{{ translate('view_all')}}
-                        <i class="czi-arrow-{{Session::get('direction') === "rtl" ? 'left mr-1 ml-n1 mt-1 float-left' : 'right ml-1 mr-n1'}}"></i>
-                    </a>
-                </div>
-            </div>
-            <div class="row g-3">
-                @foreach($bestSellProduct as $key=> $bestSellItem)
-                    @if($bestSellItem && $key<6)
-                        <div class="col-sm-6">
-                            <a class="__best-selling" href="{{route('product',$bestSellItem->slug)}}">
-                                @if($bestSellItem->discount > 0)
-                                    <div class="d-flex">
-                                        <span class="for-discount-value p-1 pl-2 pr-2 font-bold fs-13">
-                                            <span class="direction-ltr d-block">
-                                                @if ($bestSellItem->discount_type == 'percent')
-                                                    -{{round($bestSellItem->discount)}}%
-                                                @elseif($bestSellItem->discount_type =='flat')
-                                                    -{{ webCurrencyConverter(amount: $bestSellItem->discount) }}
-                                                @endif
-                                            </span>
-                                        </span>
-                                    </div>
-                                @endif
-                                <div class="d-flex flex-wrap">
-                                    <div class="best-selleing-image">
-                                        <img class="rounded"
-                                             src="{{ getStorageImages(path: $bestSellItem?->thumbnail_full_url, type: 'product') }}"
-                                             alt="{{ translate('product') }}"/>
-                                    </div>
-                                    <div class="best-selling-details">
-                                        <h6 class="widget-product-title">
-                                        <span class="ptr fw-semibold">
-                                            {{ Str::limit($bestSellItem['name'],100) }}
-                                        </span>
-                                        </h6>
-                                        @php($overallRating = getOverallRating($bestSellItem['reviews']))
-                                        @if($overallRating[0] != 0 )
-                                            <div class="rating-show">
-                                            <span class="d-inline-block font-size-sm text-body">
-                                                @for($inc=1;$inc<=5;$inc++)
-                                                    @if ($inc <= (int)$overallRating[0])
-                                                        <i class="tio-star text-warning"></i>
-                                                    @elseif ($overallRating[0] != 0 && $inc <= (int)$overallRating[0] + 1.1 && $overallRating[0] > ((int)$overallRating[0]))
-                                                        <i class="tio-star-half text-warning"></i>
-                                                    @else
-                                                        <i class="tio-star-outlined text-warning"></i>
-                                                    @endif
-                                                @endfor
-                                                <label class="badge-style">( {{ count($bestSellItem['reviews']) }} )</label>
-                                            </span>
-                                            </div>
-                                        @endif
-                                        <div class="widget-product-meta d-flex flex-wrap gap-8 align-items-center row-gap-0">
-                                            <span>
-                                                @if($bestSellItem->discount > 0)
-                                                    <del class="__color-9B9B9B __text-12px">
-                                                        {{ webCurrencyConverter(amount: $bestSellItem->unit_price) }}
-                                                    </del>
-                                                @endif
-                                            </span>
-                                            <span class="text-accent text-dark">
-                                                {{ webCurrencyConverter(amount:
-                                                $bestSellItem->unit_price-(getProductDiscount(product: $bestSellItem, price: $bestSellItem->unit_price))
-                                                ) }}
-                                            </span>
-                                        </div>
-                                    </div>
-                                </div>
-                            </a>
-                        </div>
-                    @endif
-                @endforeach
-            </div>
+<!-- Best sellings -->
+<div class="container-fluid mx-4 bg-[#ffffff] mt-[50px]  md:block">
+    <div class="max-w-[100%] md:max-w-[100%] lg:md:max-w-[78%] mx-auto justify-between items-center  text-sm py-2 ">
+        <!-- Section Title -->
+        <div class="flex justify-between items-center mb-6">
+            <h2 class="text-2xl font-bold">{{ translate('best_sellings') }}</h2>
+            <a href="{{ route('products', ['data_from' => 'best-selling', 'page' => 1]) }}"
+                class="text-orange-500 hover:underline">{{ translate('view_all') }}</a>
         </div>
+        <!-- Product Cards -->
+        <div class="owl-carousel  carousel-seven grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-8">
+            @foreach ($bestSellProduct as $key => $bestSellItem)
+                @if ($bestSellItem && $key < 6)
+                    <!-- Card 1 -->
+                    <a class="__best-selling" href="{{ route('product', $bestSellItem->slug) }}">
+                        @if ($bestSellItem->discount > 0)
+                            <div class="d-flex">
+                                <span class="for-discount-value p-1 pl-2 pr-2 font-bold fs-13">
+                                    <span class="direction-ltr d-block">
+                                        @if ($bestSellItem->discount_type == 'percent')
+                                            -{{ round($bestSellItem->discount) }}%
+                                        @elseif($bestSellItem->discount_type == 'flat')
+                                            -{{ webCurrencyConverter(amount: $bestSellItem->discount) }}
+                                        @endif
+                                    </span>
+                                </span>
+                            </div>
+                        @endif
+                        <div class="item overflow-hidden text-center rounded-[10px] ">
+                            <div class=" overflow-hidden rounded-[10px]">
+                                <img src="{{ getStorageImages(path: $bestSellItem?->thumbnail_full_url, type: 'product') }}"
+                                    alt="{{ translate('product') }}" class="w-full h-full object-cover object-center" />
+                            </div>
+                         
+                            @php($overallRating = getOverallRating($bestSellItem['reviews']))
+                            @if ($overallRating[0] != 0)
+                                <!-- Rating -->
+                                <div class="text-orange-500 mt-2 flex justify-center space-x-1">
+                                    @for ($inc = 1; $inc <= 5; $inc++)
+                                        @if ($inc <= floor($overallRating[0]))
+                                            {{-- Full Star --}}
+                                            <span>★</span>
+                                        @elseif($overallRating[0] > floor($overallRating[0]) && $inc == ceil($overallRating[0]))
+                                            {{-- Half Star (you can use a different icon or styling if you have) --}}
+                                            <span class="text-orange-300">★</span>
+                                        @else
+                                            {{-- Empty Star (e.g., grey) --}}
+                                            <span class="text-gray-300">★</span>
+                                        @endif
+                                    @endfor
+                                </div>
+                            @endif
+                            <!-- Title & Price -->
+                            <div class="p-2">
+                                <h3 class="text-md font-medium"> {{ Str::limit($bestSellItem['name'], 100) }}</h3>
+                                @if ($bestSellItem->discount > 0)
+                                    <del class="__color-9B9B9B __text-12px">
+                                        {{ webCurrencyConverter(amount: $bestSellItem->unit_price) }}
+                                    </del>
+                                @endif
+                                <p class="text-orange-500 font-semibold mt-1">
+                                    {{ webCurrencyConverter(
+                                        amount: $bestSellItem->unit_price - getProductDiscount(product: $bestSellItem, price: $bestSellItem->unit_price),
+                                    ) }}
+                                </p>
+                            </div>
+                        </div>
+                    </a>
+                @endif
+            @endforeach
+        </div>
+        <a href="#"
+            class="text-orange-600 text-[16px] underline hover:text-orange-700 transition duration-200 text-center block mt-3">
+            View all
+        </a>
     </div>
 </div>

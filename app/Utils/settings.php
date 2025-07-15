@@ -18,6 +18,7 @@ if (!function_exists('getWebConfig')) {
                 return BusinessSetting::all();
             });
             $data = $settings?->firstWhere('type', $name);
+          
             $config = isset($data) ? setWebConfigCache($name, $data) : $config;
         }
         return $config;
