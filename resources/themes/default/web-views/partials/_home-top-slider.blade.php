@@ -1,164 +1,166 @@
 @if (count($bannerTypeMainBanner) > 0)
-<section class="py-5">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
 
-    <style>
-        .hero-carousel {
-            background: linear-gradient(to right, #fff5f0, #fefaf6);
-            border-radius: 20px;
-            padding: 40px 20px;
-            overflow: hidden;
-        }
+    <div class="owl-carousel carousel-one">
+        @foreach ($bannerTypeMainBanner as $banner)
+            <div
+                class="item bg-[url('{{ getStorageImages(path: $banner->photo_full_url, type: 'banner') }}')] bg-no-repeat bg-cover bg-center rounded-xl p-6 h-[500px]">
 
-        .hero-text h1 {
-            font-size: 2.5rem;
-            font-weight: 700;
-            line-height: 1.2;
-        }
-
-        .hero-text h1 span {
-            color: #f54a05;
-        }
-
-        .hero-text p {
-            font-size: 1.1rem;
-            color: #555;
-            margin-top: 15px;
-        }
-
-        .hero-button {
-            margin-top: 25px;
-        }
-
-        .hero-button a {
-            background-color: #f54a05;
-            color: #fff;
-            padding: 12px 28px;
-            border-radius: 10px;
-            text-decoration: none;
-            font-weight: 600;
-        }
-
-        .hero-images img {
-            width: 100%;
-            height: auto;
-            border-radius: 20px;
-            object-fit: cover;
-        }
-
-        @media (min-width: 768px) {
-            .hero-text h1 {
-                font-size: 3rem;
-            }
-        }
-        .custom-carousel-btn {
-    position: absolute;
-    top: 50%;
-    transform: translateY(-50%);
-    background-color: #d9d9d9;
-    border: none;
-    color: #333;
-    font-size: 1.5rem;
-    border-radius: 50%;
-    width: 36px;
-    height: 36px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 5;
-    transition: all 0.3s ease;
-    box-shadow: 0 0 5px rgba(0,0,0,0.2);
-}
-
-.custom-carousel-btn:hover {
-    background-color: #b5b5b5;
-}
-
-.custom-prev {
-    left: 10px;
-}
-
-.custom-next {
-    right: 10px;
-}
-
-.hero-carousel {
-    margin: 0;
-    padding-left: 3rem;
-    padding-right: 3rem;
-    width: 100% ;
-}
-
-    </style>
-
-    <div id="heroCarousel" class="carousel slide" data-bs-ride="carousel">
-        <div class="carousel-inner">
-
-            @foreach ($bannerTypeMainBanner->chunk(2) as $index => $chunk)
-              @php $firstBanner = $chunk->first(); @endphp
-            <div class="carousel-item {{ $index == 0 ? 'active' : '' }}">
-                <div class="hero-carousel d-flex align-items-center px-4">
-                    <div class="row align-items-center px-5">
-                        <!-- Text Column -->
-                        <div class="col-md-6 hero-text ">
-                            <h1>
-                                Discover a Smarter<br>
-                                Way to Shop with <span>Albazar</span>
-                            </h1>
-                            <p>
-                                Explore a wide selection of electronics, fashion, perfumes, and more — handpicked for quality,
-                                value, and everyday convenience.
-                            </p>
-                            <div class="hero-button">
-                                <a href="{{ $firstBanner['url'] }}">SHOP NOW →</a>
-                            </div>
-                        </div>
-
-                        <!-- Image Columns -->
-                        <div class="col-md-6">
-                            <div class="row g-3 hero-images">
-                                @foreach ($chunk as $banner)
-                                    <div class="col-6">
-                                        <a href="{{ $banner['url'] }}" target="_blank">
-                                            <img src="{{ getStorageImages(path: $banner->photo_full_url, type: 'banner') }}" alt="Banner Image">
-                                        </a>
-                                    </div>
-                                @endforeach
-                            </div>
-                        </div>
+                <div class="max-w-7xl mx-auto flex flex-col lg:flex-row justify-between gap-10">
+                    <div class="flex-1 text-center lg:text-left">
+                        <h1 class="text-4xl md:text-[50px] font-bold leading-tight mb-4">
+                            Discover a Smarter <br />
+                            Way to Shop with <span class="text-[#FC4D03]">Albazar</span>
+                        </h1>
+                        <p class="text-[#383636] text-lg mb-6">
+                            Explore a wide selection of electronics, fashion, perfumes, and more — handpicked for
+                            quality, value, and everyday convenience.
+                        </p>
+                        <a href="{{ $banner['url'] }}"
+                            class="inline-block bg-[#FC4D03] text-white px-6 py-3 rounded-lg font-semibold transition">
+                            SHOP NOW →
+                        </a>
                     </div>
+                    {{-- <div class="flex-1 grid grid-cols-2 gap-6">
+                                <div class="mb-9">
+                                    <img src="{{ asset('footer/06.07.2025_06.56.14_REC.png') }}" alt="Fashion 1"
+                                        class="rounded-xl w-full h-full object-cover" />
+                                </div>
+                                <div class="mt-9">
+                                    <img src="{{ asset('footer/06.07.2025_06.56.23_REC.png') }}" alt="Fashion 2"
+                                        class="rounded-xl w-full h-full object-cover" />
+                                </div>
+                            </div> --}}
                 </div>
             </div>
-            @endforeach
-
-        </div>
-
-        <!-- Controls -->
-       <!-- Custom Arrows -->
-<button class="custom-carousel-btn custom-prev" type="button" data-bs-target="#heroCarousel" data-bs-slide="prev">
-    <i class="bi bi-chevron-left"></i>
-</button>
-<button class="custom-carousel-btn custom-next" type="button" data-bs-target="#heroCarousel" data-bs-slide="next">
-    <i class="bi bi-chevron-right"></i>
-</button>
-    <style>
-        .custom-badge {
-            font-size: 14px;
-            font-weight: 500;
-            color: #333;
-            background-color: #f8f9fa;
-            border: 1px solid #dee2e6;
-            padding: 8px 12px;
-            border-radius: 4px;
-            white-space: nowrap;
-        }
-        .badge-container {
-            gap: 10px;
-        }
-    </style>
+        @endforeach
     </div>
 
-   
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-</section>
+
+    <div class="container-fluid mx-auto bg-[#FFEEE6]  md:pb-[30px] pb-[10px] md:pt-[50px] pt-[20px] md:hidden">
+        <div
+            class="max-w-[100%] md:max-w-[100%] lg:md:max-w-[80%]  mx-auto justify-between items-center  text-sm py-2 ">
+            <div class=" py-4 px-4 md:px-12">
+                <div class="grid grid-cols-1 gap-9 owl-carousel owl-theme carousel-six2">
+                    <div class="col-span-12 ">
+                        <div class="max-w-7xl mx-auto flex flex-col lg:flex-row   gap-10">
+                            <div class="flex-1 grid grid-cols-2 gap-6">
+                                <div class="mb-9">
+                                    <img src="{{ asset('footer/06.07.2025_06.56.14_REC.png') }}" alt="Fashion 1"
+                                        class="rounded-xl w-full h-full object-cover" />
+                                </div>
+                                <div class="mt-9">
+                                    <img src="{{ asset('footer/06.07.2025_06.56.23_REC.png') }}" alt="Fashion 2"
+                                        class="rounded-xl w-full h-full object-cover" />
+                                </div>
+                            </div>
+                            <div class="flex-1  lg:text-left">
+                                <h1 class="text-[22px] md:text-[50px] font-bold leading-tight mb-4">
+                                    Discover a Smarter
+                                    Way to Shop with <span class="text-[#FC4D03]">Albazar</span>
+                                </h1>
+                                <p class="text-[#383636] text-lg mb-6">
+                                    Explore a wide selection of electronics, fashion, perfumes, and more —
+                                    handpicked for quality, value, and everyday convenience.
+                                </p>
+                                <a href="#"
+                                    class="inline-block bg-[#FC4D03] text-white px-6 py-3 rounded-lg font-semibold  transition">
+                                    SHOP NOW →
+                                </a>
+                            </div>
+
+                        </div>
+                    </div>
+                    <div class="col-span-12 ">
+                        <div class="max-w-7xl mx-auto flex flex-col lg:flex-row   gap-10">
+                            <div class="flex-1 grid grid-cols-2 gap-6">
+                                <div class="mb-9">
+                                    <img src="{{ asset('footer/06.07.2025_06.56.14_REC.png') }}" alt="Fashion 1"
+                                        class="rounded-xl w-full h-full object-cover" />
+                                </div>
+                                <div class="mt-9">
+                                    <img src="{{ asset('footer/06.07.2025_06.56.23_REC.png') }}" alt="Fashion 2"
+                                        class="rounded-xl w-full h-full object-cover" />
+                                </div>
+                            </div>
+                            <div class="flex-1  lg:text-left">
+                                <h1 class="text-[22px] md:text-[50px] font-bold leading-tight mb-4">
+                                    Discover a Smarter
+                                    Way to Shop with <span class="text-[#FC4D03]">Albazar</span>
+                                </h1>
+                                <p class="text-[#383636] text-lg mb-6">
+                                    Explore a wide selection of electronics, fashion, perfumes, and more —
+                                    handpicked for quality, value, and everyday convenience.
+                                </p>
+                                <a href="#"
+                                    class="inline-block bg-[#FC4D03] text-white px-6 py-3 rounded-lg font-semibold  transition">
+                                    SHOP NOW →
+                                </a>
+                            </div>
+
+                        </div>
+                    </div>
+                    <div class="col-span-12 ">
+                        <div class="max-w-7xl mx-auto flex flex-col lg:flex-row   gap-10">
+                            <div class="flex-1 grid grid-cols-2 gap-6">
+                                <div class="mb-9">
+                                    <img src="{{ asset('footer/06.07.2025_06.56.14_REC.png') }}" alt="Fashion 1"
+                                        class="rounded-xl w-full h-full object-cover" />
+                                </div>
+                                <div class="mt-9">
+                                    <img src="{{ asset('footer/06.07.2025_06.56.23_REC.png') }}" alt="Fashion 2"
+                                        class="rounded-xl w-full h-full object-cover" />
+                                </div>
+                            </div>
+                            <div class="flex-1  lg:text-left">
+                                <h1 class="text-[22px] md:text-[50px] font-bold leading-tight mb-4">
+                                    Discover a Smarter
+                                    Way to Shop with <span class="text-[#FC4D03]">Albazar</span>
+                                </h1>
+                                <p class="text-[#383636] text-lg mb-6">
+                                    Explore a wide selection of electronics, fashion, perfumes, and more —
+                                    handpicked for quality, value, and everyday convenience.
+                                </p>
+                                <a href="#"
+                                    class="inline-block bg-[#FC4D03] text-white px-6 py-3 rounded-lg font-semibold  transition">
+                                    SHOP NOW →
+                                </a>
+                            </div>
+
+                        </div>
+                    </div>
+                    <div class="col-span-12 ">
+                        <div class="max-w-7xl mx-auto flex flex-col lg:flex-row   gap-10">
+                            <div class="flex-1 grid grid-cols-2 gap-6">
+                                <div class="mb-9">
+                                    <img src="{{ asset('footer/06.07.2025_06.56.14_REC.png') }}" alt="Fashion 1"
+                                        class="rounded-xl w-full h-full object-cover" />
+                                </div>
+                                <div class="mt-9">
+                                    <img src="{{ asset('footer/06.07.2025_06.56.23_REC.png') }}" alt="Fashion 2"
+                                        class="rounded-xl w-full h-full object-cover" />
+                                </div>
+                            </div>
+                            <div class="flex-1  lg:text-left">
+                                <h1 class="text-[22px] md:text-[50px] font-bold leading-tight mb-4">
+                                    Discover a Smarter
+                                    Way to Shop with <span class="text-[#FC4D03]">Albazar</span>
+                                </h1>
+                                <p class="text-[#383636] text-lg mb-6">
+                                    Explore a wide selection of electronics, fashion, perfumes, and more —
+                                    handpicked for quality, value, and everyday convenience.
+                                </p>
+                                <a href="#"
+                                    class="inline-block bg-[#FC4D03] text-white px-6 py-3 rounded-lg font-semibold  transition">
+                                    SHOP NOW →
+                                </a>
+                            </div>
+
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
 @endif
