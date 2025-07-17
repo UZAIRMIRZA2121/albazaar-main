@@ -18,7 +18,7 @@ $(document).ready(function () {
     });
 });
 
-cartQuantityInitialize();
+cartQuantityInitialize();product-details.js
 getVariantPrice();
 
 $(".view_more_button").on("click", function () {

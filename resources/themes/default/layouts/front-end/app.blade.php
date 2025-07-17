@@ -5,6 +5,14 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="_token" content="{{ csrf_token() }}">
+    <meta name="robots" content="index, follow">
+    <meta property="og:site_name" content="{{ $web_config['company_name'] }}" />
+
+    <meta name="google-site-verification" content="{{ getWebConfig('google_search_console_code') }}">
+    <meta name="msvalidate.01" content="{{ getWebConfig('bing_webmaster_code') }}">
+    <meta name="baidu-site-verification" content="{{ getWebConfig('baidu_webmaster_code') }}">
+    <meta name="yandex-verification" content="{{ getWebConfig('yandex_webmaster_code') }}">
     <title>@yield('title', 'Albazar') </title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -27,7 +35,29 @@
 
     <!-- Alpine.js include (add this in your <head> if not already) -->
     <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
-
+    <script src="{{ theme_asset(path: 'public/assets/front-end/vendor/jquery/dist/jquery-2.2.4.min.js') }}"></script>
+    <script src="{{ theme_asset(path: 'public/assets/front-end/vendor/bootstrap/dist/js/bootstrap.bundle.min.js') }}">
+    </script>
+    <script
+        src="{{ theme_asset(path: 'public/assets/front-end/vendor/bs-custom-file-input/dist/bs-custom-file-input.min.js') }}">
+    </script>
+    <script src="{{ theme_asset(path: 'public/assets/front-end/vendor/simplebar/dist/simplebar.min.js') }}"></script>
+    <script src="{{ theme_asset(path: 'public/assets/front-end/vendor/tiny-slider/dist/min/tiny-slider.js') }}"></script>
+    <script
+        src="{{ theme_asset(path: 'public/assets/front-end/vendor/smooth-scroll/dist/smooth-scroll.polyfills.min.js') }}">
+    </script>
+    <script src="{{ theme_asset(path: 'public/js/lightbox.min.js') }}"></script>
+    <script src="{{ theme_asset(path: 'public/assets/front-end/vendor/drift-zoom/dist/Drift.min.js') }}"></script>
+    <script src="{{ theme_asset(path: 'public/assets/front-end/vendor/lightgallery.js/dist/js/lightgallery.min.js') }}">
+    </script>
+    <script src="{{ theme_asset(path: 'public/assets/front-end/vendor/lg-video.js/dist/lg-video.min.js') }}"></script>
+    <script src="{{ theme_asset(path: 'public/assets/front-end/js/owl.carousel.min.js') }}"></script>
+    <script src="{{ theme_asset(path: 'public/assets/back-end/js/toastr.js') }}"></script>
+    <script src="{{ theme_asset(path: 'public/assets/front-end/js/theme.js') }}"></script>
+    <script src="{{ theme_asset(path: 'public/assets/front-end/js/slick.js') }}"></script>
+    <script src="{{ theme_asset(path: 'public/assets/front-end/js/sweet_alert.js') }}"></script>
+    <script src="{{ theme_asset(path: 'public/assets/back-end/js/toastr.js') }}"></script>
+    <script src="{{ theme_asset(path: 'public/assets/front-end/js/custom.js') }}"></script>
     <style>
         body {
             background-color: white;
@@ -233,6 +263,25 @@
                 /* or block */
             }
         }
+
+        #loading {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(255, 255, 255, 0.8);
+            /* optional: semi-transparent background */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            /* very high to ensure it's on top */
+        }
+
+        .d--none {
+            display: none !important;
+        }
     </style>
 
 </head>
@@ -241,12 +290,93 @@
     <!-- Main Content -->
     @include('layouts.front-end.partials._header')
     {{-- @include('layouts.front-end.partials._alert-message') --}}
+
+    <div id="loading" class="d--none">
+        <div class="text-center">
+            <img width="200" alt=""
+                src="{{ getStorageImages(path: getWebConfig(name: 'loader_gif'), type: 'source', source: theme_asset(path: 'public/assets/front-end/img/loader.gif')) }}">
+        </div>
+    </div>
+
+
+
     <main>
         @yield('content')
     </main>
     <!-- footer -->
- 
 
+
+
+
+    
+    <span id="message-otp-sent-again" data-text="{{ translate('OTP_has_been_sent_again.') }}"></span>
+    <span id="message-wait-for-new-code" data-text="{{ translate('please_wait_for_new_code.') }}"></span>
+    <span id="message-please-check-recaptcha" data-text="{{ translate('please_check_the_recaptcha.') }}"></span>
+    <span id="message-please-retype-password" data-text="{{ translate('please_ReType_Password') }}"></span>
+    <span id="message-password-not-match" data-text="{{ translate('password_do_not_match') }}"></span>
+    <span id="message-password-match" data-text="{{ translate('password_match') }}"></span>
+    <span id="message-password-need-longest" data-text="{{ translate('password_Must_Be_6_Character') }}"></span>
+    <span id="message-send-successfully" data-text="{{ translate('send_successfully') }}"></span>
+    <span id="message-update-successfully" data-text="{{ translate('update_successfully') }}"></span>
+    <span id="message-successfully-copied" data-text="{{ translate('successfully_copied') }}"></span>
+    <span id="message-copied-failed" data-text="{{ translate('copied_failed') }}"></span>
+    <span id="message-select-payment-method" data-text="{{ translate('please_select_a_payment_Methods') }}"></span>
+    <span id="message-please-choose-all-options" data-text="{{ translate('please_choose_all_the_options') }}"></span>
+    <span id="message-cannot-input-minus-value" data-text="{{ translate('cannot_input_minus_value') }}"></span>
+    <span id="message-all-input-field-required" data-text="{{ translate('all_input_field_required') }}"></span>
+    <span id="message-no-data-found" data-text="{{ translate('no_data_found') }}"></span>
+    <span id="message-minimum-order-quantity-cannot-less-than"
+        data-text="{{ translate('minimum_order_quantity_cannot_be_less_than_') }}"></span>
+    <span id="message-item-has-been-removed-from-cart"
+        data-text="{{ translate('item_has_been_removed_from_cart') }}"></span>
+    <span id="message-sorry-stock-limit-exceeded" data-text="{{ translate('sorry_stock_limit_exceeded') }}"></span>
+    <span id="message-sorry-the-minimum-order-quantity-not-match"
+        data-text="{{ translate('sorry_the_minimum_order_quantity_does_not_match') }}"></span>
+    <span id="message-cart" data-text="{{ translate('cart') }}"></span>
+
+    <span id="route-messages-store" data-url="{{ route('messages') }}"></span>
+    <span id="route-address-update" data-url="{{ route('address-update') }}"></span>
+    <span id="route-coupon-apply" data-url="{{ route('coupon.apply') }}"></span>
+    <span id="route-cart-add" data-url="{{ route('cart.add') }}"></span>
+    <span id="route-cart-remove" data-url="{{ route('cart.remove') }}"></span>
+    <span id="route-cart-variant-price" data-url="{{ route('cart.variant_price') }}"></span>
+    <span id="route-cart-nav-cart" data-url="{{ route('cart.nav-cart') }}"></span>
+    <span id="route-cart-order-again" data-url="{{ route('cart.order-again') }}"></span>
+    <span id="route-cart-updateQuantity" data-url="{{ route('cart.updateQuantity') }}"></span>
+    <span id="route-cart-updateQuantity-guest" data-url="{{ route('cart.updateQuantity.guest') }}"></span>
+    <span id="route-pay-offline-method-list" data-url="{{ route('pay-offline-method-list') }}"></span>
+    <span id="route-customer-auth-sign-up" data-url="{{ route('customer.auth.sign-up') }}"></span>
+    <span id="route-searched-products" data-url="{{ url('/searched-products') }}"></span>
+    <span id="route-currency-change" data-url="{{ route('currency.change') }}"></span>
+    <span id="route-store-wishlist" data-url="{{ route('store-wishlist') }}"></span>
+    <span id="route-delete-wishlist" data-url="{{ route('delete-wishlist') }}"></span>
+    <span id="route-wishlists" data-url="{{ route('wishlists') }}"></span>
+    <span id="route-quick-view" data-url="{{ route('quick-view') }}"></span>
+    <span id="route-checkout-details" data-url="{{ route('checkout-details') }}"></span>
+    <span id="route-checkout-payment" data-url="{{ route('checkout-payment') }}"></span>
+    <span id="route-set-shipping-id" data-url="{{ route('customer.set-shipping-method') }}"></span>
+    <span id="route-order-note" data-url="{{ route('order_note') }}"></span>
+    <span id="route-product-restock-request" data-url="{{ route('cart.product-restock-request') }}"></span>
+    <span id="route-get-session-recaptcha-code" data-route="{{ route('get-session-recaptcha-code') }}"
+        data-mode="{{ env('APP_MODE') }}"></span>
+    <span id="password-error-message" data-max-character="{{ translate('at_least_8_characters') . '.' }}"
+        data-uppercase-character="{{ translate('at_least_one_uppercase_letter_') . '(A...Z)' . '.' }}"
+        data-lowercase-character="{{ translate('at_least_one_uppercase_letter_') . '(a...z)' . '.' }}"
+        data-number="{{ translate('at_least_one_number') . '(0...9)' . '.' }}"
+        data-symbol="{{ translate('at_least_one_symbol') . '(!...%)' . '.' }}"></span>
+    <span class="system-default-country-code" data-value="{{ getWebConfig(name: 'country_code') ?? 'us' }}"></span>
+    <span id="system-session-direction" data-value="{{ session()->get('direction') ?? 'ltr' }}"></span>
+
+    <span id="is-request-customer-auth-sign-up"
+        data-value="{{ Request::is('customer/auth/sign-up*') ? 1 : 0 }}"></span>
+    <span id="is-customer-auth-active" data-value="{{ auth('customer')->check() ? 1 : 0 }}"></span>
+
+    <span id="storage-flash-deals" data-value="{{ $web_config['flash_deals']['start_date'] ?? '' }}"></span>
+
+
+
+
+    
     @include('layouts.front-end.partials._footer')
 
 </body>

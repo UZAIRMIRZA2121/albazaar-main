@@ -88,16 +88,16 @@ if (!function_exists('getPriceRangeWithDiscount')) {
             if ($product->discount > 0) {
                 $amount = $productUnitPrice - getProductDiscount(product: $product, price: $productUnitPrice);
                 $productDiscountedPrice = setCurrencySymbol(amount: usdToDefaultCurrency(amount: $amount), currencyCode: getCurrencyCode());
-                return '<span class="discounted_unit_price fs-24 font-bold">' . $productDiscountedPrice . '</span>' . '<del class="total_unit_price align-middle text-muted fs-18 font-semibold">' . setCurrencySymbol(amount: usdToDefaultCurrency(amount: $productUnitPrice), currencyCode: getCurrencyCode()) . '</del>';
+                return '<span class="text-2xl font-bold">' . $productDiscountedPrice . '</span>' .   '  <del class=" bg-[#FC4D03] text-white px-2 py-1 text-sm rounded  total_unit_price align-middle text-muted fs-18 font-semibold">' . setCurrencySymbol(amount: usdToDefaultCurrency(amount: $productUnitPrice), currencyCode: getCurrencyCode()) . '</del>';
             } else {
-                return '<span class="discounted_unit_price fs-24 font-bold">' . setCurrencySymbol(amount: usdToDefaultCurrency(amount: $productUnitPrice), currencyCode: getCurrencyCode()) . '</span>';
+                return '<span class="text-2xl font-bold">' . setCurrencySymbol(amount: usdToDefaultCurrency(amount: $productUnitPrice), currencyCode: getCurrencyCode()) . '</span>';
             }
         } else {
             if ($product->discount > 0) {
                 $productDiscountedPrice = webCurrencyConverter(amount: $productUnitPrice - getProductDiscount(product: $product, price: $productUnitPrice));
-                return '<span class="discounted_unit_price fs-24 font-bold">' . $productDiscountedPrice . '</span>' . '<del class="total_unit_price align-middle text-muted fs-18 font-semibold">' . webCurrencyConverter(amount: $productUnitPrice) . '</del>';
+                return '<span class="text-2xl font-bold">' . $productDiscountedPrice . '</span>' . '<del class=" bg-[#FC4D03] text-white px-2 py-1 text-sm rounded  total_unit_price align-middle text-muted fs-18 font-semibold">' . webCurrencyConverter(amount: $productUnitPrice) . '</del>';
             } else {
-                return '<span class="discounted_unit_price fs-24 font-bold">' . webCurrencyConverter(amount: $productUnitPrice) . '</span>';
+                return '<span class="text-2xl font-bold">' . webCurrencyConverter(amount: $productUnitPrice) . '</span>';
             }
         }
     }

@@ -53,6 +53,7 @@ class ProductDetailsController extends Controller
      */
     public function index(string $slug): View|RedirectResponse
     {
+       
         $theme_name = theme_root_path();
 
         return match ($theme_name) {
@@ -158,7 +159,7 @@ class ProductDetailsController extends Controller
          
 
 
-            //  dd(VIEW_FILE_NAMES['products_details']);
+        //    dd(VIEW_FILE_NAMES['products_details']);
             return view(VIEW_FILE_NAMES['products_details'], compact(
                 'product',
                 'countWishlist',

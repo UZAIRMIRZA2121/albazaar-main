@@ -38,6 +38,7 @@ class ProductListController extends Controller
 
     public function products(Request $request)
     {
+    
         $themeName = theme_root_path();
 
         return match ($themeName) {
@@ -75,7 +76,7 @@ class ProductListController extends Controller
                 'view' => view('web-views.products._ajax-products', compact('products'))->render()
             ], 200);
         }
-
+// dd(VIEW_FILE_NAMES['products_view_page']);
         return view(VIEW_FILE_NAMES['products_view_page'], [
             'products' => $products,
             'data' => $data,

@@ -124,12 +124,12 @@ $(".get-currency-change-function").on("click", function () {
 
 function currencyChangeFunction(currency_code) {
     $.ajaxSetup({
-        headers: {"X-CSRF-TOKEN": $('meta[name="_token"]').attr("content")},
+        headers: { "X-CSRF-TOKEN": $('meta[name="_token"]').attr("content") },
     });
     $.ajax({
         type: "POST",
         url: $("#route-currency-change").data("url"),
-        data: {currency_code: currency_code},
+        data: { currency_code: currency_code },
         success: function (data) {
             toastr.success(data.message);
             location.reload();
@@ -257,16 +257,16 @@ $("#inputChecked").change(function () {
     }
 });
 
-$(".submitVerifyForm").on('click', function () {
-    let formElement = $(this).closest('form');
-    formElement.attr('action', formElement.data('verify'));
-    $(this).closest('form').submit();
+$(".submitVerifyForm").on("click", function () {
+    let formElement = $(this).closest("form");
+    formElement.attr("action", formElement.data("verify"));
+    $(this).closest("form").submit();
 });
 
-$(".resendVerifyForm").on('click', function () {
-    let formElement = $(this).closest('form');
-    formElement.attr('action', formElement.data('resend'));
-    $(this).closest('form').submit();
+$(".resendVerifyForm").on("click", function () {
+    let formElement = $(this).closest("form");
+    formElement.attr("action", formElement.data("resend"));
+    $(this).closest("form").submit();
 });
 
 // $(".resendVerifyForm").on('click', function () {
@@ -353,9 +353,9 @@ $("#customerOtpVerify").click(function () {
                     newSeconds--;
                     newCounter.html(
                         minutes +
-                        ":" +
-                        (seconds < 10 ? "0" : "") +
-                        String(seconds)
+                            ":" +
+                            (seconds < 10 ? "0" : "") +
+                            String(seconds)
                     );
                     if (newSeconds > 0) {
                         setTimeout(new_tick, 1000);
@@ -453,7 +453,6 @@ $(".shop-page-sidebar-close").on("click", function () {
 $(".action-sort-shop-products-by-data").on("change", function () {
     sortShopProductsByData($(this).val());
 });
-
 
 $("#shop-view-chat-form").on("submit", function (e) {
     e.preventDefault();
@@ -633,8 +632,11 @@ $(".click-to-copy-data-value").on("click", function () {
 });
 
 $("#customer-login-form").on("submit", function (e) {
-    var recaptchaContainer = document.getElementById('recaptcha_element');
-    if (recaptchaContainer && recaptchaContainer.innerHTML.trim()?.toString() !== "") {
+    var recaptchaContainer = document.getElementById("recaptcha_element");
+    if (
+        recaptchaContainer &&
+        recaptchaContainer.innerHTML.trim()?.toString() !== ""
+    ) {
         var response = grecaptcha.getResponse();
         if (response.length === 0) {
             e.preventDefault();
@@ -666,8 +668,7 @@ $("#customer-register-form").on("submit", function (e) {
                 window.location.href = response.redirect_url;
             }
         },
-        error: function () {
-        },
+        error: function () {},
         complete: function () {
             $("#loading").removeClass("d-grid");
         },
@@ -680,7 +681,7 @@ $(".remove-img-row-by-key").on("click", function () {
     let key = $(this).data("key");
 
     $.ajaxSetup({
-        headers: {"X-CSRF-TOKEN": $('meta[name="_token"]').attr("content")},
+        headers: { "X-CSRF-TOKEN": $('meta[name="_token"]').attr("content") },
     });
     $.ajax({
         type: "POST",
@@ -802,7 +803,7 @@ function order_again(orderId) {
     $.ajax({
         type: "POST",
         url: $("#route-cart-order-again").data("url"),
-        data: {order_id: orderId},
+        data: { order_id: orderId },
         beforeSend: function () {
             $("#loading").show();
         },
@@ -903,12 +904,12 @@ $(".clickable").click(function () {
 
 function addWishlist(product_id, modalId) {
     $.ajaxSetup({
-        headers: {"X-CSRF-TOKEN": $('meta[name="_token"]').attr("content")},
+        headers: { "X-CSRF-TOKEN": $('meta[name="_token"]').attr("content") },
     });
     $.ajax({
         url: $("#route-store-wishlist").data("url"),
         method: "POST",
-        data: {product_id: product_id},
+        data: { product_id: product_id },
         success: function (data) {
             if (data.value == 1) {
                 $(".countWishlist").html(data.count);
@@ -960,7 +961,7 @@ function removeWishlist(productId, modalId) {
     $.ajax({
         url: $("#route-delete-wishlist").data("url"),
         method: "POST",
-        data: {id: productId},
+        data: { id: productId },
         beforeSend: function () {
             $("#loading").show();
         },
@@ -980,8 +981,8 @@ function removeWishlist(productId, modalId) {
                         .empty()
                         .append(
                             `<h6 class="text-muted text-center">` +
-                            messageNoDataFound +
-                            `</h6>`
+                                messageNoDataFound +
+                                `</h6>`
                         );
                 } else {
                     let pageValue = wishlistPaginatedPage.val();
@@ -1081,7 +1082,12 @@ function productQuickViewFunctionalityInitialize() {
     });
 }
 
-function addToCart(form_id = "add-to-cart-form", redirect_to_checkout = false, url = null) {
+function addToCart(
+    form_id = "add-to-cart-form",
+    redirect_to_checkout = false,
+    url = null
+) {
+  
     if (checkAddToCartValidity()) {
         $.ajaxSetup({
             headers: {
@@ -1096,7 +1102,9 @@ function addToCart(form_id = "add-to-cart-form", redirect_to_checkout = false, u
         if (existCartItem !== "" && !redirect_to_checkout) {
             formActionUrl = $("#route-cart-updateQuantity-guest").data("url");
         }
-
+        console.log("Form Action URL: " + formActionUrl);
+        console.log("redirect_to_checkout " + redirect_to_checkout);
+        console.log("form_id " + form_id);
         $.post({
             url: formActionUrl,
             data: $("#" + form_id)
@@ -1109,6 +1117,7 @@ function addToCart(form_id = "add-to-cart-form", redirect_to_checkout = false, u
                 $("#loading").show();
             },
             success: function (response) {
+
                 console.log(response);
                 if (response.status === 2) {
                     if (redirectToCheckoutValue !== "false") {
@@ -1150,7 +1159,10 @@ function addToCart(form_id = "add-to-cart-form", redirect_to_checkout = false, u
 
                     return false;
                 } else if (response.status == 0) {
-                    if (redirectToCheckoutValue !== "false" || !redirect_to_checkout) {
+                    if (
+                        redirectToCheckoutValue !== "false" ||
+                        !redirect_to_checkout
+                    ) {
                         $("#out-of-stock-modal-message").html(response.message);
                         $("#out-of-stock-modal").modal("show");
                         return false;
@@ -1182,7 +1194,8 @@ function commonFunctionalityForProductView() {
         }
     });
 
-    $(".action-add-to-cart-form").on("click", function () {
+    $(document).on("click", ".action-add-to-cart-form", function () {
+        alert("Please select a product option first.");
         addToCart("add-to-cart-form");
     });
 
@@ -1192,13 +1205,15 @@ function commonFunctionalityForProductView() {
     });
 
     $(".product-restock-request-button").on("click", function () {
-        let isLoggedIn = $(this).data('auth')?.toString();
-        if (isLoggedIn === 'true' || isLoggedIn === '1') {
-            let parentElement = $(this).closest('.product-cart-option-container');
-            let productCartForm = parentElement.find('.addToCartDynamicForm');
-            let getFrom = $(this).data('form')?.toString();
+        let isLoggedIn = $(this).data("auth")?.toString();
+        if (isLoggedIn === "true" || isLoggedIn === "1") {
+            let parentElement = $(this).closest(
+                ".product-cart-option-container"
+            );
+            let productCartForm = parentElement.find(".addToCartDynamicForm");
+            let getFrom = $(this).data("form")?.toString();
 
-            if (productCartForm?.length <= 0 && getFrom && getFrom !== '') {
+            if (productCartForm?.length <= 0 && getFrom && getFrom !== "") {
                 productCartForm = $(getFrom);
             }
             getRequestForProductRestock(productCartForm);
@@ -1222,14 +1237,14 @@ function commonFunctionalityForProductView() {
                 $("#loading").show();
             },
             success: function (response) {
-                responseManager(response)
-                button.attr('disabled', true);
-                button.text(button.data('requested'));
+                responseManager(response);
+                button.attr("disabled", true);
+                button.text(button.data("requested"));
 
                 try {
                     startFCM([response?.fcm_topic]);
                 } catch (e) {
-                    console.log(e)
+                    console.log(e);
                 }
             },
             complete: function () {
@@ -1283,12 +1298,11 @@ function orderSummaryStickyFunction() {
             stickyElement.removeClass("stick");
             $(".floating-btn-grp").addClass("style-2");
         }
-    } catch (e) {
-    }
+    } catch (e) {}
 }
 
-$(window).on('resize', orderSummaryStickyFunction)
-$(window).on('scroll', orderSummaryStickyFunction)
+$(window).on("resize", orderSummaryStickyFunction);
+$(window).on("scroll", orderSummaryStickyFunction);
 
 function cartListQuantityUpdateInit() {
     $(".action-update-cart-quantity").on("click", function () {
@@ -1669,8 +1683,8 @@ function updateCartQuantity(cart_id, product_id, action, event) {
                 $("#message-minimum-order-quantity-cannot-less-than").data(
                     "text"
                 ) +
-                " " +
-                min_value
+                    " " +
+                    min_value
             );
             cart_quantity_of.val(min_value);
             updateCartQuantity(cart_id, product_id, action, event);
@@ -1693,11 +1707,11 @@ function updateCartQuantity(cart_id, product_id, action, event) {
                     $('.in_cart_key[name="key"]').val(response.in_cart_key);
                     response["qty"] <= 1
                         ? $(`.quantity__minus${cart_id}`).html(
-                            '<i class="tio-delete-outlined text-danger fs-10"></i>'
-                        )
+                              '<i class="tio-delete-outlined text-danger fs-10"></i>'
+                          )
                         : $(`.quantity__minus${cart_id}`).html(
-                            '<i class="tio-remove fs-10"></i>'
-                        );
+                              '<i class="tio-remove fs-10"></i>'
+                          );
 
                     $(`.cartQuantity${cart_id}`).val(response["qty"]);
                     $(`.cartQuantity${cart_id}`).html(response["qty"]);
@@ -1767,7 +1781,7 @@ function cartItemRemoveFunction(remove_url, token, cart_id, segment) {
                 CloseButton: true,
                 ProgressBar: true,
             });
-            getUpdateProductAddUpdateCartBtn(response)
+            getUpdateProductAddUpdateCartBtn(response);
             if (
                 segment === "shop-cart" ||
                 segment === "checkout-payment" ||
@@ -1781,22 +1795,24 @@ function cartItemRemoveFunction(remove_url, token, cart_id, segment) {
 
 function getUpdateProductAddUpdateCartBtn(response) {
     try {
-        let productInfo = $('.product-generated-variation-code');
+        let productInfo = $(".product-generated-variation-code");
         let productVariantExist = false;
 
         response?.cartList?.map(function (item, index) {
-            if (productInfo.data('product-id') == item?.id && productInfo.val() == item?.variant) {
+            if (
+                productInfo.data("product-id") == item?.id &&
+                productInfo.val() == item?.variant
+            ) {
                 productVariantExist = true;
             }
-        })
+        });
 
         if (!productVariantExist) {
-            let actionAddToCartBtn = $('.action-add-to-cart-form');
-            actionAddToCartBtn.html(actionAddToCartBtn.data('add-text'))
-            $('.in_cart_key[name="key"]').val('');
+            let actionAddToCartBtn = $(".action-add-to-cart-form");
+            actionAddToCartBtn.html(actionAddToCartBtn.data("add-text"));
+            $('.in_cart_key[name="key"]').val("");
         }
-    } catch (e) {
-    }
+    } catch (e) {}
 }
 
 $("#add-to-cart-form input").on("change", function () {
@@ -1831,21 +1847,27 @@ function getVariantPrice() {
                 $("#available-quantity").html(data.quantity);
                 $(".cart-qty-field").attr("max", data.quantity);
 
-                if (data?.product_type?.toString() === 'physical') {
-                    let productRestockRequestButton = $(".product-restock-request-button");
+                if (data?.product_type?.toString() === "physical") {
+                    let productRestockRequestButton = $(
+                        ".product-restock-request-button"
+                    );
                     if (data.quantity <= 0) {
                         $(".product-restock-request-section").show();
-                        productRestockRequestButton.removeAttr('disabled');
+                        productRestockRequestButton.removeAttr("disabled");
                         $(".product-add-and-buy-section").hide();
                     } else {
                         $(".product-restock-request-section").hide();
                         $(".product-add-and-buy-section").show();
                     }
                     if (data?.restock_request_status) {
-                        productRestockRequestButton.html(productRestockRequestButton.data('requested'));
-                        productRestockRequestButton.attr('disabled', true);
+                        productRestockRequestButton.html(
+                            productRestockRequestButton.data("requested")
+                        );
+                        productRestockRequestButton.attr("disabled", true);
                     } else {
-                        productRestockRequestButton.html(productRestockRequestButton.data('default'));
+                        productRestockRequestButton.html(
+                            productRestockRequestButton.data("default")
+                        );
                     }
                 }
 
@@ -1914,8 +1936,7 @@ function updateFlashDealProgressBar() {
             ((current_time_stamp - start_date) / (endTime - start_date)) * 100;
         const progress_bar = document.querySelector(".flash-deal-progress-bar");
         progress_bar.style.width = time_progress + "%";
-    } catch (e) {
-    }
+    } catch (e) {}
 }
 
 $(".image-preview-before-upload").on("change", function () {
@@ -1983,13 +2004,13 @@ function shareOnSocialMedia() {
             "https://" + social + encodeURIComponent(url),
             "Popup",
             "toolbar=0,status=0,width=" +
-            width +
-            ",height=" +
-            height +
-            ",left=" +
-            left +
-            ",top=" +
-            top
+                width +
+                ",height=" +
+                height +
+                ",left=" +
+                left +
+                ",top=" +
+                top
         );
     });
 }
@@ -2149,15 +2170,15 @@ $(".password-check").on("keyup keypress change click", function () {
 function setEqualHeight(slides) {
     let maxHeight = 0;
 
-    slides.forEach(slide => {
-        slide.style.height = '';
+    slides.forEach((slide) => {
+        slide.style.height = "";
         if (slide.offsetHeight > maxHeight) {
             maxHeight = slide.offsetHeight;
         }
     });
 
-    slides.forEach(slide => {
-        slide.style.height = maxHeight + 'px';
+    slides.forEach((slide) => {
+        slide.style.height = maxHeight + "px";
     });
 }
 
@@ -2200,13 +2221,17 @@ $(".footer-top-slider").owlCarousel({
 });
 
 function sameHeight() {
-    setEqualHeight(document.querySelectorAll('.footer-slider-container .footer-slider .owl-item'))
-    setEqualHeight(document.querySelectorAll('.footer-top-slider .owl-item'))
+    setEqualHeight(
+        document.querySelectorAll(
+            ".footer-slider-container .footer-slider .owl-item"
+        )
+    );
+    setEqualHeight(document.querySelectorAll(".footer-top-slider .owl-item"));
 }
 
-sameHeight()
+sameHeight();
 
-$(window).on('resize', sameHeight)
+$(window).on("resize", sameHeight);
 
 $(".promotional-banner-slider").owlCarousel({
     margin: 20,
@@ -2275,17 +2300,18 @@ $(".sidebar-overlay").on("click", function () {
     $(".cz-sidebar").removeClass("show active");
 });
 
-
 function getSessionRecaptchaCode(sessionKey, inputSelector) {
     try {
-        let routeGetSessionRecaptchaCode = $('#route-get-session-recaptcha-code');
-        if (routeGetSessionRecaptchaCode.data('mode').toString() === 'dev') {
-            let string = '.';
+        let routeGetSessionRecaptchaCode = $(
+            "#route-get-session-recaptcha-code"
+        );
+        if (routeGetSessionRecaptchaCode.data("mode").toString() === "dev") {
+            let string = ".";
             let intervalId = setInterval(() => {
-                if (string === '......') {
-                    string = '.';
+                if (string === "......") {
+                    string = ".";
                 }
-                string = string + '.';
+                string = string + ".";
                 $(inputSelector).val(string);
             }, 100);
 
@@ -2293,12 +2319,14 @@ function getSessionRecaptchaCode(sessionKey, inputSelector) {
                 clearInterval(intervalId);
                 $.ajaxSetup({
                     headers: {
-                        "X-CSRF-TOKEN": $('meta[name="_token"]').attr("content"),
+                        "X-CSRF-TOKEN": $('meta[name="_token"]').attr(
+                            "content"
+                        ),
                     },
                 });
                 $.ajax({
                     type: "POST",
-                    url: $('#route-get-session-recaptcha-code').data('route'),
+                    url: $("#route-get-session-recaptcha-code").data("route"),
                     data: {
                         _token: $('meta[name="_token"]').attr("content"),
                         sessionKey: sessionKey,
@@ -2314,41 +2342,44 @@ function getSessionRecaptchaCode(sessionKey, inputSelector) {
     }
 }
 
-$('.get-session-recaptcha-auto-fill').each(function () {
-    getSessionRecaptchaCode($(this).data('session'), $(this).data('input'))
+$(".get-session-recaptcha-auto-fill").each(function () {
+    getSessionRecaptchaCode($(this).data("session"), $(this).data("input"));
 });
 
-$('.get-session-recaptcha-auto-fill').on('click', function () {
-    getSessionRecaptchaCode($(this).data('session'), $(this).data('input'));
+$(".get-session-recaptcha-auto-fill").on("click", function () {
+    getSessionRecaptchaCode($(this).data("session"), $(this).data("input"));
 });
 
-$('.otp-login-btn').on('click', function () {
-    $(this).addClass('d-none');
-    $('.manual-login-btn').removeClass('d-none');
-    $('.manual-login-items').addClass('d-none');
-    $('.otp-login-items').removeClass('d-none');
-    $('.phone-input-with-country-picker').attr('required', true);
-    $('.auth-email-input').attr('required', false);
-    $('.auth-password-input').attr('required', false);
-    $('.auth-login-type-input').val('otp-login');
-})
+$(".otp-login-btn").on("click", function () {
+    $(this).addClass("d-none");
+    $(".manual-login-btn").removeClass("d-none");
+    $(".manual-login-items").addClass("d-none");
+    $(".otp-login-items").removeClass("d-none");
+    $(".phone-input-with-country-picker").attr("required", true);
+    $(".auth-email-input").attr("required", false);
+    $(".auth-password-input").attr("required", false);
+    $(".auth-login-type-input").val("otp-login");
+});
 
-$('.manual-login-btn').on('click', function () {
-    $(this).addClass('d-none');
-    $('.otp-login-btn').removeClass('d-none');
-    $('.otp-login-items').addClass('d-none');
-    $('.manual-login-items').removeClass('d-none');
-    $('.phone-input-with-country-picker').attr('required', false);
-    $('.auth-email-input').attr('required', true);
-    $('.auth-password-input').attr('required', true);
-    $('.auth-login-type-input').val('manual-login');
-})
+$(".manual-login-btn").on("click", function () {
+    $(this).addClass("d-none");
+    $(".otp-login-btn").removeClass("d-none");
+    $(".otp-login-items").addClass("d-none");
+    $(".manual-login-items").removeClass("d-none");
+    $(".phone-input-with-country-picker").attr("required", false);
+    $(".auth-email-input").attr("required", true);
+    $(".auth-password-input").attr("required", true);
+    $(".auth-login-type-input").val("manual-login");
+});
 
-$('.customer-centralize-login-form').on('submit', async function (event) {
+$(".customer-centralize-login-form").on("submit", async function (event) {
     event.preventDefault();
 
-    var recaptchaContainer = document.getElementById('recaptcha_element');
-    if (recaptchaContainer && recaptchaContainer.innerHTML.trim()?.toString() !== "") {
+    var recaptchaContainer = document.getElementById("recaptcha_element");
+    if (
+        recaptchaContainer &&
+        recaptchaContainer.innerHTML.trim()?.toString() !== ""
+    ) {
         var response = grecaptcha.getResponse();
         if (response.length === 0) {
             toastr.error($("#message-please-check-recaptcha").data("text"));
@@ -2366,14 +2397,14 @@ $('.customer-centralize-login-form').on('submit', async function (event) {
     // }
 
     $.ajax({
-        url: $(this).attr('action'),
-        method: $(this).attr('method'),
+        url: $(this).attr("action"),
+        method: $(this).attr("method"),
         data: $(this).serialize(),
         beforeSend: function () {
             $("#loading").show();
         },
         success: function (response) {
-            responseManager(response)
+            responseManager(response);
         },
         complete: function () {
             $("#loading").hide();
@@ -2381,9 +2412,8 @@ $('.customer-centralize-login-form').on('submit', async function (event) {
     });
 });
 
-
 function responseManager(response) {
-    if (response.status === 'success') {
+    if (response.status === "success") {
         if (response.message) {
             toastr.success(response.message);
         }
@@ -2392,22 +2422,18 @@ function responseManager(response) {
         } else if (response?.redirect_url) {
             location.href = response?.redirect_url;
         }
-    } else if (response.status === 'error') {
+    } else if (response.status === "error") {
         if (response.message) {
             toastr.error(response.message);
         }
-    } else if (response.status === 'warning') {
+    } else if (response.status === "warning") {
         if (response.message) {
             toastr.warning(response.message);
         }
     }
 
     if (response.errors) {
-        for (
-            let index = 0;
-            index < response.errors.length;
-            index++
-        ) {
+        for (let index = 0; index < response.errors.length; index++) {
             toastr.error(response.errors[index].message, {
                 CloseButton: true,
                 ProgressBar: true,
@@ -2425,21 +2451,21 @@ function responseManager(response) {
     }
 }
 
-$('.clean-phone-input-value').on("input", function () {
+$(".clean-phone-input-value").on("input", function () {
     $(this).val($(this).val().replace(/\s/g, ""));
 });
 
 function productRestockStockLimitStatus(response) {
-    let mainElement = $('.product-restock-stock-alert');
-    mainElement.find('.title').html(response?.title);
-    mainElement.find('.image').attr("width", 50).attr('src', response?.image);
-    mainElement.find('.message').html(response?.body);
-    mainElement.find('.product-link').removeAttr('data-link');
-    mainElement.find('.product-link').attr('data-link', response?.route);
+    let mainElement = $(".product-restock-stock-alert");
+    mainElement.find(".title").html(response?.title);
+    mainElement.find(".image").attr("width", 50).attr("src", response?.image);
+    mainElement.find(".message").html(response?.body);
+    mainElement.find(".product-link").removeAttr("data-link");
+    mainElement.find(".product-link").attr("data-link", response?.route);
     mainElement.addClass("active");
     setTimeout(() => {
         mainElement.removeClass("active");
-    }, 100000)
+    }, 100000);
 }
 
 $(".product-restock-stock-close").on("click", function () {
