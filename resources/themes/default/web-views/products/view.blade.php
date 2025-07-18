@@ -1,7 +1,10 @@
 @extends('layouts.front-end.app')
 
 @section('title', translate($data['data_from']) . ' ' . translate('products'))
-
+@php
+    $searchCategory = request()->get('category'); // if you're handling selected category
+    $searchProduct = request()->get('search'); // if you're handling selected product
+@endphp
 @push('css_or_js')
     <meta property="og:image" content="{{ $web_config['web_logo']['path'] }}" />
     <meta property="og:title" content="Products of {{ $web_config['company_name'] }} " />
@@ -218,7 +221,7 @@
                                 </ul>
                             </div>
                         @endif
- 
+
 
                     </aside>
                 </div>
@@ -234,10 +237,7 @@
                         </div>
 
                         <p class="text-[#505050]  mb-6 text-[16px] ">
-                            Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been
-                            the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley
-                            of type and scrambled it to make a type specimen book. It has survived not only five centuries,
-                            but also the leap into electronic typesetting, remaining essentially unchanged....
+                           
                         </p>
 
                         <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-5">
@@ -472,7 +472,7 @@
     </div>
 
     {{ $data['data_from'] ?? $data['product_type'] }}
-
+    {{ $data['search'] ?? '' }}
     <span id="products-search-data-backup" data-url="{{ route('products') }}"
         data-brand="{{ $data['brand_id'] ?? '' }}" data-category="{{ $data['category_id'] ?? '' }}"
         data-name="{{ $data['name'] }}" data-from="{{ $data['data_from'] ?? $data['product_type'] }}"

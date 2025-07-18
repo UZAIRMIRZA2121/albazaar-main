@@ -8649,4 +8649,6 @@ return [
 	"Certificate" => "Certificate",
 	"push_notification_successfully" => "Push notification successfully",
 	"Top Categories" => "Top Categories",
+	"no_search_product_found" => "No search product found",
+	"Featured Deal" => "Featured Deal",
 ];

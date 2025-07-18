@@ -24,7 +24,7 @@
     @endif
     <div class=" overflow-hidden rounded-[15px]">
         <a href="{{ route('product', $product->slug) }}" class="w-100">
-            <img src="{{ asset('footer/06.07.2025_04.45.59_REC.png') }}" alt="Baby Knitted Shoes"
+            <img src="{{ getStorageImages(path: $product->thumbnail_full_url, type: 'product') }}" alt="Baby Knitted Shoes"
                 class="w-full h-full object-fill rounded-[15px]" />
         </a>
     </div>
