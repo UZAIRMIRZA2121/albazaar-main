@@ -22,11 +22,11 @@
                     </div>
                     {{-- <div class="flex-1 grid grid-cols-2 gap-6">
                                 <div class="mb-9">
-                                    <img src="{{ asset('footer/06.07.2025_06.56.14_REC.png') }}" alt="Fashion 1"
+                                    <img src="{{ asset('public/footer/06.07.2025_06.56.14_REC.png') }}" alt="Fashion 1"
                                         class="rounded-xl w-full h-full object-cover" />
                                 </div>
                                 <div class="mt-9">
-                                    <img src="{{ asset('footer/06.07.2025_06.56.23_REC.png') }}" alt="Fashion 2"
+                                    <img src="{{ asset('public/footer/06.07.2025_06.56.23_REC.png') }}" alt="Fashion 2"
                                         class="rounded-xl w-full h-full object-cover" />
                                 </div>
                             </div> --}}
@@ -45,11 +45,11 @@
                         <div class="max-w-7xl mx-auto flex flex-col lg:flex-row   gap-10">
                             <div class="flex-1 grid grid-cols-2 gap-6">
                                 <div class="mb-9">
-                                    <img src="{{ asset('footer/06.07.2025_06.56.14_REC.png') }}" alt="Fashion 1"
+                                    <img src="{{ asset('public/footer/06.07.2025_06.56.14_REC.png') }}" alt="Fashion 1"
                                         class="rounded-xl w-full h-full object-cover" />
                                 </div>
                                 <div class="mt-9">
-                                    <img src="{{ asset('footer/06.07.2025_06.56.23_REC.png') }}" alt="Fashion 2"
+                                    <img src="{{ asset('public/footer/06.07.2025_06.56.23_REC.png') }}" alt="Fashion 2"
                                         class="rounded-xl w-full h-full object-cover" />
                                 </div>
                             </div>
@@ -74,11 +74,11 @@
                         <div class="max-w-7xl mx-auto flex flex-col lg:flex-row   gap-10">
                             <div class="flex-1 grid grid-cols-2 gap-6">
                                 <div class="mb-9">
-                                    <img src="{{ asset('footer/06.07.2025_06.56.14_REC.png') }}" alt="Fashion 1"
+                                    <img src="{{ asset('public/footer/06.07.2025_06.56.14_REC.png') }}" alt="Fashion 1"
                                         class="rounded-xl w-full h-full object-cover" />
                                 </div>
                                 <div class="mt-9">
-                                    <img src="{{ asset('footer/06.07.2025_06.56.23_REC.png') }}" alt="Fashion 2"
+                                    <img src="{{ asset('public/footer/06.07.2025_06.56.23_REC.png') }}" alt="Fashion 2"
                                         class="rounded-xl w-full h-full object-cover" />
                                 </div>
                             </div>
@@ -103,11 +103,11 @@
                         <div class="max-w-7xl mx-auto flex flex-col lg:flex-row   gap-10">
                             <div class="flex-1 grid grid-cols-2 gap-6">
                                 <div class="mb-9">
-                                    <img src="{{ asset('footer/06.07.2025_06.56.14_REC.png') }}" alt="Fashion 1"
+                                    <img src="{{ asset('public/footer/06.07.2025_06.56.14_REC.png') }}" alt="Fashion 1"
                                         class="rounded-xl w-full h-full object-cover" />
                                 </div>
                                 <div class="mt-9">
-                                    <img src="{{ asset('footer/06.07.2025_06.56.23_REC.png') }}" alt="Fashion 2"
+                                    <img src="{{ asset('public/footer/06.07.2025_06.56.23_REC.png') }}" alt="Fashion 2"
                                         class="rounded-xl w-full h-full object-cover" />
                                 </div>
                             </div>
@@ -132,11 +132,11 @@
                         <div class="max-w-7xl mx-auto flex flex-col lg:flex-row   gap-10">
                             <div class="flex-1 grid grid-cols-2 gap-6">
                                 <div class="mb-9">
-                                    <img src="{{ asset('footer/06.07.2025_06.56.14_REC.png') }}" alt="Fashion 1"
+                                    <img src="{{ asset('public/footer/06.07.2025_06.56.14_REC.png') }}" alt="Fashion 1"
                                         class="rounded-xl w-full h-full object-cover" />
                                 </div>
                                 <div class="mt-9">
-                                    <img src="{{ asset('footer/06.07.2025_06.56.23_REC.png') }}" alt="Fashion 2"
+                                    <img src="{{ asset('public/footer/06.07.2025_06.56.23_REC.png') }}" alt="Fashion 2"
                                         class="rounded-xl w-full h-full object-cover" />
                                 </div>
                             </div>

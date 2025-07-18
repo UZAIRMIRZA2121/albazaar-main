@@ -233,7 +233,7 @@
                     <div
                         class="relative rounded-[20px] p-6 flex items-center justify-between overflow-hidden bg-white h-[300px]">
                         <div
-                            class="absolute inset-0 bg-[url('{{ asset('footer/06.07.2025_03.30.18_REC.png') }}')] bg-no-repeat bg-cover bg-left z-0">
+                            class="absolute inset-0 bg-[url('{{ asset('public/footer/06.07.2025_03.30.18_REC.png') }}')] bg-no-repeat bg-cover bg-left z-0">
                         </div>
                         <div class=" space-y-4 z-10 relative ml-[50px]">
                             <h2 class="text-[35px] font-bold text-black text-center">Big Sale</h2>
@@ -247,7 +247,7 @@
                     </div>
                     <div class="relative rounded-[20px] overflow-hidden h-[300px] bg-white">
                         <div
-                            class="absolute inset-0 bg-[url('{{ asset('footer/06.07.2025_03.30.28_REC.png') }}')] bg-no-repeat bg-cover bg-center z-0">
+                            class="absolute inset-0 bg-[url('{{ asset('public/footer/06.07.2025_03.30.28_REC.png') }}')] bg-no-repeat bg-cover bg-center z-0">
                         </div>
                         <div
                             class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2  bg-[#FC4D03] text-white px-10 py-8 rounded-lg flex items-center space-x-1 z-10">

@@ -7,7 +7,7 @@
                     data-section="base_customizer_mobile_trigger">
                     <div class=" items-center w-[120px]  md:w-[180px] mx-auto m-1">
                         <a href="{{ url('/') }}" class="flex items-center space-x-3">
-                            <img src="{{ asset('footer/LOGO/English/PNG/A4.png') }}" class="" alt=""
+                            <img src="{{ asset('public/footer/LOGO/English/PNG/A4.png') }}" class="" alt=""
                                 width="100%" />
                         </a>
                     </div>
@@ -433,7 +433,7 @@
         tabindex="-1" aria-labelledby="drawer-label">
         <div class="flex items-center w-[180px]">
             <a href="{{ url('/') }}" class="flex items-center space-x-3">
-                <img src="{{ asset('footer/footer_logo.png') }}" class="" alt="" width="100%" />
+                <img src="{{ asset('public/footer/footer_logo.png') }}" class="" alt="" width="100%" />
             </a>
         </div>
 

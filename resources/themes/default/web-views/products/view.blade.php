@@ -145,7 +145,7 @@
                                             {{ $category->name }}
                                             @if ($category->childes->count() > 0)
                                                 <span>
-                                                    <img src="{{ asset('footer/next.png') }}" class="w-3" />
+                                                    <img src="{{ asset('public/footer/next.png') }}" class="w-3" />
                                                 </span>
                                             @endif
                                         </div>
@@ -200,7 +200,7 @@
                                         class="w-full p-2 rounded-lg border border-gray-300 pr-10 text-[12px] search-product-attribute"
                                         x-model="brandSearch">
                                     <div class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 text-xl">
-                                        <img src="{{ asset('footer/icons8-search-30.png') }}" class="w-5" />
+                                        <img src="{{ asset('public/footer/icons8-search-30.png') }}" class="w-5" />
                                     </div>
                                 </div>
 
@@ -230,7 +230,7 @@
                         <div class="flex items-center justify-between mb-2  md:px-0 mt-3 md:mt-0">
                             <h1 class="text-3xl font-bold">
                                 {{ isset($data['brand_name']) ? '' . $data['brand_name'] . '' : '' }}</h1>
-                            <img src="{{ asset('footer/filter.png') }}" class="w-5 h-5 cursor-pointer md:hidden"
+                            <img src="{{ asset('public/footer/filter.png') }}" class="w-5 h-5 cursor-pointer md:hidden"
                                 alt="Filter" @click="showFilter = true" data-drawer-target="drawer-right-example"
                                 data-drawer-show="drawer-right-example" data-drawer-placement="right"
                                 aria-controls="drawer-right-example">
@@ -440,7 +440,7 @@
                             <div @click="openCategory === index ? openCategory = null : openCategory = index"
                                 class="flex justify-between items-center px-2 py-2 hover:bg-gray-50 cursor-pointer">
                                 <span x-text="item.name"></span>
-                                <img src="{{ asset('footer/next.png') }}" class="w-4">
+                                <img src="{{ asset('public/footer/next.png') }}" class="w-4">
                             </div>
                             <ul x-show="openCategory === index" x-collapse
                                 class="bg-gray-50 text-sm text-gray-600 pl-6 pr-4 py-2 space-y-2">
@@ -460,7 +460,7 @@
                     <input type="text" placeholder="Search by brands"
                         class="w-full p-2 rounded-lg border border-gray-300 pr-10 text-[12px]">
                     <div class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 text-xl">
-                        <img src="{{ asset('footer/icons8-search-30.png') }}" class="w-5" />
+                        <img src="{{ asset('public/footer/icons8-search-30.png') }}" class="w-5" />
                     </div>
                 </div>
                 <div class="flex justify-between items-center mt-2">

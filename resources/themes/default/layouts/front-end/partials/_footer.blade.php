@@ -7,7 +7,7 @@
                         <div class=" items-center w-[180px] md:mx-auto hidden md:block">
                             <a href="{{route('home')}}"
                                 class="flex items-center space-x-3 rtl:space-x-reverse">
-                                <img src="{{ asset('footer/LOGO/English/PNG/A4.png') }}" class=""
+                                <img src="{{ asset('public/footer/LOGO/English/PNG/A4.png') }}" class=""
                                     alt="" width="100%" />
                             </a>
                         </div>
@@ -220,11 +220,11 @@
                         <p class="mt-3">&copy; 2025 Albazar. - All Rights Reversed</p>
                     </div>
                     <div class="col-span-12 md:col-span-3 pt-2 md:pt-8 flex justify-center">
-                        <img src="{{ asset('footer/app.png') }}" alt="Visa" class="w-[120px]">
-                        <img src="{{ asset('footer/play.png') }}" alt="Visa" class="w-[120px]">
+                        <img src="{{ asset('public/footer/app.png') }}" alt="Visa" class="w-[120px]">
+                        <img src="{{ asset('public/footer/play.png') }}" alt="Visa" class="w-[120px]">
                     </div>
                     <div class="col-span-12 md:col-span-4 flex md:justify-end items-center justify-center pt-2 md:pt-8">
-                        <img src="{{ asset('footer/payment.png') }}" alt="Visa" class="">
+                        <img src="{{ asset('public/footer/payment.png') }}" alt="Visa" class="">
                     </div>
                 </div>
 
