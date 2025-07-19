@@ -1,6 +1,5 @@
 @if (isset($product))
 
-    <!-- Deal Of The Day -->
     <div class="container-fluid mx-4 bg-[#ffffff] md:mt-[50px] mt-[20px]">
         <div class="max-w-[100%] md:max-w-[100%] lg:md:max-w-[78%] mx-auto justify-between items-center  text-sm py-2 ">
             <div class="grid grid-cols-12  gap-6 p-2 md:p-6">
@@ -82,24 +81,10 @@
                     @if (isset($recommendedProduct))
                         {{-- Latest products --}}
 
-                        <div class="col-span-12 md:col-span-12 hidden md:block">
-                            <div class="flex justify-between items-center mb-4">
-                                <h2 class="text-2xl font-bold">{{ translate('recommended_product') }}</h2>
-                                <a href="#" class="text-orange-600 text-sm font-medium hover:underline">View
-                                    all</a>
-                            </div>
-                            <div class="grid grid-cols-2    md:grid-cols-5 gap-4">
-                                @foreach ($latestProductsList as $product)
-                                   @include('web-views.partials._inline-single-product',['product'=>$product,'decimal_point_settings'=>$decimal_point_settings])
-                                @endforeach
-
-                            </div>
-                        </div>
 
                     @endif
                 @endif
             </div>
         </div>
     </div>
-    <!-- Deal Of The Day -->
 @endif

@@ -13,8 +13,8 @@
     <meta name="msvalidate.01" content="{{ getWebConfig('bing_webmaster_code') }}">
     <meta name="baidu-site-verification" content="{{ getWebConfig('baidu_webmaster_code') }}">
     <meta name="yandex-verification" content="{{ getWebConfig('yandex_webmaster_code') }}">
-<!-- Bootstrap JS (v5) -->
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Bootstrap JS (v5) -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 
     <title>@yield('title', 'Albazar')</title>
 
@@ -79,8 +79,7 @@
     </script>
     <script src="{{ theme_asset(path: 'public/assets/front-end/vendor/simplebar/dist/simplebar.min.js') }}"></script>
     <script src="{{ theme_asset(path: 'public/assets/front-end/vendor/tiny-slider/dist/min/tiny-slider.js') }}"></script>
-    <script
-        src="{{ theme_asset(path: 'public/assets/front-end/vendor/smooth-scroll/dist/smooth-scroll.polyfills.min.js') }}">
+    <script src="{{ theme_asset(path: 'public/assets/front-end/vendor/smooth-scroll/dist/smooth-scroll.polyfills.min.js') }}">
     </script>
     <script src="{{ theme_asset(path: 'public/js/lightbox.min.js') }}"></script>
     <script src="{{ theme_asset(path: 'public/assets/front-end/vendor/drift-zoom/dist/Drift.min.js') }}"></script>
@@ -93,6 +92,7 @@
     <script src="{{ theme_asset(path: 'public/assets/front-end/js/sweet_alert.js') }}"></script>
     <script src="{{ theme_asset(path: 'public/assets/back-end/js/toastr.js') }}"></script>
     <script src="{{ theme_asset(path: 'public/assets/front-end/js/custom.js') }}"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
 
     <!-- Inline Styles -->
     <style>

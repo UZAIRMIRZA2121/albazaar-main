@@ -32,12 +32,12 @@
                 class="w-full h-full object-cover rounded">
         </a>
     </div>
-    <div class="quick-view">
+    {{-- <div class="quick-view">
         <a class="btn-circle stopPropagation action-product-quick-view" href="javascript:"
             data-product-id="{{ $product->id }}">
             <i class="czi-eye align-middle"></i>
         </a>
-    </div>
+    </div> --}}
 
     <h3 class="text-sm font-semibold text-center">
         <a href="{{ route('product', $product->slug) }}">

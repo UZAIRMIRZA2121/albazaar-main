@@ -9,12 +9,14 @@
             <span class="__close-announcement web-announcement-slideUp">X</span>
         </div>
     @endif
+
+
     <div class="container-fluid mx-auto bg-[#ffffff]">
         <div
             class=" max-w-[100%] md:max-w-[100%] lg:md:max-w-[80%]   mx-auto justify-between items-center  text-sm py-2 border-b">
 
             <nav class="w-full">
-                <div class="max-w-[100%] flex flex-wrap items-center justify-between mx-3 md:mx-5 md:mx-auto md:p-2">
+                <div class="max-w-[100%] flex flex-wrap items-center justify-between  md:mx-5 md:mx-auto md:p-2">
                     <div class="site-header-item site-header-focus-item  flex space-x-3"
                         data-section="base_customizer_mobile_trigger">
                         <div class=" items-center w-[120px]  md:w-[180px] mx-auto m-1">
@@ -47,67 +49,84 @@
                                 </span>
                             </button>
                         </div>
-                    </div> --}}
+                    </div>  --}}
                         <!-- data-section="header_search" -->
+                        <div id="cart_items">
+                            @include('layouts.front-end.partials._cart')
+                        </div>
                         <div class="site-header-item site-header-focus-item"
                             data-section="base_customizer_header_mobile_account">
                             <div
                                 class="header-mobile-account-wrap header-account-control-wrap header-account-action-link header-account-style-icon">
-                                <a href="#" class="header-account-button">
-                                    <span class="base-svg-iconsets">
-                                        <svg class="thebase-svg-icon thebase-account-svg " fill="#000000" version="1.1"
-                                            xmlns="http://www.w3.org/2000/svg" width="20" height="20"
-                                            viewBox="0 0 64 64">
-                                            <title>Account</title>
-                                            <path
-                                                d="M41.2452,33.0349a16,16,0,1,0-18.49,0A26.0412,26.0412,0,0,0,4,58a2,2,0,0,0,2,2H58a2,2,0,0,0,2-2A26.0412,26.0412,0,0,0,41.2452,33.0349ZM20,20A12,12,0,1,1,32,32,12.0137,12.0137,0,0,1,20,20ZM8.09,56A22.0293,22.0293,0,0,1,30,36h4A22.0293,22.0293,0,0,1,55.91,56Z">
-                                            </path>
-                                        </svg>
-                                    </span>
-                                </a>
+
+                                {{-- Authenticated Customer --}}
+                                @if (auth('customer')->check())
+                                    <div class="dropdown">
+                                        <a class="header-account-button dropdown-toggle" href="#"
+                                            id="customerDropdown" role="button" data-bs-toggle="dropdown"
+                                            aria-expanded="false">
+                                            <small> {{ Str::limit(auth('customer')->user()->f_name, 10) }}
+                                            </small>
+                                        </a>
+                                        <ul class="dropdown-menu dropdown-menu-{{ Session::get('direction') === 'rtl' ? 'start' : 'end' }}"
+                                            aria-labelledby="customerDropdown">
+                                            <li><a class="dropdown-item"
+                                                    href="{{ route('account-oder') }}">{{ translate('my_Order') }}</a>
+                                            </li>
+                                            <li><a class="dropdown-item"
+                                                    href="{{ route('user-account') }}">{{ translate('my_Profile') }}</a>
+                                            </li>
+                                            <li>
+                                                <hr class="dropdown-divider">
+                                            </li>
+                                            <li><a class="dropdown-item"
+                                                    href="{{ route('customer.auth.logout') }}">{{ translate('logout') }}</a>
+                                            </li>
+                                        </ul>
+                                    </div>
+
+                                    {{-- Guest User --}}
+                                @else
+                                    <div class="dropdown">
+                                        <a class="header-account-button dropdown-toggle" href="#"
+                                            id="guestDropdown" role="button" data-bs-toggle="dropdown"
+                                            aria-expanded="false">
+                                            <i class="fa fa-user-o"></i>
+
+                                        </a>
+
+                                        <ul class="dropdown-menu dropdown-menu-{{ Session::get('direction') === 'rtl' ? 'start' : 'end' }}"
+                                            aria-labelledby="guestDropdown">
+                                            <li>
+                                                <a class="dropdown-item" href="{{ route('customer.auth.login') }}">
+                                                    <i class="fa fa-sign-in me-2"></i>
+                                                    {{ translate('customer_login') }}
+                                                </a>
+                                            </li>
+                                            <li>
+                                                <a class="dropdown-item" href="{{ route('vendor.auth.login') }}">
+                                                    <i class="fa fa-user-circle me-2"></i>
+                                                    {{ translate('vendor_login') }}
+                                                </a>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                @endif
+                                @if (auth()->guard('seller')->check())
+                                    <small> {{ Str::limit(auth('seller')->user()->f_name, 10) }}
+                                    </small>
+                                @endif
                             </div>
                         </div>
-                        <!-- data-section="header_mobile_account" -->
-                        <div class="site-header-item site-header-focus-item mt-2"
-                            data-section="base_customizer_mobile_cart" data-drawer-target="drawer-right-example"
-                            data-drawer-show="drawer-right-example" data-drawer-placement="right"
-                            aria-controls="drawer-right-example">
-                            <div class="header-mobile-cart-wrap base-header-cart">
-                                <span class="header-cart-empty-check header-cart-is-empty-true"></span>
-                                <div class="relative">
-                                    <button data-toggle-target="#cart-drawer" aria-label="Shopping Cart"
-                                        class="drawer-toggle header-cart-button"
-                                        data-toggle-body-class="showing-popup-drawer-from-right" aria-expanded="false"
-                                        data-set-focus=".cart-toggle-close">
-                                        <span class="base-svg-iconsets">
-                                            <svg class="thebase-svg-icon thebase-shopping-cart-svg " id="Layer_1"
-                                                data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" width="20"
-                                                height="20" fill="#000000" viewBox="0 0 762.47 673.5">
-                                                <path
-                                                    d="M600.86,489.86a91.82,91.82,0,1,0,91.82,91.82A91.81,91.81,0,0,0,600.86,489.86Zm0,142.93a51.12,51.12,0,1,1,51.11-51.11A51.12,51.12,0,0,1,600.82,632.79Z"
-                                                    transform="translate(0 0)"></path>
-                                                <path
-                                                    d="M458.62,561.33H393.3a91.82,91.82,0,1,0-.05,40.92h65.37a20.46,20.46,0,0,0,0-40.92ZM303.7,632.79a51.12,51.12,0,1,1,51.12-51.11A51.11,51.11,0,0,1,303.7,632.79Z"
-                                                    transform="translate(0 0)"></path>
-                                                <path
-                                                    d="M762.47,129.41a17.26,17.26,0,0,0-17.26-17.26H260.87a17.18,17.18,0,0,0-13.26,6.23,20.47,20.47,0,0,0-7.22,19.22l31.16,208a20.46,20.46,0,0,0,40.34-6.86L284.18,153.79H718.89l-37,256.4H221.59L166.75,15.06A17.26,17.26,0,0,0,147.42.14L123.7.12l0,.13H20.26a20.26,20.26,0,0,0,0,40.52H129.34l52.32,376.91,1,8.87c.1.85.15,1.71.19,2.57a23,23,0,0,0,1.35,6.76l.05.39a17.25,17.25,0,0,0,19.33,14.89l23.74.25,0-.27H698.19a24.33,24.33,0,0,0,3.44-.25,17.25,17.25,0,0,0,18.43-14.66l.18-1.27A22.94,22.94,0,0,0,721.3,428l.8-6.5,40.06-288.46a16.23,16.23,0,0,0,.16-2.59Z"
-                                                    transform="translate(0 0)"></path>
-                                            </svg>
-                                        </span>
-                                        <span
-                                            class="rounded-full absolute flex justify-center items-center bg-[#FC4D03] text-white w-4 h-4 -top-1 -right-2">0</span>
-                                        <div class="header-cart-content"></div>
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
+
+
                         <div class="flex items-center md:gap-1 cursor-pointer">
                             <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.5"
                                 viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round"
                                     d="M12 3c4.97 0 9 4.03 9 9s-4.03 9-9 9-9-4.03-9-9 4.03-9 9-9zm0 0c2.5 0 4.5 4 4.5 9s-2 9-4.5 9-4.5-4-4.5-9 2-9 4.5-9z" />
                             </svg>
-                            <span class="text-sm">11</span>
+                            <span class="text-sm">Eng</span>
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2"
                                 viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
@@ -148,45 +167,17 @@
                                     class="absolute -top-1 -right-2 bg-[#FC4D03] text-white text-xs font-bold w-4 h-4 rounded-full flex items-center justify-center">0</span>
                             </div>
                             <!-- Cart -->
-                           <div class="header-mobile-cart-wrap base-header-cart relative">
-    <span class="header-cart-empty-check header-cart-is-empty-true"></span>
-    <div class="relative">
-        <a href="{{ route('shop-cart') }}" aria-label="Shopping Cart"
-            class="drawer-toggle header-cart-button relative block"
-            data-toggle-body-class="showing-popup-drawer-from-right"
-            aria-expanded="false" data-set-focus=".cart-toggle-close">
-
-            <!-- SVG Cart Icon -->
-            <span class="base-svg-iconsets">
-                <svg class="thebase-svg-icon thebase-shopping-cart-svg w-6 h-6 text-black"
-                    xmlns="http://www.w3.org/2000/svg" fill="#000000" viewBox="0 0 762.47 673.5">
-                    <path d="M600.86,489.86a91.82,91.82,0,1,0,91.82,91.82A91.81,91.81,0,0,0,600.86,489.86Zm0,142.93a51.12,51.12,0,1,1,51.11-51.11A51.12,51.12,0,0,1,600.82,632.79Z"></path>
-                    <path d="M458.62,561.33H393.3a91.82,91.82,0,1,0-.05,40.92h65.37a20.46,20.46,0,0,0,0-40.92ZM303.7,632.79a51.12,51.12,0,1,1,51.12-51.11A51.11,51.11,0,0,1,303.7,632.79Z"></path>
-                    <path d="M762.47,129.41a17.26,17.26,0,0,0-17.26-17.26H260.87a17.18,17.18,0,0,0-13.26,6.23,20.47,20.47,0,0,0-7.22,19.22l31.16,208a20.46,20.46,0,0,0,40.34-6.86L284.18,153.79H718.89l-37,256.4H221.59L166.75,15.06A17.26,17.26,0,0,0,147.42.14L123.7.12l0,.13H20.26a20.26,20.26,0,0,0,0,40.52H129.34l52.32,376.91,1,8.87c.1.85.15,1.71.19,2.57a23,23,0,0,0,1.35,6.76l.05.39a17.25,17.25,0,0,0,19.33,14.89l23.74.25,0-.27H698.19a24.33,24.33,0,0,0,3.44-.25,17.25,17.25,0,0,0,18.43-14.66l.18-1.27A22.94,22.94,0,0,0,721.3,428l.8-6.5,40.06-288.46a16.23,16.23,0,0,0,.16-2.59Z"></path>
-                </svg>
-            </span>
-
-            <!-- Cart Badge -->
-            <span class="rounded-full absolute flex justify-center items-center bg-[#FC4D03] text-white w-4 h-4 -top-1 -right-2">0</span>
-            <div class="header-cart-content"></div>
-        </a>
-    </div>
-</div>
+                            <div id="cart_items">
+                                @include('layouts.front-end.partials._cart')
+                            </div>
 
                             <!-- User -->
                             @if (auth('customer')->check())
                                 <div class="dropdown">
-                                    <a class="navbar-tool ml-3 dropdown-toggle" href="#" id="customerDropdown"
-                                        role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                        <div class="navbar-tool-icon-box bg-secondary">
-                                            <img class="img-profile rounded-circle __inline-14" alt=""
-                                                src="{{ getStorageImages(path: auth('customer')->user()->image_full_url, type: 'avatar') }}">
-                                        </div>
-                                        <div class="navbar-tool-text">
-                                            <small>{{ translate('hello') }},
-                                                {{ Str::limit(auth('customer')->user()->f_name, 10) }}</small>
-                                            {{ translate('dashboard') }}
-                                        </div>
+                                    <a class="header-account-button dropdown-toggle" href="#"
+                                        id="customerDropdown" role="button" data-bs-toggle="dropdown"
+                                        aria-expanded="false">
+                                        <small> {{ Str::limit(auth('customer')->user()->f_name, 10) }}
                                     </a>
                                     <ul class="dropdown-menu dropdown-menu-{{ Session::get('direction') === 'rtl' ? 'start' : 'end' }}"
                                         aria-labelledby="customerDropdown">
@@ -206,49 +197,28 @@
                                 </div>
                             @else
                                 <div class="dropdown">
-                                    <a class="navbar-tool {{ Session::get('direction') === 'rtl' ? 'mr-md-3' : 'ml-md-3' }} dropdown-toggle"
-                                        href="#" id="guestDropdown" role="button" data-bs-toggle="dropdown"
+                                    <a class="header-account-button dropdown-toggle" href="#"
+                                        id="guestDropdown" role="button" data-bs-toggle="dropdown"
                                         aria-expanded="false">
-                                        <div class="navbar-tool-icon-box bg-secondary">
-                                            <svg width="16" height="17" viewBox="0 0 16 17" fill="none"
-                                                xmlns="http://www.w3.org/2000/svg">
-                                                <path
-                                                    d="M4.25 4.41675C4.25 6.48425 5.9325 8.16675 8 8.16675C10.0675 8.16675 11.75 6.48425 11.75 4.41675C11.75 2.34925 10.0675 0.666748 8 0.666748C5.9325 0.666748 4.25 2.34925 4.25 4.41675ZM14.6667 16.5001H15.5V15.6667C15.5 12.4509 12.8825 9.83341 9.66667 9.83341H6.33333C3.11667 9.83341 0.5 12.4509 0.5 15.6667V16.5001H14.6667Z"
-                                                    fill="#1B7FED" />
-                                            </svg>
-                                        </div>
+                                        <i class="fa fa-user-o"></i>
                                     </a>
+
                                     <ul class="dropdown-menu dropdown-menu-{{ Session::get('direction') === 'rtl' ? 'start' : 'end' }}"
                                         aria-labelledby="guestDropdown">
-                                        <li><a class="dropdown-item" href="{{ route('customer.auth.login') }}"><i
-                                                    class="fa fa-sign-in me-2"></i> {{ translate('sign_in') }}</a>
+                                        <li>
+                                            <a class="dropdown-item" href="{{ route('customer.auth.login') }}">
+                                                <i class="fa fa-sign-in me-2"></i>
+                                                {{ translate('customer_login') }}
+                                            </a>
                                         </li>
                                         <li>
-                                            <hr class="dropdown-divider">
-                                        </li>
-                                        <li><a class="dropdown-item" href="{{ route('customer.auth.sign-up') }}"><i
-                                                    class="fa fa-user-circle me-2"></i> {{ translate('sign_up') }}</a>
+                                            <a class="dropdown-item" href="{{ route('vendor.auth.login') }}">
+                                                <i class="fa fa-user-circle me-2"></i>
+                                                {{ translate('vendor_login') }}
+                                            </a>
                                         </li>
                                     </ul>
                                 </div>
-
-                                {{-- Vendor Registration/Login --}}
-                                @if ($businessMode === 'multi' && getWebConfig(name: 'seller_registration'))
-                                    <div class="dropdown show mx-2 d-none d-lg-block">
-                                        <a class="btn bg-light dropdown-toggle" href="#" id="vendorDropdown"
-                                            role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                            Vendor
-                                        </a>
-                                        <ul class="dropdown-menu" aria-labelledby="vendorDropdown">
-                                            <li><a class="dropdown-item"
-                                                    href="{{ route('vendor.auth.registration.index') }}">{{ translate('become_a_vendor') }}</a>
-                                            </li>
-                                            <li><a class="dropdown-item"
-                                                    href="{{ route('vendor.auth.login') }}">{{ translate('vendor_login') }}</a>
-                                            </li>
-                                        </ul>
-                                    </div>
-                                @endif
                             @endif
 
 
@@ -385,7 +355,8 @@
         tabindex="-1" aria-labelledby="drawer-label">
         <div class="flex items-center w-[180px]">
             <a href="{{ url('/') }}" class="flex items-center space-x-3">
-                <img src="{{ asset('public/footer/footer_logo.png') }}" class="" alt="" width="100%" />
+                <img src="{{ asset('public/footer/footer_logo.png') }}" class="" alt=""
+                    width="100%" />
             </a>
         </div>
 
@@ -410,18 +381,7 @@
                 <li class="block py-2  border-b  rounded-sm md:bg-transparent">
                     <a href="{{ url('product-details') }}" class=" px-5">Product Detail</a>
                 </li>
-                <li class="block py-2  border-b  rounded-sm md:bg-transparent">
-                    <a href="#" class=" px-5"> Brand</a>
-                </li>
-                <li class="block py-2  border-b  rounded-sm md:bg-transparent">
-                    <a href="#" class=" px-5"> categories</a>
-                </li>
-                <li class="block py-2  border-b  rounded-sm md:bg-transparent">
-                    <a href="#" class=" px-5"> Sellers</a>
-                </li>
-                <li class="block py-2  border-b  rounded-sm md:bg-transparent">
-                    <a href="#" class=" px-5">Contact Us</a>
-                </li>
+
 
             </ul>
         </div>

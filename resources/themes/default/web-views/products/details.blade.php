@@ -352,21 +352,23 @@
                         <!-- View More Button -->
                         @if ($productReviews->total() > $productReviews->count())
                             <div class="flex justify-center mt-6">
-                                <button wire:click="loadMore" class="btn text-white view_more_button web--bg-primary">
+                                <a href="view_more" class="btn text-white view_more_button web--bg-primary">
                                     {{ translate('view_more') }}
-                                </button>
+
+                                </a>
+                              
                             </div>
                         @endif
                     </div>
                 @endif
             </div>
             <div class="col-span-12  flex justify-center">
-                {{-- <a href="{{ route('product.list') }}"> --}}
+             <a href="{{ route('products') }}">
                 <button
                     class="px-5 py-4 hover:bg-[#FC4D03] hover:border-[#ffffff] hover:text-white text-black border-2 border-[#000000] rounded-lg">
                     VIEW ALL
                 </button>
-                {{-- </a> --}}
+                 </a> 
             </div>
         </div>
     </div>
@@ -382,12 +384,12 @@
                     <div class="flex justify-between items-center mb-6">
                         <h2 class="text-2xl font-bold">
                             @if (getWebConfig(name: 'business_mode') == 'multi')
-                                {{ translate('more_from_the_store') }}
+                                {{ translate('Featured products') }}
                             @else
                                 {{ translate('you_may_also_like') }}
                             @endif
                         </h2>
-                        <a href="#" class="text-orange-600 font-medium text-sm hover:underline">View
+                        <a href="{{ route('products') }}" class="text-orange-600 font-medium text-sm hover:underline">View
                             all</a>
                     </div>
                     <!-- Wrapper -->
