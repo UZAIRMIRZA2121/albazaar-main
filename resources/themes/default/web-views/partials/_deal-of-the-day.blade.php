@@ -1,6 +1,6 @@
 @if (isset($product))
 
-    <div class="container-fluid mx-4 bg-[#ffffff] md:mt-[50px] mt-[20px]">
+    <div class="container-fluid  bg-[#ffffff] md:mt-[50px] mt-[20px]">
         <div class="max-w-[100%] md:max-w-[100%] lg:md:max-w-[78%] mx-auto justify-between items-center  text-sm py-2 ">
             <div class="grid grid-cols-12  gap-6 p-2 md:p-6">
 
