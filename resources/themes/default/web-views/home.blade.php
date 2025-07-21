@@ -72,7 +72,7 @@
 
         <!-- Big Sale -->
         <div
-            class="container-fluid mx-4 bg-[#ffffff] md:mt-[50px] mt-[20px] md:pb-[30px]pb-[10px]  md:pt-[50px] pt-[20px]  md:block">
+            class="container-fluid  bg-[#ffffff] md:mt-[50px] mt-[20px] md:pb-[30px]pb-[10px]  md:pt-[50px] pt-[20px]  md:block">
             <div
                 class="max-w-[100%] md:max-w-[100%] lg:md:max-w-[78%]  mx-auto justify-between items-center  text-sm py-2 ">
                 <div class="grid grid-cols-12 owl-carousel  carousel-five gap-2">
@@ -227,7 +227,7 @@
             </div>
         </div>
     @else
-        <div class="container-fluid mx-4 bg-[#ffffff] mt-[50px]">
+        <div class="container-fluid  bg-[#ffffff] mt-[50px]">
             <div class="max-w-[100%] md:max-w-[100%] lg:md:max-w-[78%] mx-auto justify-between items-center text-sm py-2">
                 <div class="mx-auto grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div
@@ -267,7 +267,7 @@
 
 
     @if ($web_config['brand_setting'] && $brands->count() > 0)
-        <div class="container-fluid mx-4 bg-[#ffffff] md:mt-[50px] mt-[20px]">
+        <div class="container-fluid  bg-[#ffffff] md:mt-[50px] mt-[20px]">
             <div class="max-w-full md:max-w-full lg:max-w-[78%] mx-auto text-sm py-2">
                 <div class="md:py-10 px-4">
                     <div class="max-w-7xl mx-auto">
