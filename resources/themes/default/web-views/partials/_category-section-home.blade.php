@@ -1,5 +1,5 @@
 @if ($categories->count() > 0)
-<div class="container-fluid mx-4 bg-[#ffffff] mt-[15px] pb-[30px]">
+<div class="container-fluid  bg-[#ffffff] mt-[15px] pb-[30px]">
     <div class="max-w-full lg:max-w-[78%] mx-auto text-sm py-2">
         <h2 class="text-2xl font-bold mb-6">{{ translate('Top Categories') }}</h2>
 

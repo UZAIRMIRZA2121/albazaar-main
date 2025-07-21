@@ -1,31 +1,14 @@
-    @php($announcement = getWebConfig(name: 'announcement'))
-    @php($businessMode = getWebConfig(name: 'business_mode'))
-    @php($categories = App\Models\Category::all())
-
-    @if (isset($announcement) && $announcement['status'] == 1)
-        <div class="text-center position-relative px-4 py-1 d--none" id="announcement"
-            style="background-color: {{ $announcement['color'] }};color:{{ $announcement['text_color'] }}">
-            <span>{{ $announcement['announcement'] }} </span>
-            <span class="__close-announcement web-announcement-slideUp">X</span>
-        </div>
-    @endif
-
-
-    <div class="container-fluid mx-auto bg-[#ffffff]">
-        <div
-            class=" max-w-[100%] md:max-w-[100%] lg:md:max-w-[80%]   mx-auto justify-between items-center  text-sm py-2 border-b">
-
-            <nav class="w-full">
-                <div class="max-w-[100%] flex flex-wrap items-center justify-between  md:mx-5 md:mx-auto md:p-2">
+      <div class="max-w-[100%] flex flex-wrap items-center justify-between  md:mx-5 md:mx-auto md:p-2">
                     <div class="site-header-item site-header-focus-item  flex space-x-3"
                         data-section="base_customizer_mobile_trigger">
                         <div class=" items-center w-[120px]  md:w-[180px] mx-auto m-1">
                             <a href="{{ url('/') }}" class="flex items-center space-x-3">
-                                <img src="{{ asset('footer/LOGO/English/PNG/A4.png') }}" class="" alt=""
-                                    width="100%" />
+                                <img src="{{ asset('public/footer/LOGO/English/PNG/A4.png') }}" class=""
+                                    alt="" width="100%" />
                             </a>
                         </div>
                     </div>
+
 
                     <div class="space-x-3 md:space-x-5 mr-3 items-center  menu_list_mobile">
 
@@ -72,7 +55,7 @@
                                 @else
                                     <div class="dropdown">
                                         <button
-                                            class=" border-0 bg-transparent dropdown-toggle d-flex align-items-center"
+                                            class="btn border-0 bg-transparent dropdown-toggle d-flex align-items-center"
                                             type="button" id="guestDropdown" data-bs-toggle="dropdown"
                                             aria-expanded="false">
                                             <span class="base-svg-iconsets">
@@ -104,7 +87,7 @@
                                         </ul>
                                     </div>
                                 @endif
-
+                                
 
                                 @if (auth()->guard('seller')->check())
                                     <small> {{ Str::limit(auth('seller')->user()->f_name, 10) }}
@@ -295,6 +278,7 @@
                                 </ul>
                             </div>
                             <div class="w-[350px]">
+
                                 <form class="w-full" method="GET" action="{{ route('products') }}">
                                     <div class="flex border-2 shadow-sm rounded-lg relative">
                                         <!-- Dropdown Trigger -->
@@ -349,142 +333,10 @@
                                         </div>
                                     </div>
                                 </form>
-                            </div>
 
+                            </div>
                         </div>
                     </div>
-                    <div class="w-[350px] d-sm-none">
-                        <form class="w-full" method="GET" action="{{ route('products') }}">
-                            <div class="flex border-2 shadow-sm rounded-lg relative">
-                                <!-- Dropdown Trigger -->
-                                <button id="dropdown-button"
-                                    class="box_shadow_none shrink-0 z-30 inline-flex items-center py-2.5 px-4 text-[12px] font-medium text-center text-[#504444] bg-white border-r border-gray-300 rounded-s-lg focus:ring-4 focus:outline-none"
-                                    type="button">
-                                    All Categories
-                                    <svg class="w-2.5 h-2.5 ms-2.5" aria-hidden="true" fill="none"
-                                        viewBox="0 0 10 6">
-                                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
-                                            stroke-width="2" d="m1 1 4 4 4-4"></path>
-                                    </svg>
-                                </button>
-                                <!-- Dropdown Menu -->
-                                <div id="dropdown"
-                                    class="dropdown-closed transition-all duration-150 z-40 bg-white divide-y divide-gray-100 rounded-lg shadow-sm w-44 absolute top-full mt-1 left-0"
-                                    aria-labelledby="dropdown-button">
-                                    <ul class="py-2 text-sm text-gray-700" aria-labelledby="dropdown-button">
-                                        <li>
-                                            <button type="submit" name="category" value=""
-                                                class="inline-flex w-full px-4 py-2 hover:bg-gray-100">
-                                                All Categories
-                                            </button>
-                                        </li>
-                                        @foreach ($categories as $category)
-                                            <li>
-                                                <button type="submit" name="category" value="{{ $category->id }}"
-                                                    class="inline-flex w-full px-4 py-2 hover:bg-gray-100">
-                                                    {{ $category->name }}
-                                                </button>
-                                            </li>
-                                        @endforeach
-                                    </ul>
-                                </div>
 
-                                <!-- Search Input -->
-                                <div class="relative w-full">
-                                    <input type="search" name="search" id="search-dropdown"
-                                        class="block p-2.5 w-full z-20 text-sm text-[#504444] bg-white rounded-e-lg border-none text-[12px]"
-                                        placeholder="Search Item.." value="{{ request('search') }}">
-                                    <button type="submit"
-                                        class="absolute top-0 end-0 p-2.5 text-sm font-medium h-full">
-                                        <svg class="w-4 h-4" fill="none" viewBox="0 0 20 20">
-                                            <path stroke="currentColor" stroke-linecap="round"
-                                                stroke-linejoin="round" stroke-width="2"
-                                                d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z" />
-                                        </svg>
-                                        <span class="sr-only">Search</span>
-                                    </button>
-                                </div>
-                            </div>
-                        </form>
-                    </div>
 
                 </div>
-            </nav>
-        </div>
-    </div>
-    <style>
-        .dropdown-open {
-            display: block !important;
-        }
-
-        .dropdown-closed {
-            display: none !important;
-        }
-    </style>
-
-<script>
-    document.addEventListener("DOMContentLoaded", function () {
-        const dropdownBtn = document.getElementById("dropdown-button");
-        const dropdown = document.getElementById("dropdown");
-
-        dropdownBtn.addEventListener("click", function (e) {
-            e.preventDefault();
-            dropdown.classList.toggle("dropdown-open");
-            dropdown.classList.toggle("dropdown-closed");
-        });
-
-        // Optional: close when clicking outside
-        document.addEventListener("click", function (e) {
-            if (!dropdown.contains(e.target) && !dropdownBtn.contains(e.target)) {
-                dropdown.classList.remove("dropdown-open");
-                dropdown.classList.add("dropdown-closed");
-            }
-        });
-    });
-</script>
- 
-
-    <!-- Navbar -->
-    <script>
-        document.addEventListener("DOMContentLoaded", function() {
-            const dropdownBtn = document.getElementById("dropdown-button1");
-            const dropdown = document.getElementById("dropdown1");
-            const options = dropdown.querySelectorAll(".category-option");
-            const categoryInput = document.getElementById("categoryInput");
-
-            // Toggle dropdown visibility
-            dropdownBtn.addEventListener("click", function(e) {
-                e.preventDefault();
-                dropdown.classList.toggle("hidden");
-            });
-
-            // Update selected category
-            options.forEach(option => {
-                option.addEventListener("click", function(e) {
-                    e.preventDefault();
-                    const value = this.getAttribute("data-value");
-                    const label = this.textContent.trim();
-
-                    // Update button label
-                    dropdownBtn.innerHTML = `
-                    ${label}
-                    <svg class="w-2.5 h-2.5 ms-2.5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"
-                         fill="none" viewBox="0 0 10 6">
-                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
-                              stroke-width="2" d="m1 1 4 4 4-4" />
-                    </svg>
-                `;
-
-                    categoryInput.value = value;
-                    dropdown.classList.add("hidden");
-                });
-            });
-
-            // Hide dropdown if clicked outside
-            document.addEventListener("click", function(e) {
-                if (!dropdown.contains(e.target) && !dropdownBtn.contains(e.target)) {
-                    dropdown.classList.add("hidden");
-                }
-            });
-        });
-    </script>

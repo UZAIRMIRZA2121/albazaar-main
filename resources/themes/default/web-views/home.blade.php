@@ -9,7 +9,7 @@
     {{-- hero section --}}
 
 
-    <div class="container-fluid mx-2 md:mx-4 bg-[#ffffff] border-b">
+    <div class="container-fluid  md:mx-4 bg-[#ffffff] border-b">
         <div class="max-w-[100%] md:max-w-[100%] lg:md:max-w-[80%] mx-auto justify-between items-center  text-sm py-2 ">
             <div class="w-full bg-white py-6">
                 <div class="flex flex-wrap justify-between items-center  sm:px-6 lg:px-8">
@@ -108,7 +108,7 @@
     @endif
 
     @if ($featuredProductsList->count() > 0)
-        <div class="container-fluid mx-4 md:mx-0 bg-[#EFF0F2] mt-[20px] md:mt-[50px] pb-[10px] md:pb-[30px] pt-[20px] md:pt-[50px]"
+        <div class="container-fluid md:mx-0 bg-[#EFF0F2] mt-[20px] md:mt-[50px] pb-[10px] md:pb-[30px] pt-[20px] md:pt-[50px]"
             id="featured_deal">
             <div class="max-w-full lg:max-w-[78%] mx-auto text-sm py-2">
                 <div class="md:py-10 px-2">
@@ -181,7 +181,7 @@
     <!-- Deal Of The Day -->
 
     @if ($newArrivalProducts->count() > 0)
-        <div class="container-fluid mx-4 md:mx-0 bg-[#FFF1EB] md:mt-[50px] mt-[20px] md:py-[100px] py-[50px]  md:block"
+        <div class="container-fluid  md:mx-0 bg-[#FFF1EB] md:mt-[50px] mt-[20px] md:py-[100px] py-[50px]  md:block"
             id="new-arrival-section">
             <div class="max-w-[100%] md:max-w-[100%] lg:md:max-w-[78%] mx-auto text-sm py-2">
                 <!-- Section Title -->
@@ -209,7 +209,7 @@
     @endif
 
     @if (count($bannerTypeFooterBanner) > 1)
-        <div class="container-fluid mx-4 bg-[#ffffff] mt-[50px]">
+        <div class="container-fluid  bg-[#ffffff] mt-[50px]">
             <div class="max-w-[100%] md:max-w-[100%] lg:md:max-w-[78%] mx-auto justify-between items-center text-sm py-2">
                 <div class="mx-auto grid grid-cols-1 md:grid-cols-2 gap-6">
                     @foreach ($bannerTypeFooterBanner as $banner)
