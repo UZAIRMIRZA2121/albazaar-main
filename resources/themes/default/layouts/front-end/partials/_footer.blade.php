@@ -1,7 +1,7 @@
    <div class="container-fluid mx-auto bg-[#ffffff] overflow-hidden">
         <div class="max-w-[100%] md:max-w-[88%] mx-auto justify-between items-center  text-sm py-2 ">
             <footer class="  md:py-10">
-                <div class="container md:mx-auto mx-5  grid grid-cols-12 gap-12 pt-4 pb-[40px]">
+                <div class="container md:mx-auto  grid grid-cols-12 gap-1 pt-4 pb-[40px]">
                     <!-- Contact Info -->
                     <div class="space-y-3 col-span-12 md:col-span-4 lg:md:col-span-3 ">
                         <div class=" items-center w-[180px] md:mx-auto hidden md:block">
@@ -130,7 +130,7 @@
                         </ul>
                     </div>
                     <!-- Policy -->
-                    <div class="space-y-3 col-span-5 md:col-span-4 lg:md:col-span-2">
+                    <div class="space-y-3 col-span-3  md:col-span-4 lg:md:col-span-2 sm:[width:125px]">
                         <h3 class="text-[#000000] font-bold mb-2">SELL ON ALBAZAR</h3>
                         <ul class="space-y-5 text-[#383636] text-[14px]">
                             <li><a href="{{route('about-us')}}" class="hover:underline">{{ translate('about_us')}}</a></li>

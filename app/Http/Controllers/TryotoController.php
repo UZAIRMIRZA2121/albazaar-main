@@ -393,7 +393,7 @@ class TryotoController extends Controller
         $orderData = [
             'orderId' => $orderId,
             'ref1' => '1234ABCDE',
-            'pickupLocationCode' => ,
+            'pickupLocationCode' => 'DefaultWH',
             'createShipment' => true,
             'deliveryOptionId' => (int) ($order->option_id ?? 12364),
             'storeName' => 'Brand A English',

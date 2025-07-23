@@ -22,7 +22,7 @@
 
                 return $matchCategory && $matchName;
             })
-            ->where('featured', 1)
+        
             ->sortByDesc('featured_till');
     @endphp
 
@@ -49,14 +49,43 @@
                 {!! $products->links() !!}
             </nav>
         </div>
-    @else
-        <div class="d-flex justify-content-center align-items-center w-100 py-5">
-            <div>
-                <img src="{{ theme_asset(path: 'public/assets/front-end/img/media/product.svg') }}" class="img-fluid"
-                    alt="">
-                <h6 class="text-muted">{{ translate('no_search_product_found') }}</h6>
+  
+        @else
+        @if ($searchProduct || $searchCategory)
+        
+<script>
+    Swal.fire({
+        icon: 'info',
+        title: '{{ translate('no_search_product_found') }}',
+        text: '{{ translate('please_check_other_products') }}', // Optional additional text
+        confirmButtonText: '{{ translate('ok') }}',
+        showCloseButton: true,
+        allowOutsideClick: true
+    });
+</script>
+
+            {{-- Fallback: show all products --}}
+            @foreach ($products as $product)
+                @if (!empty($product['product_id']))
+                    @php($product = $product->product)
+                @endif
+
+                @if (!empty($product))
+                    <div class="p-2">
+                        @include('web-views.partials._filter-single-product', [
+                            'product' => $product,
+                            'decimal_point_settings' => $decimal_point_settings,
+                        ])
+                    </div>
+                @endif
+            @endforeach
+
+            <div class="col-12">
+                <nav class="d-flex justify-content-between pt-2" aria-label="Page navigation" id="paginator-ajax">
+                    {!! $products->links() !!}
+                </nav>
             </div>
-        </div>
-        <br><br><br>
-    @endif
+        @endif
+  @endif
+   
 @endif

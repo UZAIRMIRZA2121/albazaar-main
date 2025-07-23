@@ -12,14 +12,8 @@
 
 @section('content')
 
-    <div class="container-fluid mx-4 md:mx-0">
-        <div class="max-w-[100%] md:max-w-[100%] lg:md:max-w-[78%] mx-auto justify-between items-center text-sm py-2">
-            <div class="grid grid-cols-12 gap-3 md:gap-9">
-                {{-- @include(VIEW_FILE_NAMES['product_details']) --}}
-            </div>
-        </div>
-    </div>
-    <div class="container-fluid mx-4 md:mx-0  ">
+ 
+    <div class="container-fluid  md:mx-0  ">
         <div class="max-w-[100%] md:max-w-[100%] lg:md:max-w-[78%] mx-auto justify-between items-center  text-sm py-2 ">
 
             <div class="grid grid-cols-12 gap-2 mt-9 mb-8">
@@ -376,9 +370,9 @@
 
 
     <!--  Featured products -->
-    <div class="container-fluid mx-4 md:mx-0 ">
+    <div class="container-fluid  md:mx-0 ">
         <div class="max-w-[100%] md:max-w-[100%] lg:md:max-w-[78%] mx-auto justify-between items-center  text-sm py-2 ">
-            <div class=" md:py-10 px-4">
+            <div class=" md:py-10">
                 <div class="max-w-7xl mx-auto">
                     <!-- Header -->
                     <div class="flex justify-between items-center mb-6">

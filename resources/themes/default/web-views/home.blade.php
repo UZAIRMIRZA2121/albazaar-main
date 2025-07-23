@@ -108,69 +108,105 @@
     @endif
 
     @if ($featuredProductsList->count() > 0)
-        <div class="container-fluid md:mx-0 bg-[#EFF0F2] mt-[20px] md:mt-[50px] pb-[10px] md:pb-[30px] pt-[20px] md:pt-[50px]"
-            id="featured_deal">
-            <div class="max-w-full lg:max-w-[78%] mx-auto text-sm py-2">
-                <div class="md:py-10 px-2">
-                    <div class="max-w-7xl mx-auto">
-
-                        <!-- Header -->
-                        <div class="flex justify-between items-center mb-6 mx-3">
-                            <h2 class="text-2xl font-bold">{{ translate('Featured Deal') }}</h2>
-                            <a href="#"
-                                class="hidden md:inline-block text-orange-600 font-medium text-sm hover:underline">View
-                                all</a>
+    
+     <div class="container-fluid  md:mx-0 bg-[#EFF0F2] md:mt-[50px] mt-[20px] md:pb-[30px] pb-[10px] md:pt-[50px] pt-[20px] hidden md:block">
+    <div class="max-w-[100%] md:max-w-[100%] lg:md:max-w-[78%] mx-auto justify-between items-center  text-sm py-2 ">
+        <div class=" md:py-10 px-2">
+            <div class="max-w-7xl mx-auto">
+                <!-- Header -->
+                <div class="flex justify-between items-center mb-6 mx-3">
+                    <h2 class="text-2xl font-bold">Featured products</h2>
+                    <a href="#" class="text-orange-600 font-medium text-sm hover:underline">View
+                        all</a>
+                </div>
+                <!-- Product Grid -->
+                <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
+                     @foreach ($featuredProductsList as $product)
+                    <div class="rounded-xl overflow-hidden text-center p-1 bg-white group relative">
+                        <div class="text-center p-2 rounded-[10px]  overflow-hidden ">
+                            <img src="{{ getStorageImages(path: $product->thumbnail_full_url, type: 'product') }}" alt="Sun Glass"
+                                class="w-full  rounded-[10px]    object-cover">
+                        </div>
+                        <div class="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition duration-200 z-10">
+                            <button
+                                class="bg-[#FC4D03] text-white text-[10px] font-semibold px-4 py-2 rounded-lg shadow-lg flex items-center gap-1">
+                                <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M11.25 18.75C11.25 19.58 10.58 20.25 9.75 20.25C8.92 20.25 8.25 19.58 8.25 18.75C8.25 17.92 8.92 17.25 9.75 17.25C10.58 17.25 11.25 17.92 11.25 18.75ZM16.25 17.25C15.42 17.25 14.75 17.92 14.75 18.75C14.75 19.58 15.42 20.25 16.25 20.25C17.08 20.25 17.75 19.58 17.75 18.75C17.75 17.92 17.08 17.25 16.25 17.25ZM20.73 7.68L18.73 15.68C18.65 16.01 18.35 16.25 18 16.25H8C7.64 16.25 7.33 15.99 7.26 15.63L5.37 5.25H4C3.59 5.25 3.25 4.91 3.25 4.5C3.25 4.09 3.59 3.75 4 3.75H6C6.36 3.75 6.67 4.01 6.74 4.37L7.17 6.75H20C20.23 6.75 20.45 6.86 20.59 7.04C20.73 7.22 20.78 7.46 20.73 7.68ZM19.04 8.25H7.44L8.62 14.75H17.41L19.04 8.25Z"
+                                    fill="#ffffff" />
+                                </svg>
+                                <span>QUICK ADD</span>
+                            </button>
                         </div>
 
-                        <!-- Product Grid -->
-                        <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
-                            @foreach ($featuredProductsList as $product)
-                                <a href="{{ route('product', $product->slug) }}" class="block">
-                                    <div class="rounded-xl overflow-hidden text-center p-1 bg-white group relative">
-                                        <div class="text-center p-2 rounded-[10px] overflow-hidden">
-                                            <img src="{{ getStorageImages(path: $product->thumbnail_full_url, type: 'product') }}"
-                                                alt="{{ $product->name ?? 'Product' }}"
-                                                class="w-full rounded-[10px] object-cover">
-                                        </div>
+                        <div class="px-4 py-3">
+                            <h3 class="text-md font-medium">{{ $product->name ?? 'Product Name' }}</h3>
+                            <p class="text-orange-500 font-semibold mt-2">
+                                    @if ($product->discount > 0)
+                                        <del class="category-single-product-price">
+                                            {{ webCurrencyConverter(amount: $product->unit_price) }}
+                                        </del>
+                                    @endif
+                                {{ webCurrencyConverter(amount: $product->unit_price - getProductDiscount(product: $product, price: $product->unit_price)) }}
 
-                                        <div
-                                            class="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition duration-200 z-10">
-                                            <button
-                                                class="bg-[#FC4D03] text-white text-[10px] font-semibold px-4 py-2 rounded-lg shadow-lg flex items-center gap-1">
-                                                <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none">
-                                                    <path
-                                                        d="M11.25 18.75C11.25 19.58 10.58 20.25 9.75 20.25C8.92 20.25 8.25 19.58 8.25 18.75C8.25 17.92 8.92 17.25 9.75 17.25C10.58 17.25 11.25 17.92 11.25 18.75ZM16.25 17.25C15.42 17.25 14.75 17.92 14.75 18.75C14.75 19.58 15.42 20.25 16.25 20.25C17.08 20.25 17.75 19.58 17.75 18.75C17.75 17.92 17.08 17.25 16.25 17.25ZM20.73 7.68L18.73 15.68C18.65 16.01 18.35 16.25 18 16.25H8C7.64 16.25 7.33 15.99 7.26 15.63L5.37 5.25H4C3.59 5.25 3.25 4.91 3.25 4.5C3.25 4.09 3.59 3.75 4 3.75H6C6.36 3.75 6.67 4.01 6.74 4.37L7.17 6.75H20C20.23 6.75 20.45 6.86 20.59 7.04C20.73 7.22 20.78 7.46 20.73 7.68ZM19.04 8.25H7.44L8.62 14.75H17.41L19.04 8.25Z"
-                                                        fill="#ffffff" />
-                                                </svg>
-                                                <span>QUICK ADD</span>
-                                            </button>
-                                        </div>
-
-                                        <div class="px-4 py-3">
-                                            <h3 class="text-md font-medium">{{ $product->name ?? 'Product Name' }}</h3>
-                                            <p class="text-orange-500 font-semibold mt-2">
-                                                @if ($product->discount > 0)
-                                                    <del class="category-single-product-price">
-                                                        {{ webCurrencyConverter(amount: $product->unit_price) }}
-                                                    </del>
-                                                @endif
-                                                {{ webCurrencyConverter(amount: $product->unit_price - getProductDiscount(product: $product, price: $product->unit_price)) }}
-                                            </p>
-                                        </div>
-                                    </div>
-                                </a>
-                            @endforeach
+                            </p>
                         </div>
-
-                        <!-- Mobile View All Link -->
-                        <a href="#"
-                            class="md:hidden text-orange-600 text-[16px] underline hover:text-orange-700 transition duration-200 text-center block my-5">
-                            View all
-                        </a>
                     </div>
+                    @endforeach
                 </div>
             </div>
         </div>
+    </div>
+</div>
+
+<div class="container-fluid  md:mx-0 bg-[#EFF0F2] md:mt-[50px] mt-[20px] md:pb-[30px] pb-[10px] md:pt-[50px] pt-[20px] md:hidden">
+    <div class="max-w-[100%] md:max-w-[100%] lg:md:max-w-[78%] mx-auto justify-between items-center  text-sm py-2 ">
+        <div class="  px-2">
+            <div class="max-w-7xl mx-auto">
+                <!-- Header -->
+                <div class="flex justify-between items-center mb-6 mx-3">
+                    <h2 class="text-2xl font-bold">Featured products</h2>
+                </div>
+                <!-- Product Grid -->
+                <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
+                     @foreach ($featuredProductsList as $product)
+                    <div class="rounded-xl overflow-hidden text-center p-1 bg-white group relative">
+                        <div class="text-center p-2 rounded-[10px]  overflow-hidden ">
+                            <img src="{{ getStorageImages(path: $product->thumbnail_full_url, type: 'product') }}" alt="Sun Glass"
+                                class="w-full  rounded-[10px]    object-cover">
+                        </div>
+                        <div class="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition duration-200 z-10">
+                            <button
+                                class="bg-[#FC4D03] text-white text-[10px] font-semibold px-4 py-2 rounded-lg shadow-lg flex items-center gap-1">
+                                <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M11.25 18.75C11.25 19.58 10.58 20.25 9.75 20.25C8.92 20.25 8.25 19.58 8.25 18.75C8.25 17.92 8.92 17.25 9.75 17.25C10.58 17.25 11.25 17.92 11.25 18.75ZM16.25 17.25C15.42 17.25 14.75 17.92 14.75 18.75C14.75 19.58 15.42 20.25 16.25 20.25C17.08 20.25 17.75 19.58 17.75 18.75C17.75 17.92 17.08 17.25 16.25 17.25ZM20.73 7.68L18.73 15.68C18.65 16.01 18.35 16.25 18 16.25H8C7.64 16.25 7.33 15.99 7.26 15.63L5.37 5.25H4C3.59 5.25 3.25 4.91 3.25 4.5C3.25 4.09 3.59 3.75 4 3.75H6C6.36 3.75 6.67 4.01 6.74 4.37L7.17 6.75H20C20.23 6.75 20.45 6.86 20.59 7.04C20.73 7.22 20.78 7.46 20.73 7.68ZM19.04 8.25H7.44L8.62 14.75H17.41L19.04 8.25Z"
+                                    fill="#ffffff" />
+                                </svg>
+                                <span>QUICK ADD</span>
+                            </button>
+                        </div>
+
+                        <div class="px-4 py-3">
+                            <h3 class="text-md font-medium">{{ $product->name ?? 'Product Name' }}</h3>
+                            <p class="text-orange-500 font-semibold mt-2">
+                            
+                                    @if ($product->discount > 0)
+                                        <del class="category-single-product-price">
+                                            {{ webCurrencyConverter(amount: $product->unit_price) }}
+                                        </del>
+                                    @endif
+                                {{ webCurrencyConverter(amount: $product->unit_price - getProductDiscount(product: $product, price: $product->unit_price)) }}
+                                </p>
+                        </div>
+                    </div>
+                     @endforeach
+                </div>
+                   <a href="#" class="text-orange-600 text-[16px] underline hover:text-orange-700 transition duration-200 text-center block my-5">
+                    View all
+                    </a>
+            </div>
+        </div>
+    </div>
+</div>
     @endif
 
 
@@ -181,7 +217,7 @@
     <!-- Deal Of The Day -->
 
     @if ($newArrivalProducts->count() > 0)
-        <div class="container-fluid  md:mx-0 bg-[#FFF1EB] md:mt-[50px] mt-[20px] md:py-[100px] py-[50px]  md:block"
+        <div class="container-fluid md:mx-0 bg-[#FFF1EB] md:mt-[50px] mt-[20px] md:py-[100px] py-[50px]  md:block"
             id="new-arrival-section">
             <div class="max-w-[100%] md:max-w-[100%] lg:md:max-w-[78%] mx-auto text-sm py-2">
                 <!-- Section Title -->
@@ -192,7 +228,7 @@
                 <div class="owl-carousel owl-theme carousel-six">
                     @foreach ($newArrivalProducts as $key => $product)
                         @include('web-views.partials._product-card-2', [
-                            'product' => $product,
+                            'product' => $product,  
                             'decimal_point_settings' => $decimalPointSettings,
                         ])
                     @endforeach
@@ -273,7 +309,7 @@
                     <div class="max-w-7xl mx-auto">
                         <!-- Header -->
                         <div class="flex justify-between items-center md:mb-6">
-                            <h2 class="text-2xl mb-3 font-bold">{{ translate('brands') }}</h2>
+                            <h2 class="text-2xl mb-3 font-bold">{{ translate('Man') }}</h2>
                             <a href="{{ route('brands') }}"
                                 class="text-orange-500 hover:underline">{{ translate('view_all') }}</a>
                         </div>
@@ -281,7 +317,6 @@
                         <!-- Scrollable Wrapper -->
                         <div class="w-full overflow-x-auto lg:overflow-x-visible">
                             <div class="flex gap-4">
-
                                 @php($brandCount = 0)
                                 @foreach ($brands as $brand)
                                     @if ($brandCount < 15)
@@ -303,12 +338,6 @@
                                     @endif
                                     @php($brandCount++)
                                 @endforeach
-
-
-
-
-
-
                             </div>
                         </div>
                         <!-- End Scrollable Wrapper -->

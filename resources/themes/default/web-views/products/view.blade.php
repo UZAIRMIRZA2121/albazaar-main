@@ -24,7 +24,7 @@
     @php($decimal_point_settings = getWebConfig(name: 'decimal_point_settings'))
 
 
-    <div class="container-fluid mx-4 md:mx-0  ">
+    <div class="container-fluid md:mx-0  ">
         <div class="max-w-[100%] md:max-w-[100%] lg:md:max-w-[78%] mx-auto justify-between items-center  text-sm py-2 ">
             <!-- Breadcrumb -->
             <div class="px-1 py-4  text-[#FC4D03] font-semibold text-[16px] hidden md:block">
@@ -341,12 +341,7 @@
                                 'products' => $products,
                                 'decimal_point_settings' => $decimal_point_settings,
                             ])
-                            @include('web-views.products._ajax-products', [
-                                'products' => $products,
-                                'decimal_point_settings' => $decimal_point_settings,
-                            ])
-
-
+                        
 
 
                         </div>
@@ -375,7 +370,7 @@
             <span class="sr-only">Close menu</span>
         </button>
 
-        <!-- 🧾 Filter Content -->
+        <!-- ðŸ§¾ Filter Content -->
         <aside class="mt-6 w-full space-y-6 text-sm font-medium">
             <!-- Filter Dropdown -->
             <div>
@@ -421,7 +416,7 @@
                 </div>
             </div>
 
-            <!-- 🧩 Other Categories (Accordion) -->
+            <!-- ðŸ§© Other Categories (Accordion) -->
             <div>
                 <h2 class="font-semibold mb-2 text-[14px]">Other categories</h2>
                 <ul class="bg-white rounded-lg divide-y divide-gray-200 shadow-sm text-[12px]">

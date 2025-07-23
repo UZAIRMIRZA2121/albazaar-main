@@ -399,8 +399,6 @@
         href="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/assets/owl.theme.default.min.css">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/owl.carousel.min.js"></script>
-
-
     <script src="{{ theme_asset(path: 'public/assets/front-end/vendor/jquery/dist/jquery-2.2.4.min.js') }}"></script>
     <script src="{{ theme_asset(path: 'public/assets/front-end/vendor/bootstrap/dist/js/bootstrap.bundle.min.js') }}">
     </script>
@@ -425,6 +423,13 @@
     <script src="{{ theme_asset(path: 'public/assets/back-end/js/toastr.js') }}"></script>
     <script src="{{ theme_asset(path: 'public/assets/front-end/js/custom.js') }}"></script>
     {!! Toastr::message() !!}
+
+
+
+
+
+
+
     <script>
         $(document).ready(function() {
             // 7 items wale carousel ke liye

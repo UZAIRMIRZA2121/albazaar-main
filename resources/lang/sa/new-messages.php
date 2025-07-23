@@ -8652,4 +8652,5 @@ return [
 	"no_search_product_found" => "No search product found",
 	"Featured Deal" => "Featured Deal",
 	"customer_login" => "Customer login",
+	"Man" => "Man",
 ];

@@ -57,7 +57,5 @@
                            <div class="header-cart-content"></div>
                        </a>
                    @endif
-
-
                </div>
            </div>
